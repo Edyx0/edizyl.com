@@ -267,6 +267,10 @@ p {
   text-underline-offset: 8px;
 }
 
+.nowrap {
+  white-space: nowrap;
+}
+
 .hero-sub {
   font-family: var(--body);
   font-size: 1.15rem;
