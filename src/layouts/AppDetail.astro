@@ -1,0 +1,170 @@
+---
+import Layout from './Layout.astro';
+import type { AppData } from '../data/apps';
+
+interface Props {
+  app: AppData;
+}
+
+const { app } = Astro.props;
+const heroStyle = `--app-accent: ${app.accent};`;
+---
+
+<Layout title={`${app.name} — ${app.subtitle}`} description={app.tagline}>
+  <p><a href="/#apps" class="back-link">← Back to portfolio</a></p>
+
+  <section class="app-hero" style={heroStyle}>
+    <div class="app-hero-glow"></div>
+    <div class="app-hero-content">
+      <img src={app.icon} alt={`${app.name} icon`} class="app-hero-icon" width="120" height="120" />
+      <div class="app-hero-text">
+        <h1>{app.name}</h1>
+        <p class="hero-sub">{app.subtitle}</p>
+        <p class="hero-tagline">{app.tagline}</p>
+        <p>
+          <a href={app.appStoreUrl} class="cta">Download on the App Store →</a>
+        </p>
+      </div>
+    </div>
+
+    {app.stats && app.stats.length > 0 && (
+      <div class="stat-pills">
+        {app.stats.map((s) => (
+          <div class="stat-pill">
+            <span class="stat-label">{s.label}</span>
+            <span class="stat-value">{s.value}</span>
+          </div>
+        ))}
+      </div>
+    )}
+  </section>
+
+  {(app.screenshots.length > 0 || app.previewVideoHls) && (
+    <section class="section-screenshots">
+      <h2>Screenshots</h2>
+      <div class="shots-scroll">
+        {app.previewVideoHls && (
+          <video
+            class="shot-video"
+            controls
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            poster={app.previewVideoPoster}
+            data-hls={app.previewVideoHls}
+          ></video>
+        )}
+        {app.screenshots.map((src, i) => (
+          <img src={src} alt={`${app.name} screenshot ${i + 1}`} loading="lazy" />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <script>
+    const videos = document.querySelectorAll('video[data-hls]');
+    videos.forEach(async (video) => {
+      const v = video as HTMLVideoElement;
+      const src = v.dataset.hls;
+      if (!src) return;
+      v.muted = true;
+      v.autoplay = true;
+      v.loop = true;
+      const playWhenReady = () => {
+        v.play().catch(() => {
+          // Autoplay can still be blocked by browser settings; controls remain available.
+        });
+      };
+      if (v.canPlayType('application/vnd.apple.mpegurl')) {
+        v.src = src;
+        v.addEventListener('loadedmetadata', playWhenReady, { once: true });
+        return;
+      }
+      // Load hls.js on demand for Chrome/Firefox
+      if (!(window as any).Hls) {
+        await new Promise<void>((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.18/dist/hls.min.js';
+          s.onload = () => resolve();
+          s.onerror = () => reject();
+          document.head.appendChild(s);
+        });
+      }
+      const Hls = (window as any).Hls;
+      if (Hls && Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(src);
+        hls.attachMedia(v);
+        hls.on(Hls.Events.MANIFEST_PARSED, playWhenReady);
+      }
+    });
+  </script>
+
+  <section>
+    <h2>About</h2>
+    {app.about.map((p) => <p>{p}</p>)}
+  </section>
+
+  <section>
+    <h2>Features</h2>
+    <ul class="list">
+      {app.features.map((f) => <li>{f}</li>)}
+    </ul>
+  </section>
+
+  <section>
+    <h2>How it was built?</h2>
+    {app.builtStory.map((p) => <p>{p}</p>)}
+
+    <div class="chips" style={heroStyle}>
+      {app.techChips.map((c) => <span class="chip">{c}</span>)}
+    </div>
+
+    <details class="tech-details">
+      <summary>Full tech stack</summary>
+      <dl class="stack">
+        {app.stack.map((s) => (
+          <>
+            <dt>{s.label}</dt>
+            <dd>{s.value}</dd>
+          </>
+        ))}
+      </dl>
+    </details>
+  </section>
+
+  {app.highlights && app.highlights.length > 0 && (
+    <section>
+      <h2>Highlights</h2>
+      <ul class="list">
+        {app.highlights.map((h) => <li>{h}</li>)}
+      </ul>
+    </section>
+  )}
+
+  <section>
+    <h2>Technical details</h2>
+    <div class="meta-grid">
+      <div><span class="muted">Version</span><br />{app.meta.version}</div>
+      <div><span class="muted">Released</span><br />{app.meta.released}</div>
+      <div><span class="muted">Updated</span><br />{app.meta.updated}</div>
+      <div><span class="muted">Requires</span><br />{app.meta.minOS}</div>
+      <div><span class="muted">Size</span><br />{app.meta.size}</div>
+      <div><span class="muted">Genre</span><br />{app.meta.genre}</div>
+      {app.meta.rating && <div><span class="muted">Rating</span><br />{app.meta.rating}</div>}
+    </div>
+  </section>
+
+  <section class="bottom-cta" style={heroStyle}>
+    <h2>Try it</h2>
+    <p>{app.tagline}</p>
+    <p>
+      <a href={app.appStoreUrl} class="cta">Get {app.name} on the App Store →</a>
+    </p>
+    <p class="muted" style="margin-top: 1rem;">
+      See the <a href={`/${app.slug}/privacy`}>{app.name} privacy policy</a>.
+    </p>
+  </section>
+</Layout>

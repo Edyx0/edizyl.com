@@ -1,0 +1,8 @@
+---
+import AppDetail from '../../layouts/AppDetail.astro';
+import { findApp } from '../../data/apps';
+
+const app = findApp('tabu-ekstra')!;
+---
+
+<AppDetail app={app} />

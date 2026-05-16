@@ -1,0 +1,242 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { apps } from '../data/apps';
+
+const tagFor: Record<string, string> = {
+  'tabu-ekstra': 'iOS · SwiftUI',
+  'imposter': 'iOS · SwiftUI',
+  'holy-shift': 'iOS · Unity · C#',
+};
+---
+
+<Layout title="Ediz Yılmaz — Indie iOS dev & Computer Engineering student">
+  <section class="page-hero stagger">
+    <div class="hero-main">
+      <h1 class="hero-headline">
+        Indie iOS dev<br />
+        <span class="italic">& sometimes a</span><br />
+        CS <span class="underline-rust">student.</span>
+      </h1>
+      <p class="hero-sub">
+        I ship party games to the App Store, build LLM pipelines at Pingula,
+        and occasionally win game jams. Based in Istanbul.
+      </p>
+      <div class="tag-row">
+        <span class="tag">Swift / SwiftUI</span>
+        <span class="tag">Unity / C#</span>
+        <span class="tag">Python / LLMs</span>
+        <span class="tag">Apple Search Ads</span>
+      </div>
+    </div>
+
+    <aside class="hero-side">
+      <div class="row">
+        <span class="k">Status</span>
+        <span class="v rust"><span class="live-dot"></span>Open to collab</span>
+      </div>
+      <div class="row">
+        <span class="k">Currently</span>
+        <span class="v">AI Eng @ Pingula</span>
+      </div>
+      <div class="row">
+        <span class="k">Studying</span>
+        <span class="v">Yeditepe CE · 3.88</span>
+      </div>
+      <div class="row">
+        <span class="k">Shipped</span>
+        <span class="v">3 apps · 1 jam game</span>
+      </div>
+    </aside>
+  </section>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>Tabu Ekstra</span><span class="star">✦</span>
+      <span class="italic">Imposter</span><span class="star">✦</span>
+      <span>Holy Shift</span><span class="star">✦</span>
+      <span class="italic">Figma</span><span class="star">✦</span>
+      <span>SwiftUI</span><span class="star">✦</span>
+      <span class="italic">Unity</span><span class="star">✦</span>
+      <span>Procreate</span><span class="star">✦</span>
+      <span class="italic">LLM pipelines</span><span class="star">✦</span>
+      <span>Apple Search Ads</span><span class="star">✦</span>
+      <span class="italic">Tabu Ekstra</span><span class="star">✦</span>
+      <span>Imposter</span><span class="star">✦</span>
+      <span class="italic">Holy Shift</span><span class="star">✦</span>
+      <span>Figma</span><span class="star">✦</span>
+      <span class="italic">SwiftUI</span><span class="star">✦</span>
+      <span>Unity</span><span class="star">✦</span>
+      <span class="italic">Procreate</span><span class="star">✦</span>
+      <span>LLM pipelines</span><span class="star">✦</span>
+      <span class="italic">Apple Search Ads</span><span class="star">✦</span>
+    </div>
+  </div>
+
+  <section id="apps" class="section">
+    <header class="section-head">
+      <span class="section-num">01</span>
+      <h2>Released apps</h2>
+      <span class="section-note">3 · App Store</span>
+    </header>
+    <div class="cards">
+      {apps.map((app) => {
+        const isFeature = app.slug === 'tabu-ekstra';
+        return (
+          <article
+            class={`card has-accent ${isFeature ? 'card-featured' : ''}`}
+            style={`--card-accent: ${app.accent}`}
+            data-card-href={`/${app.slug}/`}
+            tabindex="0"
+          >
+            <a href={`/${app.slug}/`} class="card-header-link">
+              <div class="card-header">
+                <img src={app.icon} alt={`${app.name} icon`} class="card-icon" width="64" height="64" loading="lazy" />
+                <div>
+                  <h3>{app.name}</h3>
+                  <div class="meta">{app.subtitle} · {tagFor[app.slug]}</div>
+                </div>
+              </div>
+            </a>
+
+            {isFeature ? (
+              <a href={`/${app.slug}/`} class="event-feature-link">
+                <figure class="event-feature">
+                  <img
+                    src="/tabu-ekstra/summer-words.jpg"
+                    alt="Tabu Ekstra — 2026 Summer Words"
+                    loading="lazy"
+                  />
+                  <figcaption>2026 Summer Words — seasonal in-app event.</figcaption>
+                </figure>
+              </a>
+            ) : (
+              <>
+                <p>{app.short}</p>
+                <p class="card-links">
+                  <a href={`/${app.slug}/`}>Details</a>
+                  <span class="dot">·</span>
+                  <a href={app.appStoreUrl}>App Store</a>
+                  <span class="dot">·</span>
+                  <a href={`/${app.slug}/privacy`}>Privacy</a>
+                </p>
+              </>
+            )}
+          </article>
+        );
+      })}
+    </div>
+  </section>
+
+  <section id="other-projects" class="section">
+    <header class="section-head">
+      <span class="section-num">02</span>
+      <h2>Other projects</h2>
+      <span class="section-note">Jam · WIP</span>
+    </header>
+    <div class="cards">
+      <article
+        class="card"
+        data-card-href="https://edizy.itch.io/ayasofya-kutsal-bilgelik-tasi"
+        tabindex="0"
+      >
+        <a href="https://edizy.itch.io/ayasofya-kutsal-bilgelik-tasi" class="card-header-link">
+          <img
+            src="/other-projects/ayasofya/cover.png"
+            alt="Ayasofya cover"
+            class="card-banner"
+            loading="lazy"
+          />
+          <h3>Ayasofya — Kutsal Bilgelik Taşı</h3>
+          <div class="meta">2021 · Unity · C# · 🥈 BGM Gamejam 2nd place</div>
+        </a>
+        <p>2D pixel-art parkour built with the SEUK team. I did level design and programming. My first game jam, my first Unity shipment.</p>
+        <p class="card-links">
+          <a href="https://edizy.itch.io/ayasofya-kutsal-bilgelik-tasi">itch.io</a>
+          <span class="dot">·</span>
+          <a href="https://itch.io/jam/bgm-gamejam-fest/rate/920250">Jam page</a>
+        </p>
+      </article>
+
+      <article class="card kickle-card">
+        <div class="card-header">
+          <img src="/kickle/logo.jpg" alt="Kickle logo" class="card-icon" width="64" height="64" loading="lazy" />
+          <div>
+            <h3>Kickle <span class="badge-wip">unfinished</span></h3>
+            <div class="meta">iOS · SwiftUI · work in progress</div>
+          </div>
+        </div>
+        <p>A football trivia app I plan to release before the World Cup, with a strong focus on experimenting with Liquid Glass visualization.</p>
+        <figure class="event-feature">
+          <img src="/kickle/worldcup.png" alt="2026 FIFA World Cup Special" loading="lazy" />
+          <figcaption>2026 FIFA World Cup Special — in-app event for the tournament.</figcaption>
+        </figure>
+      </article>
+    </div>
+  </section>
+
+  <script>
+    const linkedCards = document.querySelectorAll<HTMLElement>('[data-card-href]');
+
+    const openCardHref = (card: HTMLElement) => {
+      const href = card.dataset.cardHref;
+      if (!href) return;
+      window.location.href = href;
+    };
+
+    linkedCards.forEach((card) => {
+      card.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement;
+        if (target.closest('a, button')) return;
+        openCardHref(card);
+      });
+
+      card.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        const target = event.target as HTMLElement;
+        if (target.closest('a, button')) return;
+        event.preventDefault();
+        openCardHref(card);
+      });
+    });
+  </script>
+
+  <section id="about" class="section">
+    <header class="section-head">
+      <span class="section-num">03</span>
+      <h2>About</h2>
+      <span class="section-note">CV · Background</span>
+    </header>
+    <p>
+      I'm a Computer Engineering student at Yeditepe University on a full merit scholarship
+      (3.88 GPA, Dean's Honor List, Fall 2025). I build iOS games as a solo developer —
+      handling everything from SwiftUI to monetization, ASA campaigns, and store optimization,
+      with a strong interest in design.
+    </p>
+    <p>
+      Currently interning at <a href="https://pingula.com">Pingula</a> as an AI Engineer Intern,
+      building production LLM pipelines for educational content.
+    </p>
+  </section>
+
+  <section id="contact" class="section">
+    <header class="section-head">
+      <span class="section-num">04</span>
+      <h2>Contact</h2>
+      <span class="section-note">Reach out</span>
+    </header>
+    <ul class="contact-list">
+      <li>
+        <span class="k">Email</span>
+        <span class="v"><a href="mailto:edizyilmaz@icloud.com">edizyilmaz@icloud.com</a></span>
+      </li>
+      <li>
+        <span class="k">LinkedIn</span>
+        <span class="v"><a href="https://linkedin.com/in/edizylm/">linkedin.com/in/edizylm</a></span>
+      </li>
+      <li>
+        <span class="k">GitHub</span>
+        <span class="v"><a href="https://github.com/Edyx0">github.com/Edyx0</a></span>
+      </li>
+    </ul>
+  </section>
+</Layout>

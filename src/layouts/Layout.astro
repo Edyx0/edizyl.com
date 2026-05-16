@@ -1,0 +1,66 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  legal?: boolean;
+}
+
+const { title, description = 'Ediz Yılmaz — Computer Engineering student & iOS indie developer.', legal = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0e0c0a" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+    <title>{title}</title>
+  </head>
+  <body class={legal ? 'legal' : ''}>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="site">
+      <div>
+        <a href="/" class="logo">
+          <span class="logo-mark">E/Y</span>
+          <span class="logo-name">Ediz Yılmaz</span>
+        </a>
+        <nav>
+          <a href="/#apps"><span class="num">01</span> Apps</a>
+          <a href="/#other-projects"><span class="num">02</span> Other</a>
+          <a href="/#about"><span class="num">03</span> About</a>
+          <a href="/#contact"><span class="num">04</span> Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer>
+      <div class="footer-rule"></div>
+      <div class="footer-row">
+        <span class="footer-brand">
+          <span class="mono">©</span> {new Date().getFullYear()}
+          <span class="footer-sep">/</span>
+          Ediz Yılmaz
+          <span class="footer-sep">/</span>
+          <span class="mono">Istanbul · Turkey</span>
+        </span>
+        <span class="footer-links">
+          <a href="/privacy">Privacy</a>
+          <a href="https://github.com/Edyx0">GitHub</a>
+          <a href="https://linkedin.com/in/edizylm/">LinkedIn</a>
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>
