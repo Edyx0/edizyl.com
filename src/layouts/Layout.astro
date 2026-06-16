@@ -5,9 +5,64 @@ interface Props {
   title: string;
   description?: string;
   legal?: boolean;
+  bodyClass?: string;
 }
 
-const { title, description = 'Ediz Yılmaz — Computer Engineering student & iOS indie developer.', legal = false } = Astro.props;
+const {
+  title,
+  description = 'Ediz Yılmaz — Computer Engineering student & iOS indie developer.',
+  legal = false,
+  bodyClass = '',
+} = Astro.props;
+
+const classes = [legal ? 'legal' : '', bodyClass].filter(Boolean).join(' ');
+
+const logoDots = [
+  [6.6,72.7],[6.6,59.5],[6.6,46.3],[19.8,85.9],[19.8,72.7],[19.8,59.5],[19.8,46.3],[19.8,33],
+  [33,85.9],[33,59.5],[33,33],[46.3,85.9],[46.3,59.5],[46.3,33],[59.5,85.9],[59.5,59.5],
+  [59.5,46.3],[85.8,72.7],[85.8,59.5],[85.8,46.3],[99.1,85.9],[99.1,72.7],[99.1,33],
+  [112.3,85.9],[112.3,33],[125.5,72.7],[125.5,59.5],[125.5,46.3],[125.5,33],[125.5,19.8],
+  [138.7,85.9],[138.7,72.7],[138.7,59.5],[138.7,46.3],[138.7,33],[138.7,19.8],[165.1,85.9],
+  [165.1,72.7],[165.1,59.5],[165.1,46.3],[165.1,33],[165.1,6.6],[178.3,85.9],[178.3,72.7],
+  [178.3,59.5],[178.3,46.3],[178.3,33],[178.3,6.6],[204.7,85.9],[204.7,72.7],[204.7,33],
+  [217.9,85.9],[217.9,72.7],[217.9,59.5],[217.9,33],[231.1,85.9],[231.1,59.5],[231.1,46.3],
+  [231.1,33],[244.4,85.9],[244.4,46.3],[244.4,33],[257.6,85.9],[257.6,33],[284,99.1],
+  [284,59.5],[284,46.3],[284,33],[297.2,99.1],[297.2,72.7],[297.2,59.5],[297.2,46.3],
+  [297.2,33],[310.4,99.1],[310.4,85.9],[310.4,72.7],[310.4,59.5],[323.6,85.9],[336.8,72.7],
+  [336.8,59.5],[336.8,46.3],[336.8,33],[363.2,85.9],[363.2,72.7],[363.2,59.5],[363.2,46.3],
+  [363.2,33],[363.2,6.6],[376.4,85.9],[376.4,72.7],[376.4,59.5],[376.4,46.3],[376.4,33],
+  [376.4,6.6],[402.8,85.9],[402.8,72.7],[402.8,59.5],[402.8,46.3],[402.8,33],[402.8,19.8],
+  [416,85.9],[416,72.7],[416,59.5],[416,46.3],[416,33],[416,19.8],[442.4,85.9],[442.4,72.7],
+  [442.4,59.5],[442.4,46.3],[442.4,33],[455.7,85.9],[455.7,72.7],[455.7,59.5],[455.7,46.3],
+  [468.9,33],[482.1,46.3],[482.1,33],[495.3,85.9],[495.3,72.7],[495.3,59.5],[495.3,46.3],
+  [508.5,33],[521.7,46.3],[521.7,33],[534.9,85.9],[534.9,72.7],[534.9,59.5],[534.9,46.3],
+  [561.4,72.7],[574.6,85.9],[574.6,59.5],[574.6,33],[587.9,85.9],[587.9,59.5],[587.9,33],
+  [601.1,72.7],[601.1,59.5],[601.1,46.3],[601.1,33],[614.3,85.9],[614.3,72.7],[614.3,59.5],
+  [614.3,46.3],[640.7,85.9],[640.7,72.7],[640.7,33],[653.9,85.9],[653.9,72.7],[653.9,59.5],
+  [653.9,33],[667.1,85.9],[667.1,59.5],[667.1,46.3],[667.1,33],[680.3,85.9],[680.3,46.3],
+  [680.3,33],[693.5,85.9],[693.5,33],
+];
+
+const logoDotColors = ['#ff0000', '#0000ff', '#00ff3c'];
+const seeded = (value: number) => {
+  const x = Math.sin(value * 9301 + 49297) * 233280;
+  return x - Math.floor(x);
+};
+const logoDotRanks = logoDots
+  .map(([x, y], index) => ({ index, score: seeded(x * 19 + y * 31) }))
+  .sort((a, b) => a.score - b.score);
+const logoDotDelayByIndex = new Map(
+  logoDotRanks.map((dot, rank) => [
+    dot.index,
+    Math.round((rank / Math.max(1, logoDotRanks.length - 1)) * 760),
+  ]),
+);
+const logoDotLitByIndex = new Map(
+  logoDotRanks.map((dot, rank) => [
+    dot.index,
+    rank < Math.round(logoDotRanks.length * 0.38),
+  ]),
+);
 ---
 
 <!doctype html>
@@ -20,23 +75,30 @@ const { title, description = 'Ediz Yılmaz — Computer Engineering student & iO
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitcount+Prop+Double:wght@400;500;600;700&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:wght@400;500;700&display=swap" />
     <title>{title}</title>
   </head>
-  <body class={legal ? 'legal' : ''}>
+  <body class={classes}>
     <div class="grain" aria-hidden="true"></div>
 
     <header class="site">
       <div>
         <a href="/" class="logo">
-          <span class="logo-mark">E/Y</span>
-          <span class="logo-name">Ediz Yılmaz</span>
+          <span class="dot-logo" aria-hidden="true">
+            {logoDots.map(([x, y], index) => (
+              <span
+                data-lit={logoDotLitByIndex.get(index) ? 'true' : 'false'}
+                style={`--x:${(x / 701 * 100).toFixed(3)}%;--y:${(y / 106 * 100).toFixed(3)}%;--dot-color:${logoDotColors[index % logoDotColors.length]};--dot-delay:${logoDotDelayByIndex.get(index) ?? 0}ms`}
+              />
+            ))}
+          </span>
+          <span class="sr-only">edizyilmaz</span>
         </a>
         <nav>
-          <a href="/#apps"><span class="num">01</span> Apps</a>
-          <a href="/#other-projects"><span class="num">02</span> Other</a>
-          <a href="/#about"><span class="num">03</span> About</a>
-          <a href="/#contact"><span class="num">04</span> Contact</a>
+          <a href="/#apps" data-pixel-label="Apps">Apps</a>
+          <a href="/#other-projects" data-pixel-label="Other">Other</a>
+          <a href="/#about" data-pixel-label="About">About</a>
+          <a href="/#contact" data-pixel-label="Contact">Contact</a>
         </nav>
       </div>
     </header>
@@ -62,5 +124,227 @@ const { title, description = 'Ediz Yılmaz — Computer Engineering student & iO
         </span>
       </div>
     </footer>
+
+    <script>
+      const dotGlyphs = {
+        A: ['01110', '10001', '10001', '11111', '10001', '10001', '10001'],
+        B: ['11110', '10001', '10001', '11110', '10001', '10001', '11110'],
+        C: ['01111', '10000', '10000', '10000', '10000', '10000', '01111'],
+        D: ['11110', '10001', '10001', '10001', '10001', '10001', '11110'],
+        E: ['11111', '10000', '10000', '11110', '10000', '10000', '11111'],
+        F: ['11111', '10000', '10000', '11110', '10000', '10000', '10000'],
+        G: ['01111', '10000', '10000', '10011', '10001', '10001', '01110'],
+        H: ['10001', '10001', '10001', '11111', '10001', '10001', '10001'],
+        I: ['11111', '00100', '00100', '00100', '00100', '00100', '11111'],
+        J: ['00111', '00010', '00010', '00010', '10010', '10010', '01100'],
+        K: ['10001', '10010', '10100', '11000', '10100', '10010', '10001'],
+        L: ['10000', '10000', '10000', '10000', '10000', '10000', '11111'],
+        M: ['10001', '11011', '10101', '10101', '10001', '10001', '10001'],
+        N: ['10001', '11001', '10101', '10011', '10001', '10001', '10001'],
+        O: ['01110', '10001', '10001', '10001', '10001', '10001', '01110'],
+        P: ['11110', '10001', '10001', '11110', '10000', '10000', '10000'],
+        Q: ['01110', '10001', '10001', '10001', '10101', '10010', '01101'],
+        R: ['11110', '10001', '10001', '11110', '10100', '10010', '10001'],
+        S: ['01111', '10000', '10000', '01110', '00001', '00001', '11110'],
+        T: ['11111', '00100', '00100', '00100', '00100', '00100', '00100'],
+        U: ['10001', '10001', '10001', '10001', '10001', '10001', '01110'],
+        V: ['10001', '10001', '10001', '10001', '10001', '01010', '00100'],
+        W: ['10001', '10001', '10001', '10101', '10101', '10101', '01010'],
+        X: ['10001', '10001', '01010', '00100', '01010', '10001', '10001'],
+        Y: ['10001', '10001', '01010', '00100', '00100', '00100', '00100'],
+        Z: ['11111', '00001', '00010', '00100', '01000', '10000', '11111'],
+        0: ['01110', '10001', '10011', '10101', '11001', '10001', '01110'],
+        1: ['00100', '01100', '00100', '00100', '00100', '00100', '01110'],
+        2: ['01110', '10001', '00001', '00010', '00100', '01000', '11111'],
+        3: ['11110', '00001', '00001', '01110', '00001', '00001', '11110'],
+        4: ['10010', '10010', '10010', '11111', '00010', '00010', '00010'],
+        5: ['11111', '10000', '10000', '11110', '00001', '00001', '11110'],
+        6: ['01110', '10000', '10000', '11110', '10001', '10001', '01110'],
+        7: ['11111', '00001', '00010', '00100', '01000', '01000', '01000'],
+        8: ['01110', '10001', '10001', '01110', '10001', '10001', '01110'],
+        9: ['01110', '10001', '10001', '01111', '00001', '00001', '01110'],
+        '&': ['01100', '10010', '10100', '01000', '10101', '10010', '01101'],
+        '@': ['011110', '100001', '101101', '101101', '101110', '100000', '011111'],
+        ':': ['00', '11', '11', '00', '11', '11', '00'],
+        '.': ['000', '000', '000', '000', '000', '110', '110'],
+        '-': ['0000', '0000', '0000', '1111', '0000', '0000', '0000'],
+        '/': ['00001', '00010', '00010', '00100', '01000', '01000', '10000'],
+        '+': ['00000', '00100', '00100', '11111', '00100', '00100', '00000'],
+        '#': ['01010', '11111', '01010', '01010', '11111', '01010', '01010'],
+        '?': ['01110', '10001', '00001', '00010', '00100', '00000', '00100'],
+        ' ': ['000', '000', '000', '000', '000', '000', '000'],
+      };
+
+      const dotTargets =
+        'header.site nav a, .brand-name, .cta, .studio-band a, .tag, .chip, .back-link, .card-links a, .contact-list a, .footer-row a';
+      const dotColors = ['var(--landing-red)', 'var(--landing-blue)', 'var(--landing-green)', 'var(--landing-paper)'];
+      const seededValue = (seed) => {
+        const x = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
+        return x - Math.floor(x);
+      };
+
+      const dotCache = new Map();
+      const extractFontDots = (label) => {
+        if (dotCache.has(label)) return dotCache.get(label);
+
+        const fontSize = 132;
+        const pad = 28;
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        if (!ctx) return { width: 1, height: 1, dots: [] };
+
+        ctx.font = `600 ${fontSize}px "Bitcount Prop Double", "JetBrains Mono", monospace`;
+        ctx.textBaseline = 'alphabetic';
+        const metrics = ctx.measureText(label);
+        const ascent = Math.ceil(metrics.actualBoundingBoxAscent || fontSize * 0.82);
+        const descent = Math.ceil(metrics.actualBoundingBoxDescent || fontSize * 0.18);
+        canvas.width = Math.max(1, Math.ceil(metrics.width + pad * 2));
+        canvas.height = Math.max(1, ascent + descent + pad * 2);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.font = `600 ${fontSize}px "Bitcount Prop Double", "JetBrains Mono", monospace`;
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillStyle = '#fff';
+        ctx.fillText(label, pad, pad + ascent);
+
+        const { width, height } = canvas;
+        const pixels = ctx.getImageData(0, 0, width, height).data;
+        const visited = new Uint8Array(width * height);
+        const components = [];
+        const threshold = 38;
+        const stack = [];
+
+        const isInk = (index) => pixels[index * 4 + 3] > threshold;
+        for (let index = 0; index < width * height; index += 1) {
+          if (visited[index] || !isInk(index)) continue;
+
+          visited[index] = 1;
+          stack.push(index);
+          let count = 0;
+          let sumX = 0;
+          let sumY = 0;
+          let minX = width;
+          let maxX = 0;
+          let minY = height;
+          let maxY = 0;
+
+          while (stack.length) {
+            const current = stack.pop();
+            const x = current % width;
+            const y = Math.floor(current / width);
+            count += 1;
+            sumX += x;
+            sumY += y;
+            minX = Math.min(minX, x);
+            maxX = Math.max(maxX, x);
+            minY = Math.min(minY, y);
+            maxY = Math.max(maxY, y);
+
+            const neighbors = [current - 1, current + 1, current - width, current + width];
+            for (const next of neighbors) {
+              if (next < 0 || next >= width * height || visited[next]) continue;
+              if ((next === current - 1 && x === 0) || (next === current + 1 && x === width - 1)) continue;
+              if (!isInk(next)) continue;
+              visited[next] = 1;
+              stack.push(next);
+            }
+          }
+
+          if (count >= 8) {
+            components.push({
+              x: sumX / count,
+              y: sumY / count,
+              area: count,
+              minX,
+              maxX,
+              minY,
+              maxY,
+            });
+          }
+        }
+
+        const minX = Math.min(...components.map((dot) => dot.minX), pad);
+        const maxX = Math.max(...components.map((dot) => dot.maxX), width - pad);
+        const minY = Math.min(...components.map((dot) => dot.minY), pad);
+        const maxY = Math.max(...components.map((dot) => dot.maxY), height - pad);
+        const cropWidth = Math.max(1, maxX - minX + 1);
+        const cropHeight = Math.max(1, maxY - minY + 1);
+        const avgDiameter = components.length
+          ? components.reduce((sum, dot) => sum + Math.sqrt(dot.area / Math.PI) * 2, 0) / components.length
+          : fontSize * 0.08;
+        const result = {
+          width: cropWidth / fontSize,
+          height: cropHeight / fontSize,
+          dotSize: Math.max(0.035, Math.min(0.095, (avgDiameter / fontSize) * 0.9)),
+          dots: components.map((dot) => ({
+            x: ((dot.x - minX) / cropWidth) * 100,
+            y: ((dot.y - minY) / cropHeight) * 100,
+          })),
+        };
+
+        dotCache.set(label, result);
+        return result;
+      };
+
+      const makeDotText = (label, isNav) => {
+        const extracted = extractFontDots(label);
+        const wrap = document.createElement('span');
+        wrap.className = 'dot-text font-dot-text';
+        wrap.setAttribute('aria-hidden', 'true');
+        wrap.style.width = `${extracted.width.toFixed(3)}em`;
+        wrap.style.height = `${extracted.height.toFixed(3)}em`;
+        wrap.style.setProperty('--dot-size', `${extracted.dotSize.toFixed(4)}em`);
+
+        extracted.dots.forEach((point, index) => {
+          const chance = seededValue(index + label.length * 17 + point.x * 3 + point.y * 5);
+          const lit = chance > (isNav ? 0.5 : 0.58);
+          const color = isNav ? 'var(--nav-pixel)' : dotColors[Math.floor(chance * dotColors.length) % dotColors.length];
+          const dot = document.createElement('span');
+
+          dot.className = 'dot-cell';
+          dot.dataset.on = 'true';
+          dot.dataset.lit = lit ? 'true' : 'false';
+          dot.style.left = `${point.x.toFixed(3)}%`;
+          dot.style.top = `${point.y.toFixed(3)}%`;
+          dot.style.setProperty('--dot-color', color);
+          dot.style.setProperty('--dot-delay', `${Math.round((point.x * 5) + (point.y * 4) + chance * 560)}ms`);
+          wrap.append(dot);
+        });
+
+        return wrap;
+      };
+
+      const hydrateDotText = () => {
+        document.querySelectorAll(dotTargets).forEach((item) => {
+          if (!(item instanceof HTMLElement) || item.dataset.dotTextReady === 'true') return;
+
+          const isNav = item.matches('header.site nav a');
+          const numText = item.querySelector('.num')?.textContent?.trim();
+          const label = item.dataset.pixelLabel || item.textContent?.replace(/\s+/g, ' ').trim() || '';
+          if (!label) return;
+
+          item.dataset.pixelLabel = label;
+          item.dataset.dotTextReady = 'true';
+          item.classList.add('is-dot-text');
+          if (!item.getAttribute('aria-label')) item.setAttribute('aria-label', label);
+          item.textContent = '';
+
+          if (isNav && numText) {
+            const num = document.createElement('span');
+            num.className = 'num';
+            num.textContent = numText;
+            item.append(num);
+          }
+
+          item.append(makeDotText(label, isNav));
+        });
+      };
+
+      if ('fonts' in document) {
+        document.fonts.ready.then(hydrateDotText);
+      } else {
+        hydrateDotText();
+      }
+    </script>
   </body>
 </html>
