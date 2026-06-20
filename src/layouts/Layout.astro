@@ -126,225 +126,26 @@ const logoDotLitByIndex = new Map(
     </footer>
 
     <script>
-      const dotGlyphs = {
-        A: ['01110', '10001', '10001', '11111', '10001', '10001', '10001'],
-        B: ['11110', '10001', '10001', '11110', '10001', '10001', '11110'],
-        C: ['01111', '10000', '10000', '10000', '10000', '10000', '01111'],
-        D: ['11110', '10001', '10001', '10001', '10001', '10001', '11110'],
-        E: ['11111', '10000', '10000', '11110', '10000', '10000', '11111'],
-        F: ['11111', '10000', '10000', '11110', '10000', '10000', '10000'],
-        G: ['01111', '10000', '10000', '10011', '10001', '10001', '01110'],
-        H: ['10001', '10001', '10001', '11111', '10001', '10001', '10001'],
-        I: ['11111', '00100', '00100', '00100', '00100', '00100', '11111'],
-        J: ['00111', '00010', '00010', '00010', '10010', '10010', '01100'],
-        K: ['10001', '10010', '10100', '11000', '10100', '10010', '10001'],
-        L: ['10000', '10000', '10000', '10000', '10000', '10000', '11111'],
-        M: ['10001', '11011', '10101', '10101', '10001', '10001', '10001'],
-        N: ['10001', '11001', '10101', '10011', '10001', '10001', '10001'],
-        O: ['01110', '10001', '10001', '10001', '10001', '10001', '01110'],
-        P: ['11110', '10001', '10001', '11110', '10000', '10000', '10000'],
-        Q: ['01110', '10001', '10001', '10001', '10101', '10010', '01101'],
-        R: ['11110', '10001', '10001', '11110', '10100', '10010', '10001'],
-        S: ['01111', '10000', '10000', '01110', '00001', '00001', '11110'],
-        T: ['11111', '00100', '00100', '00100', '00100', '00100', '00100'],
-        U: ['10001', '10001', '10001', '10001', '10001', '10001', '01110'],
-        V: ['10001', '10001', '10001', '10001', '10001', '01010', '00100'],
-        W: ['10001', '10001', '10001', '10101', '10101', '10101', '01010'],
-        X: ['10001', '10001', '01010', '00100', '01010', '10001', '10001'],
-        Y: ['10001', '10001', '01010', '00100', '00100', '00100', '00100'],
-        Z: ['11111', '00001', '00010', '00100', '01000', '10000', '11111'],
-        0: ['01110', '10001', '10011', '10101', '11001', '10001', '01110'],
-        1: ['00100', '01100', '00100', '00100', '00100', '00100', '01110'],
-        2: ['01110', '10001', '00001', '00010', '00100', '01000', '11111'],
-        3: ['11110', '00001', '00001', '01110', '00001', '00001', '11110'],
-        4: ['10010', '10010', '10010', '11111', '00010', '00010', '00010'],
-        5: ['11111', '10000', '10000', '11110', '00001', '00001', '11110'],
-        6: ['01110', '10000', '10000', '11110', '10001', '10001', '01110'],
-        7: ['11111', '00001', '00010', '00100', '01000', '01000', '01000'],
-        8: ['01110', '10001', '10001', '01110', '10001', '10001', '01110'],
-        9: ['01110', '10001', '10001', '01111', '00001', '00001', '01110'],
-        '&': ['01100', '10010', '10100', '01000', '10101', '10010', '01101'],
-        '@': ['011110', '100001', '101101', '101101', '101110', '100000', '011111'],
-        ':': ['00', '11', '11', '00', '11', '11', '00'],
-        '.': ['000', '000', '000', '000', '000', '110', '110'],
-        '-': ['0000', '0000', '0000', '1111', '0000', '0000', '0000'],
-        '/': ['00001', '00010', '00010', '00100', '01000', '01000', '10000'],
-        '+': ['00000', '00100', '00100', '11111', '00100', '00100', '00000'],
-        '#': ['01010', '11111', '01010', '01010', '11111', '01010', '01010'],
-        '?': ['01110', '10001', '00001', '00010', '00100', '00000', '00100'],
-        ' ': ['000', '000', '000', '000', '000', '000', '000'],
-      };
-
-      const dotTargets =
+      const textTargets =
         'header.site nav a, .brand-name, .cta, .studio-band a, .tag, .chip, .back-link, .card-links a, .contact-list a, .footer-row a';
-      const dotColors = ['var(--landing-red)', 'var(--landing-blue)', 'var(--landing-green)', 'var(--landing-paper)'];
-      const seededValue = (seed) => {
-        const x = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
-        return x - Math.floor(x);
-      };
 
-      const dotCache = new Map();
-      const extractFontDots = (label) => {
-        if (dotCache.has(label)) return dotCache.get(label);
+      document.querySelectorAll(textTargets).forEach((item) => {
+        if (!(item instanceof HTMLElement)) return;
+        const label =
+          item.dataset.pixelLabel ||
+          item.getAttribute('aria-label') ||
+          item.getAttribute('data-brand-name') ||
+          item.textContent?.replace(/\s+/g, ' ').trim() ||
+          '';
 
-        const fontSize = 132;
-        const pad = 28;
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        if (!ctx) return { width: 1, height: 1, dots: [] };
+        if (!label) return;
+        item.dataset.pixelLabel = label;
+        item.classList.remove('is-dot-text');
 
-        ctx.font = `600 ${fontSize}px "Bitcount Prop Double", "JetBrains Mono", monospace`;
-        ctx.textBaseline = 'alphabetic';
-        const metrics = ctx.measureText(label);
-        const ascent = Math.ceil(metrics.actualBoundingBoxAscent || fontSize * 0.82);
-        const descent = Math.ceil(metrics.actualBoundingBoxDescent || fontSize * 0.18);
-        canvas.width = Math.max(1, Math.ceil(metrics.width + pad * 2));
-        canvas.height = Math.max(1, ascent + descent + pad * 2);
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.font = `600 ${fontSize}px "Bitcount Prop Double", "JetBrains Mono", monospace`;
-        ctx.textBaseline = 'alphabetic';
-        ctx.fillStyle = '#fff';
-        ctx.fillText(label, pad, pad + ascent);
-
-        const { width, height } = canvas;
-        const pixels = ctx.getImageData(0, 0, width, height).data;
-        const visited = new Uint8Array(width * height);
-        const components = [];
-        const threshold = 38;
-        const stack = [];
-
-        const isInk = (index) => pixels[index * 4 + 3] > threshold;
-        for (let index = 0; index < width * height; index += 1) {
-          if (visited[index] || !isInk(index)) continue;
-
-          visited[index] = 1;
-          stack.push(index);
-          let count = 0;
-          let sumX = 0;
-          let sumY = 0;
-          let minX = width;
-          let maxX = 0;
-          let minY = height;
-          let maxY = 0;
-
-          while (stack.length) {
-            const current = stack.pop();
-            const x = current % width;
-            const y = Math.floor(current / width);
-            count += 1;
-            sumX += x;
-            sumY += y;
-            minX = Math.min(minX, x);
-            maxX = Math.max(maxX, x);
-            minY = Math.min(minY, y);
-            maxY = Math.max(maxY, y);
-
-            const neighbors = [current - 1, current + 1, current - width, current + width];
-            for (const next of neighbors) {
-              if (next < 0 || next >= width * height || visited[next]) continue;
-              if ((next === current - 1 && x === 0) || (next === current + 1 && x === width - 1)) continue;
-              if (!isInk(next)) continue;
-              visited[next] = 1;
-              stack.push(next);
-            }
-          }
-
-          if (count >= 8) {
-            components.push({
-              x: sumX / count,
-              y: sumY / count,
-              area: count,
-              minX,
-              maxX,
-              minY,
-              maxY,
-            });
-          }
+        if (item.querySelector('.dot-text') || !item.textContent?.trim()) {
+          item.textContent = label;
         }
-
-        const minX = Math.min(...components.map((dot) => dot.minX), pad);
-        const maxX = Math.max(...components.map((dot) => dot.maxX), width - pad);
-        const minY = Math.min(...components.map((dot) => dot.minY), pad);
-        const maxY = Math.max(...components.map((dot) => dot.maxY), height - pad);
-        const cropWidth = Math.max(1, maxX - minX + 1);
-        const cropHeight = Math.max(1, maxY - minY + 1);
-        const avgDiameter = components.length
-          ? components.reduce((sum, dot) => sum + Math.sqrt(dot.area / Math.PI) * 2, 0) / components.length
-          : fontSize * 0.08;
-        const result = {
-          width: cropWidth / fontSize,
-          height: cropHeight / fontSize,
-          dotSize: Math.max(0.035, Math.min(0.095, (avgDiameter / fontSize) * 0.9)),
-          dots: components.map((dot) => ({
-            x: ((dot.x - minX) / cropWidth) * 100,
-            y: ((dot.y - minY) / cropHeight) * 100,
-          })),
-        };
-
-        dotCache.set(label, result);
-        return result;
-      };
-
-      const makeDotText = (label, isNav) => {
-        const extracted = extractFontDots(label);
-        const wrap = document.createElement('span');
-        wrap.className = 'dot-text font-dot-text';
-        wrap.setAttribute('aria-hidden', 'true');
-        wrap.style.width = `${extracted.width.toFixed(3)}em`;
-        wrap.style.height = `${extracted.height.toFixed(3)}em`;
-        wrap.style.setProperty('--dot-size', `${extracted.dotSize.toFixed(4)}em`);
-
-        extracted.dots.forEach((point, index) => {
-          const chance = seededValue(index + label.length * 17 + point.x * 3 + point.y * 5);
-          const lit = chance > (isNav ? 0.5 : 0.58);
-          const color = isNav ? 'var(--nav-pixel)' : dotColors[Math.floor(chance * dotColors.length) % dotColors.length];
-          const dot = document.createElement('span');
-
-          dot.className = 'dot-cell';
-          dot.dataset.on = 'true';
-          dot.dataset.lit = lit ? 'true' : 'false';
-          dot.style.left = `${point.x.toFixed(3)}%`;
-          dot.style.top = `${point.y.toFixed(3)}%`;
-          dot.style.setProperty('--dot-color', color);
-          dot.style.setProperty('--dot-delay', `${Math.round((point.x * 5) + (point.y * 4) + chance * 560)}ms`);
-          wrap.append(dot);
-        });
-
-        return wrap;
-      };
-
-      const hydrateDotText = () => {
-        document.querySelectorAll(dotTargets).forEach((item) => {
-          if (!(item instanceof HTMLElement) || item.dataset.dotTextReady === 'true') return;
-
-          const isNav = item.matches('header.site nav a');
-          const numText = item.querySelector('.num')?.textContent?.trim();
-          const label = item.dataset.pixelLabel || item.textContent?.replace(/\s+/g, ' ').trim() || '';
-          if (!label) return;
-
-          item.dataset.pixelLabel = label;
-          item.dataset.dotTextReady = 'true';
-          item.classList.add('is-dot-text');
-          if (!item.getAttribute('aria-label')) item.setAttribute('aria-label', label);
-          item.textContent = '';
-
-          if (isNav && numText) {
-            const num = document.createElement('span');
-            num.className = 'num';
-            num.textContent = numText;
-            item.append(num);
-          }
-
-          item.append(makeDotText(label, isNav));
-        });
-      };
-
-      if ('fonts' in document) {
-        document.fonts.ready.then(hydrateDotText);
-      } else {
-        hydrateDotText();
-      }
+      });
     </script>
   </body>
 </html>
