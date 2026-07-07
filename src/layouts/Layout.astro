@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import 'lenis/dist/lenis.css';
 
 interface Props {
   title: string;
@@ -72,10 +73,29 @@ const logoDotLitByIndex = new Map(
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0e0c0a" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
+    <link rel="icon" type="image/svg+xml" href="/favicon-e-red.svg" />
+    <link rel="shortcut icon" type="image/svg+xml" href="/favicon-e-red.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitcount+Prop+Double:wght@400;500;600;700&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bitcount+Prop+Double:wght@400;500;600;700&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+    <script is:inline>
+      try {
+        const theme = JSON.parse(sessionStorage.getItem('opening-theme-values') || 'null');
+        if (theme) {
+          const root = document.documentElement;
+          root.style.setProperty('--opening-bg', theme.bg);
+          root.style.setProperty('--opening-ink', theme.ink);
+          root.style.setProperty('--opening-accent', theme.accent);
+          root.style.setProperty('--opening-accent-ink', theme.accentInk || theme.ink);
+          root.style.setProperty('--opening-content', theme.content || theme.bg);
+          root.style.setProperty('--opening-content-ink', theme.contentInk || theme.ink);
+          root.style.setProperty('--opening-soft', theme.soft);
+          root.dataset.openingTheme = theme.name;
+        }
+      } catch (_) {
+        // Defaults remain available when storage is unavailable or malformed.
+      }
+    </script>
     <title>{title}</title>
   </head>
   <body class={classes}>
@@ -94,36 +114,106 @@ const logoDotLitByIndex = new Map(
           </span>
           <span class="sr-only">edizyilmaz</span>
         </a>
-        <nav>
-          <a href="/#apps" data-pixel-label="Apps">Apps</a>
-          <a href="/#other-projects" data-pixel-label="Other">Other</a>
-          <a href="/#about" data-pixel-label="About">About</a>
-          <a href="/#contact" data-pixel-label="Contact">Contact</a>
-        </nav>
+        <button
+          class="menu-toggle"
+          type="button"
+          aria-controls="site-menu"
+          aria-expanded="false"
+        >
+          Menu
+        </button>
       </div>
     </header>
+
+    <dialog class="site-menu" id="site-menu" aria-labelledby="site-menu-title" tabindex="-1">
+      <div class="site-menu__shell">
+        <a class="site-menu__brand" href="/">ediz yilmaz</a>
+        <h2 id="site-menu-title" class="sr-only">Site menu</h2>
+        <button class="site-menu__close" type="button">Close</button>
+
+        <nav class="site-menu__nav" aria-label="Site">
+          <section class="site-menu__group site-menu__group--apps">
+            <p>Apps</p>
+            <a href="/tabu-ekstra/">Tabu Ekstra <span class="site-menu__count">01</span></a>
+            <a href="/imposter/">Imposter <span class="site-menu__count">02</span></a>
+            <a href="/holy-shift/">Holy Shift <span class="site-menu__count">03</span></a>
+          </section>
+
+          <section class="site-menu__group site-menu__group--other" data-open="false">
+            <button
+              class="site-menu__other-trigger"
+              type="button"
+              aria-expanded="false"
+              aria-controls="site-menu-other-panel"
+            >Other</button>
+            <div class="site-menu__other-panel" id="site-menu-other-panel">
+              <div>
+                <a href="https://edyx0.itch.io/ayasofya-kutsal-bilgelik-tasi">Ayasofya</a>
+              </div>
+            </div>
+          </section>
+
+          <a class="site-menu__page-link site-menu__page-link--about" href="/#about">About</a>
+        </nav>
+
+        <a
+          class="site-menu__music"
+          href="https://open.spotify.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Open Music on Spotify"
+        >Music</a>
+
+        <div class="site-menu__footer">
+          <a href="https://linkedin.com/in/edizylm/">LinkedIn</a>
+          <a href="https://github.com/Edyx0">GitHub</a>
+          <span>© {new Date().getFullYear()}</span>
+        </div>
+      </div>
+    </dialog>
 
     <main>
       <slot />
     </main>
 
-    <footer>
-      <div class="footer-rule"></div>
-      <div class="footer-row">
-        <span class="footer-brand">
-          <span class="mono">©</span> {new Date().getFullYear()}
-          <span class="footer-sep">/</span>
-          Ediz Yılmaz
-          <span class="footer-sep">/</span>
-          <span class="mono">Istanbul · Turkey</span>
-        </span>
-        <span class="footer-links">
-          <a href="/privacy">Privacy</a>
-          <a href="https://github.com/Edyx0">GitHub</a>
-          <a href="https://linkedin.com/in/edizylm/">LinkedIn</a>
-        </span>
-      </div>
-    </footer>
+    <script>
+      import Lenis from 'lenis';
+
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      let lenis: Lenis | null = null;
+
+      const mountSmoothScroll = () => {
+        lenis?.destroy();
+        lenis = null;
+
+        if (reducedMotion.matches) {
+          document.documentElement.classList.remove('lenis', 'lenis-smooth');
+          return;
+        }
+
+        lenis = new Lenis({
+          autoRaf: true,
+          duration: 1.08,
+          easing: (time) => Math.min(1, 1.001 - Math.pow(2, -10 * time)),
+          smoothWheel: true,
+          syncTouch: false,
+          wheelMultiplier: 1,
+          touchMultiplier: 1,
+          anchors: {
+            duration: 1.08,
+            easing: (time) => Math.min(1, 1.001 - Math.pow(2, -10 * time)),
+          },
+          prevent: (node) =>
+            document.body.classList.contains('opening-locked') ||
+            Boolean(node.closest('dialog, [data-smooth-gallery], [data-lenis-prevent]')),
+        });
+
+        window.dispatchEvent(new CustomEvent('smooth-scroll-ready', { detail: lenis }));
+      };
+
+      mountSmoothScroll();
+      reducedMotion.addEventListener('change', mountSmoothScroll);
+    </script>
 
     <script is:inline>
       (() => {
@@ -431,6 +521,46 @@ const logoDotLitByIndex = new Map(
             renderWord(element, readLabel(element), 'brand');
           });
         };
+
+        const menu = document.querySelector('#site-menu');
+        const menuToggle = document.querySelector('.menu-toggle');
+        const menuClose = document.querySelector('.site-menu__close');
+        const otherMenu = menu?.querySelector('.site-menu__group--other');
+        const otherTrigger = menu?.querySelector('.site-menu__other-trigger');
+
+        const setOtherMenuOpen = (open) => {
+          otherMenu?.setAttribute('data-open', String(open));
+          otherTrigger?.setAttribute('aria-expanded', String(open));
+        };
+
+        const closeMenu = () => {
+          if (!menu?.open) return;
+          menu.close();
+        };
+
+        menuToggle?.addEventListener('click', () => {
+          if (!menu || typeof menu.showModal !== 'function') return;
+          menu.showModal();
+          menu.focus({ preventScroll: true });
+          menuToggle.setAttribute('aria-expanded', 'true');
+          document.body.classList.add('menu-open');
+        });
+
+        menuClose?.addEventListener('click', closeMenu);
+        otherTrigger?.addEventListener('click', () => {
+          setOtherMenuOpen(otherMenu?.getAttribute('data-open') !== 'true');
+        });
+        menu?.addEventListener('click', (event) => {
+          if (event.target === menu) closeMenu();
+        });
+        menu?.querySelectorAll('a').forEach((link) => {
+          link.addEventListener('click', closeMenu);
+        });
+        menu?.addEventListener('close', () => {
+          setOtherMenuOpen(false);
+          menuToggle?.setAttribute('aria-expanded', 'false');
+          document.body.classList.remove('menu-open');
+        });
 
         if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', renderAll, { once: true });
