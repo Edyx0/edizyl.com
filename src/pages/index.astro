@@ -137,9 +137,15 @@ const brandImages: Record<string, string> = {
     };
 
     const createOpeningScene = (canvas: HTMLCanvasElement, section: HTMLElement) => {
-      const ctx = canvas.getContext('2d', { alpha: true });
+      const isChromium = /Chrome|Chromium|Edg\//.test(navigator.userAgent) && !/OPR\//.test(navigator.userAgent);
+      const ctx = canvas.getContext('2d', { alpha: !isChromium });
       if (!ctx) return;
 
+      const chromeFrameInterval = isChromium ? 1000 / 40 : 0;
+      const chromeGlowScale = isChromium ? 0.55 : 1;
+      const transformBeamModulo = isChromium ? 11 : 7;
+      const scatterBeamModulo = isChromium ? 8 : 4;
+      const scatterSegmentCount = isChromium ? 3 : 5;
       const ref = { width: 701, height: 106 };
       const colors = ['#ff0000', '#0000ff', '#00ff3c'];
       const beamColors = ['#f8fbff', '#ff0000', '#0000ff', '#00ff3c'];
@@ -168,6 +174,8 @@ const brandImages: Record<string, string> = {
         raf: 0,
         time: 0,
         lastTime: 0,
+        lastDrawTime: 0,
+        visible: true,
         autoProgress: 0,
         cockpitProgress: 0,
       };
@@ -240,7 +248,7 @@ const brandImages: Record<string, string> = {
         const rect = section.getBoundingClientRect();
         state.width = Math.max(320, Math.round(rect.width));
         state.height = Math.max(420, Math.round(window.innerHeight));
-        state.dpr = Math.min(2, window.devicePixelRatio || 1);
+        state.dpr = Math.min(isChromium ? 1.25 : 2, window.devicePixelRatio || 1);
         canvas.width = Math.round(state.width * state.dpr);
         canvas.height = Math.round(state.height * state.dpr);
         canvas.style.width = `${state.width}px`;
@@ -327,12 +335,12 @@ const brandImages: Record<string, string> = {
           const dotColor = mixColor(colorAmount, dot.color);
           const dotRadius = (6.35 + spin * 2.6 + dot.seed * 0.7) * state.scale;
           const alpha = clamp(whiteOpacity + colorAmount * (isGreen ? 0.34 : 0.2) + depth * 0.08, 0.24, 1) * (1 - outro * 0.18) * particleAlpha;
-          const blur = 2 + colorAmount * (isGreen ? 22 : 12) + spin * 20;
+          const blur = (2 + colorAmount * (isGreen ? 22 : 12) + spin * 20) * chromeGlowScale;
 
           drawDot(x, y, dotRadius, dotColor, alpha, blur);
 
-          if (beamTransform > 0.02 && index % 7 === 0 && !reducedMotionQuery.matches) {
-            const transformBeamIndex = index / 7;
+          if (beamTransform > 0.02 && index % transformBeamModulo === 0 && !reducedMotionQuery.matches) {
+            const transformBeamIndex = index / transformBeamModulo;
             const transformColor = beamColors[transformBeamIndex % beamColors.length];
             const transformAngle = transformBeamIndex * 2.399963 + (dot.seed - 0.5) * 0.28;
             const maxDistance = Math.hypot(state.width, state.height) * (0.9 + dot.seed * 0.34);
@@ -352,7 +360,7 @@ const brandImages: Record<string, string> = {
             ctx.lineCap = 'round';
             ctx.lineWidth = Math.max(1, dotRadius * (0.16 + beamTransform * 0.18));
             ctx.shadowColor = transformColor;
-            ctx.shadowBlur = transformColor === '#f8fbff' ? 6 : 12;
+            ctx.shadowBlur = (transformColor === '#f8fbff' ? 6 : 12) * chromeGlowScale;
             ctx.beginPath();
             ctx.moveTo(startX, startY);
             ctx.lineTo(endX, endY);
@@ -360,17 +368,17 @@ const brandImages: Record<string, string> = {
             ctx.restore();
           }
 
-          if (spin > 0.14 && !reducedMotionQuery.matches) {
+          if (spin > 0.14 && (!isChromium || index % 2 === 0) && !reducedMotionQuery.matches) {
             const tailColor = beamTransform > 0.08
               ? beamColors[index % beamColors.length]
               : colorAmount > 0.08 ? dot.color : `rgb(${paper})`;
             const tailX = x - Math.cos(angle) * (15 + 18 * spin);
             const tailY = y - Math.sin(angle) * (15 + 18 * spin);
-            drawDot(tailX, tailY, dotRadius * (0.72 + spin * 0.7), tailColor, alpha * spin * 0.18 * particleAlpha, 20 + spin * 34);
+            drawDot(tailX, tailY, dotRadius * (0.72 + spin * 0.7), tailColor, alpha * spin * 0.18 * particleAlpha, (20 + spin * 34) * chromeGlowScale);
           }
 
-          if (scatter > 0.02 && index % 4 === 0 && !reducedMotionQuery.matches) {
-            const beamIndex = index / 4;
+          if (scatter > 0.02 && index % scatterBeamModulo === 0 && !reducedMotionQuery.matches) {
+            const beamIndex = index / scatterBeamModulo;
             const beamAngle = beamIndex * 2.399963 + (dot.seed - 0.5) * 0.22;
             const maxDistance = Math.hypot(state.width, state.height) * (0.85 + dot.seed * 0.5);
             const speed = 0.00028 + dot.seed * 0.00018;
@@ -387,9 +395,9 @@ const brandImages: Record<string, string> = {
             ctx.lineCap = 'round';
             ctx.lineWidth = Math.max(1.8, dotRadius * (0.22 + scatter * 0.24));
             ctx.shadowColor = beamColor;
-            ctx.shadowBlur = 7 + scatter * (beamColor === '#f8fbff' ? 10 : 18);
+            ctx.shadowBlur = (7 + scatter * (beamColor === '#f8fbff' ? 10 : 18)) * chromeGlowScale;
 
-            for (let segment = 0; segment < 5; segment += 1) {
+            for (let segment = 0; segment < scatterSegmentCount; segment += 1) {
               const rawDistance = segmentBase - segment * gap;
               const wrappedDistance = ((rawDistance % maxDistance) + maxDistance) % maxDistance;
               const startDistance = ballRadius * 0.34 + wrappedDistance;
@@ -432,7 +440,12 @@ const brandImages: Record<string, string> = {
       };
 
       const draw = (time = 0) => {
+        if (chromeFrameInterval && state.lastDrawTime && time - state.lastDrawTime < chromeFrameInterval) {
+          state.raf = window.requestAnimationFrame(draw);
+          return;
+        }
         const elapsed = state.lastTime ? Math.min(64, time - state.lastTime) : 16;
+        state.lastDrawTime = time;
         state.lastTime = time;
         state.time = time;
         state.target = reducedMotionQuery.matches ? 1 : updateOpening();
@@ -475,7 +488,28 @@ const brandImages: Record<string, string> = {
         clear(trail, displayProgress);
         drawWordDots(displayProgress);
 
+        if ((state.visible || !isChromium) && !document.hidden) {
+          state.raf = window.requestAnimationFrame(draw);
+        } else {
+          state.raf = 0;
+          state.lastTime = 0;
+          state.lastDrawTime = 0;
+        }
+      };
+
+      const startDrawing = () => {
+        if (state.raf || (isChromium && !state.visible) || document.hidden) return;
+        state.lastTime = 0;
+        state.lastDrawTime = 0;
         state.raf = window.requestAnimationFrame(draw);
+      };
+
+      const stopDrawing = () => {
+        if (!state.raf) return;
+        window.cancelAnimationFrame(state.raf);
+        state.raf = 0;
+        state.lastTime = 0;
+        state.lastDrawTime = 0;
       };
 
       const handleResize = () => {
@@ -486,15 +520,37 @@ const brandImages: Record<string, string> = {
       const handleMotionChange = () => {
         state.progress = reducedMotionQuery.matches ? 1 : updateOpening();
         state.target = state.progress;
+        startDrawing();
+      };
+
+      const handleVisibilityChange = () => {
+        if (document.hidden) {
+          stopDrawing();
+        } else {
+          startDrawing();
+        }
       };
 
       window.addEventListener('resize', handleResize);
       reducedMotionQuery.addEventListener('change', handleMotionChange);
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+
+      if (isChromium && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(([entry]) => {
+          state.visible = Boolean(entry?.isIntersecting);
+          if (state.visible) {
+            startDrawing();
+          } else {
+            stopDrawing();
+          }
+        });
+        observer.observe(section);
+      }
 
       rebuildDots();
       resize();
       section.classList.add('opening-ready');
-      state.raf = window.requestAnimationFrame(draw);
+      startDrawing();
     };
 
     const onScroll = () => {

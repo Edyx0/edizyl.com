@@ -125,27 +125,325 @@ const logoDotLitByIndex = new Map(
       </div>
     </footer>
 
-    <script>
-      const textTargets =
-        'header.site nav a, .brand-name, .cta, .studio-band a, .tag, .chip, .back-link, .card-links a, .contact-list a, .footer-row a';
+    <script is:inline>
+      (() => {
+        const colors = ['#ff0000', '#0000ff', '#00ff3c'];
+        const seeded = (value) => {
+          const x = Math.sin(value * 9301 + 49297) * 233280;
+          return x - Math.floor(x);
+        };
 
-      document.querySelectorAll(textTargets).forEach((item) => {
-        if (!(item instanceof HTMLElement)) return;
-        const label =
-          item.dataset.pixelLabel ||
-          item.getAttribute('aria-label') ||
-          item.getAttribute('data-brand-name') ||
-          item.textContent?.replace(/\s+/g, ' ').trim() ||
-          '';
+        const readLabel = (element, fallback = '') => {
+          const srOnly = element.querySelector('.sr-only');
+          return (
+            element.dataset.pixelLabel ||
+            srOnly?.textContent ||
+            element.textContent ||
+            fallback
+          ).trim();
+        };
 
-        if (!label) return;
-        item.dataset.pixelLabel = label;
-        item.classList.remove('is-dot-text');
+        const sampleBitcountDots = (label, mode) => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d', { willReadFrequently: true });
+          if (!ctx || !label) return null;
 
-        if (item.querySelector('.dot-text') || !item.textContent?.trim()) {
-          item.textContent = label;
+          const fontSize = mode === 'logo' ? 176 : 184;
+          const fontWeight = 400;
+          const family = '"Bitcount Prop Double", "Bitcount Prop Single", monospace';
+          ctx.font = `${fontWeight} ${fontSize}px ${family}`;
+          ctx.textBaseline = 'alphabetic';
+
+          const metrics = ctx.measureText(label);
+          const left = Math.ceil(Math.abs(metrics.actualBoundingBoxLeft || 0)) + 28;
+          const right = Math.ceil(metrics.actualBoundingBoxRight || metrics.width) + 28;
+          const ascent = Math.ceil(metrics.actualBoundingBoxAscent || fontSize * 0.76) + 28;
+          const descent = Math.ceil(metrics.actualBoundingBoxDescent || fontSize * 0.22) + 28;
+          canvas.width = Math.max(20, left + right);
+          canvas.height = Math.max(20, ascent + descent);
+
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = '#fff';
+          ctx.font = `${fontWeight} ${fontSize}px ${family}`;
+          ctx.textBaseline = 'alphabetic';
+          ctx.fillText(label, left, ascent);
+
+          const image = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+          let inkMinX = Infinity;
+          let inkMinY = Infinity;
+          let inkMaxX = -Infinity;
+          let inkMaxY = -Infinity;
+
+          for (let y = 0; y < canvas.height; y += 1) {
+            for (let x = 0; x < canvas.width; x += 1) {
+              const alpha = image[(y * canvas.width + x) * 4 + 3];
+              if (alpha < 64) continue;
+              inkMinX = Math.min(inkMinX, x);
+              inkMinY = Math.min(inkMinY, y);
+              inkMaxX = Math.max(inkMaxX, x);
+              inkMaxY = Math.max(inkMaxY, y);
+            }
+          }
+
+          if (!Number.isFinite(inkMinX)) return null;
+
+          const pitch = fontSize * 0.075;
+          const radius = pitch * 0.32;
+          const dots = [];
+          const gridMinX = Math.floor(inkMinX / pitch) * pitch;
+          const gridMinY = Math.floor(inkMinY / pitch) * pitch;
+          const gridMaxX = Math.ceil(inkMaxX / pitch) * pitch;
+          const gridMaxY = Math.ceil(inkMaxY / pitch) * pitch;
+
+          for (let gy = 0, y = gridMinY; y <= gridMaxY; gy += 1, y += pitch) {
+            for (let gx = 0, x = gridMinX; x <= gridMaxX; gx += 1, x += pitch) {
+              let alpha = 0;
+              let peak = 0;
+              let samples = 0;
+
+              for (let yy = Math.max(0, Math.floor(y - radius)); yy <= Math.min(canvas.height - 1, Math.ceil(y + radius)); yy += 1) {
+                for (let xx = Math.max(0, Math.floor(x - radius)); xx <= Math.min(canvas.width - 1, Math.ceil(x + radius)); xx += 1) {
+                  const distance = Math.hypot(xx - x, yy - y);
+                  if (distance > radius) continue;
+                  const a = image[(yy * canvas.width + xx) * 4 + 3];
+                  alpha += a;
+                  peak = Math.max(peak, a);
+                  samples += 1;
+                }
+              }
+
+              const average = alpha / Math.max(1, samples);
+              if (peak < 112 || average < 24) continue;
+              dots.push({ x: gx * pitch, y: gy * pitch });
+            }
+          }
+
+          if (!dots.length) return null;
+
+          const minX = Math.min(...dots.map((dot) => dot.x));
+          const minY = Math.min(...dots.map((dot) => dot.y));
+          const maxX = Math.max(...dots.map((dot) => dot.x));
+          const maxY = Math.max(...dots.map((dot) => dot.y));
+
+          return {
+            dots: dots.map((dot) => ({ x: dot.x - minX, y: dot.y - minY })),
+            width: Math.max(1, maxX - minX + pitch),
+            height: Math.max(1, maxY - minY + pitch),
+            dotSize: pitch * 0.46,
+          };
+        };
+
+        const rankedDots = (dots, salt) =>
+          dots
+            .map((dot, index) => ({
+              ...dot,
+              index,
+              score: seeded(dot.x * 19 + dot.y * 31 + salt * 7),
+            }))
+            .sort((a, b) => a.score - b.score);
+
+        const makeDot = ({ x, y, color, delay, lit }) => {
+          const dot = document.createElement('span');
+          dot.className = 'dot-word__dot';
+          dot.dataset.lit = lit ? 'true' : 'false';
+          dot.style.setProperty('--dot-x', x);
+          dot.style.setProperty('--dot-y', y);
+          dot.style.setProperty('--dot-color', color);
+          dot.style.setProperty('--dot-delay', `${delay}ms`);
+          return dot;
+        };
+
+        const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+        const getWordLayout = (element, sampled, mode) => {
+          if (mode === 'nav') {
+            const scale = clamp(window.innerWidth / 7600, 0.12, 0.18);
+            return {
+              scale,
+              dotSize: clamp(sampled.dotSize * scale * 0.72, 1.05, 1.55),
+            };
+          }
+
+          const row = element.closest('.brand-row');
+          const rowWidth = row?.getBoundingClientRect().width || window.innerWidth * 0.48;
+          const available = clamp(rowWidth - 220, 300, 680);
+          const scale = clamp(available / Math.max(1, sampled.width), 0.34, 0.56);
+
+          return {
+            scale,
+            dotSize: clamp(sampled.dotSize * scale * 0.78, 3.05, 4.45),
+          };
+        };
+
+        const paintDotCanvas = (canvas, sampled, layout, mode, elapsed = 0, active = false) => {
+          const dpr = Math.min(2, window.devicePixelRatio || 1);
+          const width = Math.ceil(sampled.width * layout.scale + layout.dotSize * 2);
+          const height = Math.ceil(sampled.height * layout.scale + layout.dotSize * 2);
+          if (canvas.width !== Math.ceil(width * dpr) || canvas.height !== Math.ceil(height * dpr)) {
+            canvas.width = Math.ceil(width * dpr);
+            canvas.height = Math.ceil(height * dpr);
+            canvas.style.width = `${width}px`;
+            canvas.style.height = `${height}px`;
+          }
+
+          const ctx = canvas.getContext('2d');
+          if (!ctx) return;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.clearRect(0, 0, width, height);
+
+          sampled.dots.forEach((dot, index) => {
+            const rank = dot.rank ?? index;
+            const delay = (rank / Math.max(1, sampled.dots.length - 1)) * 760;
+            const phase = active ? ((elapsed - delay * 2.2) % 3150 + 3150) % 3150 / 3150 : 0;
+            const color = mode === 'nav' ? 'var(--nav-pixel, #00ff3c)' : colors[index % colors.length];
+            const x = dot.x * layout.scale + layout.dotSize;
+            const y = dot.y * layout.scale + layout.dotSize;
+            let radius = layout.dotSize / 2;
+            let fill = '#eee7db';
+            let alpha = 0.86;
+            let glow = 0;
+
+            if (active && phase > 0.08 && phase < 0.46) {
+              const intensity = Math.sin(((phase - 0.08) / 0.38) * Math.PI);
+              radius *= 1 + intensity * 0.08;
+              fill = color.startsWith('var(') ? '#eee7db' : color;
+              alpha = 0.72 + intensity * 0.28;
+              glow = intensity * 5;
+            }
+
+            ctx.globalAlpha = alpha;
+            if (glow > 0) {
+              ctx.shadowColor = fill;
+              ctx.shadowBlur = glow;
+            } else {
+              ctx.shadowBlur = 0;
+            }
+            ctx.fillStyle = fill;
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fill();
+          });
+
+          ctx.globalAlpha = 1;
+          ctx.shadowBlur = 0;
+        };
+
+        const renderWord = (element, label, mode) => {
+          const sampled = sampleBitcountDots(label, mode);
+          if (!sampled) return;
+
+          const layout = getWordLayout(element, sampled, mode);
+          const ranked = rankedDots(sampled.dots, label.length);
+          const rankByIndex = new Map(ranked.map((dot, rank) => [dot.index, rank]));
+          sampled.dots = sampled.dots.map((dot, index) => ({
+            ...dot,
+            rank: rankByIndex.get(index) ?? index,
+          }));
+
+          const word = document.createElement('span');
+          word.className = 'dot-word dot-word--canvas';
+          word.setAttribute('aria-hidden', 'true');
+
+          const canvas = document.createElement('canvas');
+          canvas.className = 'dot-word__canvas';
+          word.append(canvas);
+
+          element.textContent = '';
+          element.append(word);
+
+          const srOnly = document.createElement('span');
+          srOnly.className = 'sr-only';
+          srOnly.textContent = label;
+          element.append(srOnly);
+          element.dataset.dotWordReady = 'true';
+          element.dataset.dotWordSampled = 'true';
+
+          let raf = 0;
+          let active = false;
+          const target = mode === 'brand' ? element.closest('.brand-row') || element : element;
+          const draw = (time = 0) => paintDotCanvas(canvas, sampled, layout, mode, time, active);
+          const tick = (time) => {
+            draw(time);
+            if (active) raf = requestAnimationFrame(tick);
+          };
+          target.addEventListener('mouseenter', () => {
+            active = true;
+            cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(tick);
+          });
+          target.addEventListener('mouseleave', () => {
+            active = false;
+            cancelAnimationFrame(raf);
+            draw(0);
+          });
+          target.addEventListener('focusin', () => {
+            active = true;
+            cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(tick);
+          });
+          target.addEventListener('focusout', () => {
+            active = false;
+            cancelAnimationFrame(raf);
+            draw(0);
+          });
+          draw(0);
+        };
+
+        const renderLogo = () => {
+          const logo = document.querySelector('.dot-logo');
+          if (!logo) return;
+
+          const label = logo.closest('.logo')?.querySelector('.sr-only')?.textContent?.trim() || 'edizyilmaz';
+          const sampled = sampleBitcountDots(label, 'logo');
+          if (!sampled) return;
+
+          const ranked = rankedDots(sampled.dots, label.length);
+          const rankByIndex = new Map(ranked.map((dot, rank) => [dot.index, rank]));
+          const litCount = Math.round(sampled.dots.length * 0.38);
+          logo.textContent = '';
+          logo.style.setProperty('--sample-width', String(sampled.width));
+          logo.style.setProperty('--sample-height', String(sampled.height));
+
+          sampled.dots.forEach((dot, index) => {
+            const rank = rankByIndex.get(index) ?? index;
+            const span = document.createElement('span');
+            span.dataset.lit = rank < litCount ? 'true' : 'false';
+            span.style.setProperty('--x', `${(dot.x / sampled.width) * 100}%`);
+            span.style.setProperty('--y', `${(dot.y / sampled.height) * 100}%`);
+            span.style.setProperty('--dot-color', colors[index % colors.length]);
+            span.style.setProperty('--dot-delay', `${Math.round((rank / Math.max(1, sampled.dots.length - 1)) * 760)}ms`);
+            logo.append(span);
+          });
+        };
+
+        const renderAll = async () => {
+          try {
+            await document.fonts?.load('400 184px "Bitcount Prop Double"');
+            await document.fonts?.ready;
+          } catch (_) {
+            // The fallback still renders; this only improves fidelity when the web font is ready.
+          }
+
+          document.querySelectorAll('header.site nav a').forEach((element) => {
+            renderWord(element, readLabel(element), 'nav');
+          });
+          document.querySelectorAll('.brand-name').forEach((element) => {
+            renderWord(element, readLabel(element), 'brand');
+          });
+        };
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', renderAll, { once: true });
+        } else {
+          renderAll();
         }
-      });
+
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+          window.clearTimeout(resizeTimer);
+          resizeTimer = window.setTimeout(renderAll, 120);
+        });
+      })();
     </script>
   </body>
 </html>
