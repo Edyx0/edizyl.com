@@ -1,96 +1,121 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { apps } from '../data/apps';
+
+const tagFor: Record<string, string> = {
+  'tabu-ekstra': 'iOS · SwiftUI',
+  'imposter': 'iOS · SwiftUI',
+  'holy-shift': 'iOS · Unity · C#',
+};
+
+const brandImages: Record<string, string> = {
+  'tabu-ekstra': '/screenshots/tabu-ekstra/1.jpg',
+  'imposter': '/screenshots/imposter/1.jpg',
+  'holy-shift': '/screenshots/holy-shift/1.jpg',
+};
 ---
 
-<Layout title="Portfolio — Ediz Yılmaz" bodyClass="home">
-  <section id="top" class="opening-experience" aria-labelledby="opening-title">
-    <div class="opening-stage" data-phase="0">
-      <div class="opening-media opening-media--back" aria-hidden="true">
-        <figure class="opening-shot opening-shot--top-1">
-          <span class="opening-shot__surface"><img src="/landing/self-brand/burger-streak.png" alt="" /></span>
-        </figure>
-        <figure class="opening-shot opening-shot--top-2">
-          <span class="opening-shot__surface"><img src="/landing/self-brand/eat-like-an-italian.png" alt="" /></span>
-        </figure>
-        <figure class="opening-shot opening-shot--top-3">
-          <span class="opening-shot__surface"><img src="/landing/self-brand/holy-shift-characters-a.png" alt="" /></span>
-        </figure>
-        <figure class="opening-shot opening-shot--top-4">
-          <span class="opening-shot__surface"><img src="/landing/self-brand/imposter.png" alt="" /></span>
-        </figure>
-      </div>
-
-      <h1 id="opening-title" class="opening-wordmark" aria-label="edizyilmaz">
-        <span aria-hidden="true">ediz</span>
-        <span aria-hidden="true">yilmaz</span>
-      </h1>
-
-      <div class="opening-media opening-media--front" aria-hidden="true">
-        <figure class="opening-shot opening-shot--bottom-1">
-          <span class="opening-shot__surface"><img src="/landing/self-brand/kebap-streak.png" alt="" /></span>
-        </figure>
-        <figure class="opening-shot opening-shot--bottom-2">
-          <span class="opening-shot__surface"><img src="/landing/self-brand/food-trip.png" alt="" /></span>
-        </figure>
-        <figure class="opening-shot opening-shot--bottom-3">
-          <span class="opening-shot__surface"><img src="/landing/self-brand/summer-words.png" alt="" /></span>
-        </figure>
-        <figure class="opening-shot opening-shot--bottom-4">
-          <span class="opening-shot__surface"><img src="/landing/self-brand/holy-shift-characters-b.png" alt="" /></span>
-        </figure>
-        <figure class="opening-shot opening-shot--bottom-5">
-          <span class="opening-shot__surface"><img src="/landing/self-brand/tabu-ekstra.png" alt="" /></span>
-        </figure>
-      </div>
-
+<Layout title="Ediz Yılmaz — Independent app studio" bodyClass="home">
+  <section class="opening-experience" aria-label="edizyilmaz landing animation">
+    <div class="opening-stage">
+      <h1 class="opening-title">edizyilmaz</h1>
+      <canvas
+        class="opening-canvas"
+        id="opening-canvas"
+        aria-hidden="true"
+      ></canvas>
+      <img
+        class="opening-cockpit"
+        src="/landing/cockpit.png"
+        alt=""
+        aria-hidden="true"
+      />
+      <p class="opening-fallback" aria-hidden="true">edizyilmaz</p>
     </div>
   </section>
 
-  <section id="about" class="studio-profile" aria-labelledby="about-title">
-    <div class="studio-profile__lead">
-      <p>About</p>
-      <h2 id="about-title">
-        One person,<br />
-        full product loop.
-      </h2>
+  <section id="apps" class="brands-section">
+    <div class="brands-copy">
+      <p class="eyebrow">Our Brands</p>
+      <h2>A growing portfolio of party games and mobile experiments.</h2>
     </div>
 
-    <p class="studio-profile__statement">
-      I build playful apps from product direction and code through design,
+    <div class="brand-showcase">
+      <div class="brand-list" role="list">
+        {apps.map((app, index) => (
+          <a
+            href={`/${app.slug}/`}
+            class="brand-row"
+            role="listitem"
+            style={`--brand-accent: ${app.accent}`}
+            data-brand-image={brandImages[app.slug]}
+            data-brand-name={app.name}
+            aria-label={`${app.name} details`}
+          >
+            <span class="brand-index">{String(index + 1).padStart(2, '0')}</span>
+            <span class="brand-name">{app.name}</span>
+            <span class="brand-meta">{app.subtitle} · {tagFor[app.slug]}</span>
+          </a>
+        ))}
+      </div>
+
+      <figure class="brand-preview" aria-live="polite">
+        <img src={brandImages[apps[0].slug]} alt={`${apps[0].name} preview`} id="brand-preview-image" />
+        <figcaption id="brand-preview-caption">{apps[0].name}</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="other-projects" class="studio-band">
+    <p class="eyebrow">Beyond the store</p>
+    <div>
+      <h2>Jam games, prototypes, and unfinished bets.</h2>
+      <p>
+        Ayasofya started as a Unity game jam project and Kickle is the next football
+        trivia experiment. The common thread is the same: compact products with a
+        strong visual hook and a clear play loop.
+      </p>
+    </div>
+    <a href="https://edizy.itch.io/ayasofya-kutsal-bilgelik-tasi">View itch.io project</a>
+  </section>
+
+  <section id="about" class="mission-section">
+    <p class="eyebrow">About</p>
+    <h2>Built like a tiny product company.</h2>
+    <p>
+      I'm a Computer Engineering student at Yeditepe University on a full merit
+      scholarship, currently working as an AI Engineer Intern at Pingula. I handle
+      the full app loop myself: product direction, code, design, store pages,
       acquisition, analytics, and iteration after release.
     </p>
-
-    <dl class="studio-profile__facts">
-      <div>
-        <dt>Study</dt>
-        <dd>Computer Engineering · Yeditepe University</dd>
-      </div>
-      <div>
-        <dt>Based</dt>
-        <dd>Istanbul · Türkiye</dd>
-      </div>
-    </dl>
   </section>
 
-  <section id="contact" class="contact-stage" aria-labelledby="contact-title">
-    <p class="contact-stage__label">Contact</p>
-    <h2 id="contact-title">Let’s make<br />something unusual.</h2>
-
-    <a class="contact-stage__email" href="mailto:edizyilmaz@icloud.com">
-      edizyilmaz@icloud.com <span aria-hidden="true">↗</span>
-    </a>
-
-    <nav class="contact-stage__social" aria-label="Social profiles">
-      <a href="https://linkedin.com/in/edizylm/">LinkedIn</a>
-      <a href="https://github.com/Edyx0">GitHub</a>
-    </nav>
-
-    <a class="contact-stage__top" href="#top">Index — Back to top ↑</a>
+  <section id="contact" class="contact-slab">
+    <p class="eyebrow">Contact</p>
+    <h2>For collaborations, app ideas, or product work.</h2>
+    <ul class="contact-list">
+      <li>
+        <span class="k">Email</span>
+        <span class="v"><a href="mailto:edizyilmaz@icloud.com">edizyilmaz@icloud.com</a></span>
+      </li>
+      <li>
+        <span class="k">LinkedIn</span>
+        <span class="v"><a href="https://linkedin.com/in/edizylm/">linkedin.com/in/edizylm</a></span>
+      </li>
+      <li>
+        <span class="k">GitHub</span>
+        <span class="v"><a href="https://github.com/Edyx0">github.com/Edyx0</a></span>
+      </li>
+    </ul>
   </section>
 
   <script>
     const body = document.body;
+    const previewImage = document.querySelector<HTMLImageElement>('#brand-preview-image');
+    const previewCaption = document.querySelector<HTMLElement>('#brand-preview-caption');
+    const brandRows = document.querySelectorAll<HTMLElement>('.brand-row');
     const opening = document.querySelector<HTMLElement>('.opening-experience');
+    const openingCanvas = document.querySelector<HTMLCanvasElement>('#opening-canvas');
     const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     if ('scrollRestoration' in history) {
@@ -99,220 +124,460 @@ import Layout from '../layouts/Layout.astro';
     window.scrollTo(0, 0);
 
     const updateHeader = () => {
-      body.classList.toggle(
-        'home-scrolled',
-        opening ? opening.getBoundingClientRect().bottom <= 0 : true,
-      );
+      body.classList.toggle('home-scrolled', window.scrollY > window.innerHeight * 3.9);
     };
 
-    let wasContentActive = false;
-    let frameReturnTimer = 0;
+    const updateOpening = () => {
+      if (!opening) return 0;
+      const rect = opening.getBoundingClientRect();
+      const travel = rect.height - window.innerHeight;
+      const progress = travel > 0 ? Math.min(1, Math.max(0, -rect.top / travel)) : 0;
+      opening.style.setProperty('--open-progress', progress.toFixed(3));
+      return progress;
+    };
 
-    const replayOpeningFrames = () => {
-      window.clearTimeout(frameReturnTimer);
-      body.classList.add('opening-frame-return');
-      body.classList.remove('opening-frame-return-active');
-      frameReturnTimer = window.setTimeout(() => {
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => body.classList.add('opening-frame-return-active'));
+    const createOpeningScene = (canvas: HTMLCanvasElement, section: HTMLElement) => {
+      const isChromium = /Chrome|Chromium|Edg\//.test(navigator.userAgent) && !/OPR\//.test(navigator.userAgent);
+      const ctx = canvas.getContext('2d', { alpha: !isChromium });
+      if (!ctx) return;
+
+      const chromeFrameInterval = isChromium ? 1000 / 40 : 0;
+      const chromeGlowScale = isChromium ? 0.55 : 1;
+      const transformBeamModulo = isChromium ? 11 : 7;
+      const scatterBeamModulo = isChromium ? 8 : 4;
+      const scatterSegmentCount = isChromium ? 3 : 5;
+      const ref = { width: 701, height: 106 };
+      const colors = ['#ff0000', '#0000ff', '#00ff3c'];
+      const beamColors = ['#f8fbff', '#ff0000', '#0000ff', '#00ff3c'];
+      const paper = '238, 231, 219';
+      const bg = '21, 17, 12';
+      const dotAnchors: Array<{
+        x: number;
+        y: number;
+        color: string;
+        seed: number;
+        order: number;
+        radius: number;
+        angle: number;
+        colorOrder: number;
+      }> = [];
+      const state = {
+        progress: reducedMotionQuery.matches ? 1 : updateOpening(),
+        target: reducedMotionQuery.matches ? 1 : updateOpening(),
+        width: 0,
+        height: 0,
+        dpr: 1,
+        scale: 1,
+        originX: 0,
+        originY: 0,
+        ready: false,
+        raf: 0,
+        time: 0,
+        lastTime: 0,
+        lastDrawTime: 0,
+        visible: true,
+        autoProgress: 0,
+        cockpitProgress: 0,
+      };
+
+      const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+      const ease = (value: number) => {
+        const t = clamp(value);
+        return t * t * (3 - 2 * t);
+      };
+      const phase = (start: number, end: number, value: number) => ease((value - start) / (end - start));
+      const seeded = (index: number) => {
+        const x = Math.sin(index * 9301 + 49297) * 233280;
+        return x - Math.floor(x);
+      };
+
+      const rebuildDots = () => {
+        dotAnchors.length = 0;
+        const figmaCenters = [
+          [6.6,72.7],[6.6,59.5],[6.6,46.3],[19.8,85.9],[19.8,72.7],[19.8,59.5],[19.8,46.3],[19.8,33],
+          [33,85.9],[33,59.5],[33,33],[46.3,85.9],[46.3,59.5],[46.3,33],[59.5,85.9],[59.5,59.5],
+          [59.5,46.3],[85.8,72.7],[85.8,59.5],[85.8,46.3],[99.1,85.9],[99.1,72.7],[99.1,33],
+          [112.3,85.9],[112.3,33],[125.5,72.7],[125.5,59.5],[125.5,46.3],[125.5,33],[125.5,19.8],
+          [138.7,85.9],[138.7,72.7],[138.7,59.5],[138.7,46.3],[138.7,33],[138.7,19.8],[165.1,85.9],
+          [165.1,72.7],[165.1,59.5],[165.1,46.3],[165.1,33],[165.1,6.6],[178.3,85.9],[178.3,72.7],
+          [178.3,59.5],[178.3,46.3],[178.3,33],[178.3,6.6],[204.7,85.9],[204.7,72.7],[204.7,33],
+          [217.9,85.9],[217.9,72.7],[217.9,59.5],[217.9,33],[231.1,85.9],[231.1,59.5],[231.1,46.3],
+          [231.1,33],[244.4,85.9],[244.4,46.3],[244.4,33],[257.6,85.9],[257.6,33],[284,99.1],
+          [284,59.5],[284,46.3],[284,33],[297.2,99.1],[297.2,72.7],[297.2,59.5],[297.2,46.3],
+          [297.2,33],[310.4,99.1],[310.4,85.9],[310.4,72.7],[310.4,59.5],[323.6,85.9],[336.8,72.7],
+          [336.8,59.5],[336.8,46.3],[336.8,33],[363.2,85.9],[363.2,72.7],[363.2,59.5],[363.2,46.3],
+          [363.2,33],[363.2,6.6],[376.4,85.9],[376.4,72.7],[376.4,59.5],[376.4,46.3],[376.4,33],
+          [376.4,6.6],[402.8,85.9],[402.8,72.7],[402.8,59.5],[402.8,46.3],[402.8,33],[402.8,19.8],
+          [416,85.9],[416,72.7],[416,59.5],[416,46.3],[416,33],[416,19.8],[442.4,85.9],[442.4,72.7],
+          [442.4,59.5],[442.4,46.3],[442.4,33],[455.7,85.9],[455.7,72.7],[455.7,59.5],[455.7,46.3],
+          [468.9,33],[482.1,46.3],[482.1,33],[495.3,85.9],[495.3,72.7],[495.3,59.5],[495.3,46.3],
+          [508.5,33],[521.7,46.3],[521.7,33],[534.9,85.9],[534.9,72.7],[534.9,59.5],[534.9,46.3],
+          [561.4,72.7],[574.6,85.9],[574.6,59.5],[574.6,33],[587.9,85.9],[587.9,59.5],[587.9,33],
+          [601.1,72.7],[601.1,59.5],[601.1,46.3],[601.1,33],[614.3,85.9],[614.3,72.7],[614.3,59.5],
+          [614.3,46.3],[640.7,85.9],[640.7,72.7],[640.7,33],[653.9,85.9],[653.9,72.7],[653.9,59.5],
+          [653.9,33],[667.1,85.9],[667.1,59.5],[667.1,46.3],[667.1,33],[680.3,85.9],[680.3,46.3],
+          [680.3,33],[693.5,85.9],[693.5,33],
+        ];
+        const points = figmaCenters.map(([x, y]) => ({ x, y, score: seeded(x * 19 + y * 31) }));
+
+        const colorRanks = [...points].sort((a, b) => a.score - b.score);
+        const colorOrderByPoint = new Map<string, number>();
+        colorRanks.forEach((point, index) => {
+          colorOrderByPoint.set(`${point.x}:${point.y}`, index / Math.max(1, colorRanks.length - 1));
         });
-        frameReturnTimer = window.setTimeout(() => {
-          body.classList.remove('opening-frame-return', 'opening-frame-return-active');
-        }, 900);
-      }, 520);
-    };
 
-    const updateOpeningColor = () => {
-      if (!opening) return;
-      const progress = Math.min(
-        Math.max(-opening.getBoundingClientRect().top / window.innerHeight, 0),
-        1,
-      );
-      const isContentActive = progress > 0.01;
-      if (wasContentActive && !isContentActive) replayOpeningFrames();
-      if (!wasContentActive && isContentActive) {
-        window.clearTimeout(frameReturnTimer);
-        body.classList.remove('opening-frame-return', 'opening-frame-return-active');
-      }
-      wasContentActive = isContentActive;
-      body.classList.toggle('home-content-active', isContentActive);
-      body.classList.toggle('home-content-color', progress > 0.1);
-      body.classList.toggle('home-content-exit', progress > 0.8);
-    };
+        points
+          .sort((a, b) => a.x - b.x || a.y - b.y)
+          .forEach((dot, index) => {
+            const centeredX = dot.x - ref.width / 2;
+            const centeredY = dot.y - ref.height / 2;
+            dotAnchors.push({
+              x: dot.x,
+              y: dot.y,
+              color: colors[index % colors.length],
+              seed: seeded(index + 11),
+              order: index / Math.max(1, points.length - 1),
+              radius: Math.hypot(centeredX, centeredY),
+              angle: Math.atan2(centeredY, centeredX),
+              colorOrder: colorOrderByPoint.get(`${dot.x}:${dot.y}`) ?? 1,
+            });
+          });
+      };
 
-    const openingStage = opening?.querySelector<HTMLElement>('.opening-stage');
-    const openingShots = Array.from(
-      opening?.querySelectorAll<HTMLElement>('.opening-shot') ?? [],
-    );
-    let flowRateFrame = 0;
+      const resize = () => {
+        const rect = section.getBoundingClientRect();
+        state.width = Math.max(320, Math.round(rect.width));
+        state.height = Math.max(420, Math.round(window.innerHeight));
+        state.dpr = Math.min(isChromium ? 1.25 : 2, window.devicePixelRatio || 1);
+        canvas.width = Math.round(state.width * state.dpr);
+        canvas.height = Math.round(state.height * state.dpr);
+        canvas.style.width = `${state.width}px`;
+        canvas.style.height = `${state.height}px`;
+        ctx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
+        state.scale = Math.min(state.width * 0.78 / ref.width, state.height * 0.32 / ref.height, 1.34);
+        state.originX = state.width / 2 - (ref.width * state.scale) / 2;
+        state.originY = state.height / 2 - (ref.height * state.scale) / 2;
+        state.ready = true;
+      };
 
-    const getFlowAnimations = () =>
-      openingShots
-        .flatMap((shot) => shot.getAnimations())
-        .filter(
-          (animation) =>
-            animation instanceof CSSAnimation && animation.animationName === 'opening-photo-flow',
-        );
+      const clear = (trail: number, progress: number) => {
+        const spinTint = reducedMotionQuery.matches ? 0 : phase(0.66, 0.92, progress);
+        const red = Math.round(21 + spinTint * 10);
+        const green = Math.round(17 + spinTint * 4);
+        const blue = Math.round(12 + spinTint * 14);
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.fillStyle = `rgba(${red}, ${green}, ${blue}, ${trail})`;
+        ctx.fillRect(0, 0, state.width, state.height);
 
-    const easeFlowRate = (targetRate: number, duration: number) => {
-      cancelAnimationFrame(flowRateFrame);
-      const animations = getFlowAnimations();
-      if (!animations.length) return;
-      const initialRates = animations.map((animation) => animation.playbackRate);
-      const startedAt = performance.now();
-
-      const updateRate = (now: number) => {
-        const progress = Math.min((now - startedAt) / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        animations.forEach((animation, index) => {
-          animation.updatePlaybackRate(
-            initialRates[index] + (targetRate - initialRates[index]) * eased,
+        if (spinTint > 0) {
+          const glow = ctx.createRadialGradient(
+            state.width / 2,
+            state.height / 2,
+            0,
+            state.width / 2,
+            state.height / 2,
+            Math.min(state.width, state.height) * 0.62,
           );
+          glow.addColorStop(0, `rgba(30, 24, 42, ${0.16 * spinTint})`);
+          glow.addColorStop(0.45, `rgba(18, 36, 26, ${0.09 * spinTint})`);
+          glow.addColorStop(1, 'rgba(21, 17, 12, 0)');
+          ctx.fillStyle = glow;
+          ctx.fillRect(0, 0, state.width, state.height);
+        }
+      };
+
+      const mixChannel = (from: number, to: number, amount: number) => Math.round(from + (to - from) * amount);
+
+      const mixColor = (amount: number, accent: string) => {
+        const base = [238, 231, 219];
+        const target = accent === '#ff0000'
+          ? [255, 0, 0]
+          : accent === '#0000ff'
+            ? [0, 0, 255]
+            : [0, 255, 60];
+        return `rgb(${base.map((channel, index) => mixChannel(channel, target[index], amount)).join(', ')})`;
+      };
+
+      const drawWordDots = (progress: number) => {
+        const brighten = phase(0.02, 0.2, progress);
+        const colorPhase = reducedMotionQuery.matches ? 0.72 : phase(0.05, 0.78, progress);
+        const morph = phase(0.64, 0.9, progress);
+        const spin = phase(0.76, 0.96, progress);
+        const outro = phase(0.94, 1, progress);
+        const ballRadius = Math.min(state.width, state.height) * (0.17 + spin * 0.18);
+        const rotation = state.time * (0.00008 + spin * 0.00042) + spin * Math.PI * 0.7;
+        const centerX = state.width / 2;
+        const centerY = state.height / 2 + state.height * 0.045 * spin;
+        const visibleColored = 0.08 + colorPhase * 0.92;
+        const whiteOpacity = reducedMotionQuery.matches ? 0.7 : clamp(0.6 + brighten * 0.4 - spin * 0.25, 0.38, 1);
+        const scatter = reducedMotionQuery.matches ? 0 : phase(0.8, 1, progress);
+        const beamOnly = reducedMotionQuery.matches ? 0 : phase(0.9, 1, progress);
+        const beamTransform = reducedMotionQuery.matches ? 0 : phase(0.84, 1, progress);
+        const particleAlpha = 1 - phase(0.88, 1, progress);
+
+        dotAnchors.forEach((dot, index) => {
+          const localX = state.originX + dot.x * state.scale;
+          const localY = state.originY + dot.y * state.scale;
+          const band = (index % 11) / 10;
+          const angle = dot.angle + rotation + band * spin * 0.42;
+          const depth = Math.sin(angle + dot.seed * Math.PI * 2);
+          const orbit = ballRadius * (0.32 + dot.order * 0.72);
+          const circleX = centerX + Math.cos(angle) * orbit;
+          const circleY = centerY + Math.sin(angle) * ballRadius * (0.48 + depth * 0.18);
+          const x = localX + (circleX - localX) * morph;
+          const y = localY + (circleY - localY) * morph - outro * state.height * 0.035;
+          const isGreen = dot.color === '#00ff3c';
+          const colorThreshold = isGreen
+            ? 0.1 + dot.colorOrder * 0.56
+            : 0.04 + dot.colorOrder * 0.88;
+          const rawColorAmount = clamp((visibleColored - colorThreshold) * (isGreen ? 3.6 : 2.35));
+          const colorAmount = isGreen ? clamp(ease(rawColorAmount) * 1.18) : rawColorAmount;
+          const dotColor = mixColor(colorAmount, dot.color);
+          const dotRadius = (6.35 + spin * 2.6 + dot.seed * 0.7) * state.scale;
+          const alpha = clamp(whiteOpacity + colorAmount * (isGreen ? 0.34 : 0.2) + depth * 0.08, 0.24, 1) * (1 - outro * 0.18) * particleAlpha;
+          const blur = (2 + colorAmount * (isGreen ? 22 : 12) + spin * 20) * chromeGlowScale;
+
+          drawDot(x, y, dotRadius, dotColor, alpha, blur);
+
+          if (beamTransform > 0.02 && index % transformBeamModulo === 0 && !reducedMotionQuery.matches) {
+            const transformBeamIndex = index / transformBeamModulo;
+            const transformColor = beamColors[transformBeamIndex % beamColors.length];
+            const transformAngle = transformBeamIndex * 2.399963 + (dot.seed - 0.5) * 0.28;
+            const maxDistance = Math.hypot(state.width, state.height) * (0.9 + dot.seed * 0.34);
+            const flow = (state.time * (0.00018 + dot.seed * 0.00012) + dot.seed * 1.3) % 1;
+            const centerDistance = ballRadius * (0.2 + dot.seed * 0.18);
+            const startDistance = centerDistance + maxDistance * flow * beamTransform;
+            const beamLength = maxDistance * (0.05 + beamTransform * (0.1 + dot.seed * 0.04));
+            const startX = centerX + Math.cos(transformAngle) * startDistance;
+            const startY = centerY + Math.sin(transformAngle) * startDistance;
+            const endX = startX + Math.cos(transformAngle) * beamLength;
+            const endY = startY + Math.sin(transformAngle) * beamLength;
+
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.globalAlpha = beamTransform * (1 - flow * 0.55) * (0.1 + dot.seed * 0.14);
+            ctx.strokeStyle = transformColor;
+            ctx.lineCap = 'round';
+            ctx.lineWidth = Math.max(1, dotRadius * (0.16 + beamTransform * 0.18));
+            ctx.shadowColor = transformColor;
+            ctx.shadowBlur = (transformColor === '#f8fbff' ? 6 : 12) * chromeGlowScale;
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+            ctx.restore();
+          }
+
+          if (spin > 0.14 && (!isChromium || index % 2 === 0) && !reducedMotionQuery.matches) {
+            const tailColor = beamTransform > 0.08
+              ? beamColors[index % beamColors.length]
+              : colorAmount > 0.08 ? dot.color : `rgb(${paper})`;
+            const tailX = x - Math.cos(angle) * (15 + 18 * spin);
+            const tailY = y - Math.sin(angle) * (15 + 18 * spin);
+            drawDot(tailX, tailY, dotRadius * (0.72 + spin * 0.7), tailColor, alpha * spin * 0.18 * particleAlpha, (20 + spin * 34) * chromeGlowScale);
+          }
+
+          if (scatter > 0.02 && index % scatterBeamModulo === 0 && !reducedMotionQuery.matches) {
+            const beamIndex = index / scatterBeamModulo;
+            const beamAngle = beamIndex * 2.399963 + (dot.seed - 0.5) * 0.22;
+            const maxDistance = Math.hypot(state.width, state.height) * (0.85 + dot.seed * 0.5);
+            const speed = 0.00028 + dot.seed * 0.00018;
+            const beamPhase = (state.time * speed + dot.seed * 1.7 + (index % 7) * 0.11) % 1;
+            const segmentBase = ballRadius * (0.18 + particleAlpha * 0.24) + maxDistance * beamPhase;
+            const segmentLength = maxDistance * (0.18 + dot.seed * 0.11) * (0.9 + scatter * 1.15 + beamOnly * 0.45);
+            const gap = maxDistance * 0.2;
+            const finalBeamColor = beamColors[beamIndex % beamColors.length];
+            const beamColor = finalBeamColor;
+
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.strokeStyle = beamColor;
+            ctx.lineCap = 'round';
+            ctx.lineWidth = Math.max(1.8, dotRadius * (0.22 + scatter * 0.24));
+            ctx.shadowColor = beamColor;
+            ctx.shadowBlur = (7 + scatter * (beamColor === '#f8fbff' ? 10 : 18)) * chromeGlowScale;
+
+            for (let segment = 0; segment < scatterSegmentCount; segment += 1) {
+              const rawDistance = segmentBase - segment * gap;
+              const wrappedDistance = ((rawDistance % maxDistance) + maxDistance) % maxDistance;
+              const startDistance = ballRadius * 0.34 + wrappedDistance;
+              const endDistance = startDistance + segmentLength;
+              const edgeFade = clamp(startDistance / (maxDistance * 0.12), 0, 1) * clamp((maxDistance - wrappedDistance) / (maxDistance * 0.14), 0, 1);
+              const segmentAlpha = (0.18 + edgeFade * 0.82) * scatter * (0.52 + dot.seed * 0.26 + beamOnly * 0.28) * (segment === 0 ? 1 : 0.68);
+              if (segmentAlpha <= 0.02) continue;
+              const startX = centerX + Math.cos(beamAngle) * startDistance;
+              const startY = centerY + Math.sin(beamAngle) * startDistance;
+              const endX = centerX + Math.cos(beamAngle) * endDistance;
+              const endY = centerY + Math.sin(beamAngle) * endDistance;
+              ctx.globalAlpha = segmentAlpha;
+              ctx.beginPath();
+              ctx.moveTo(startX, startY);
+              ctx.lineTo(endX, endY);
+              ctx.stroke();
+            }
+            ctx.restore();
+          }
         });
-        if (progress < 1) flowRateFrame = requestAnimationFrame(updateRate);
       };
 
-      flowRateFrame = requestAnimationFrame(updateRate);
-    };
+      const drawDot = (x: number, y: number, radius: number, color: string, alpha: number, blur: number) => {
+        if (alpha <= 0.01) return;
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.globalAlpha = alpha;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = blur;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha = Math.min(1, alpha * 1.25);
+        ctx.beginPath();
+        ctx.arc(x, y, radius * 0.45, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      };
 
-    openingShots.forEach((shot) => {
-      shot.addEventListener('pointerenter', () => easeFlowRate(0.22, 420));
-      shot.addEventListener('pointerleave', () => {
-        requestAnimationFrame(() => {
-          if (!openingShots.some((item) => item.matches(':hover'))) easeFlowRate(1, 700);
+      const draw = (time = 0) => {
+        if (chromeFrameInterval && state.lastDrawTime && time - state.lastDrawTime < chromeFrameInterval) {
+          state.raf = window.requestAnimationFrame(draw);
+          return;
+        }
+        const elapsed = state.lastTime ? Math.min(64, time - state.lastTime) : 16;
+        state.lastDrawTime = time;
+        state.lastTime = time;
+        state.time = time;
+        state.target = reducedMotionQuery.matches ? 1 : updateOpening();
+        const delta = state.target - state.progress;
+        const maxStep = 0.0065 + Math.abs(delta) * 0.028;
+        state.progress += reducedMotionQuery.matches
+          ? delta
+          : Math.sign(delta) * Math.min(Math.abs(delta) * 0.075, maxStep);
+
+        if (reducedMotionQuery.matches) {
+          state.autoProgress = state.progress;
+        } else if (state.target < 0.7) {
+          state.autoProgress += (state.target - state.autoProgress) * 0.16;
+          if (state.autoProgress < 0.02) state.autoProgress = 0;
+        } else if (state.progress >= 0.74 || state.autoProgress >= 0.74) {
+          state.autoProgress = Math.max(state.autoProgress, state.progress, 0.74);
+          state.autoProgress = Math.min(1, state.autoProgress + elapsed * 0.000055);
+        } else {
+          state.autoProgress += (state.progress - state.autoProgress) * 0.08;
+        }
+
+        const visualProgress = Math.max(state.progress, state.autoProgress);
+        const displayProgress = visualProgress;
+        const cockpitProgressInput = Math.max(displayProgress, state.target >= 0.86 ? state.target * 0.94 : displayProgress);
+        const cockpitTarget = phase(0.66, 0.98, cockpitProgressInput);
+        state.cockpitProgress += (cockpitTarget - state.cockpitProgress) * (reducedMotionQuery.matches ? 1 : 0.026);
+        const cockpit = state.cockpitProgress;
+        const swayX = Math.sin(state.time * 0.00072) + Math.sin(state.time * 0.00143 + 1.7) * 0.55;
+        const swayY = Math.cos(state.time * 0.00064 + 0.8) + Math.sin(state.time * 0.00112 + 2.4) * 0.42;
+        const swayTilt = Math.sin(state.time * 0.00058 + 1.2) + Math.sin(state.time * 0.00108) * 0.48;
+        section.style.setProperty('--cockpit-progress', cockpit.toFixed(3));
+        section.style.setProperty('--cockpit-x', `${swayX * 30 * cockpit}px`);
+        section.style.setProperty('--cockpit-y', `${(swayY * 17 + 104) * cockpit}px`);
+        section.style.setProperty('--cockpit-tilt', `${swayTilt * 2.7 * cockpit}deg`);
+
+        if (!state.ready) resize();
+        const trail = reducedMotionQuery.matches
+          ? 1
+          : clamp(1 - phase(0.62, 0.82, displayProgress) * 0.8 + phase(0.9, 1, displayProgress) * 0.18, 0.16, 1);
+        clear(trail, displayProgress);
+        drawWordDots(displayProgress);
+
+        if ((state.visible || !isChromium) && !document.hidden) {
+          state.raf = window.requestAnimationFrame(draw);
+        } else {
+          state.raf = 0;
+          state.lastTime = 0;
+          state.lastDrawTime = 0;
+        }
+      };
+
+      const startDrawing = () => {
+        if (state.raf || (isChromium && !state.visible) || document.hidden) return;
+        state.lastTime = 0;
+        state.lastDrawTime = 0;
+        state.raf = window.requestAnimationFrame(draw);
+      };
+
+      const stopDrawing = () => {
+        if (!state.raf) return;
+        window.cancelAnimationFrame(state.raf);
+        state.raf = 0;
+        state.lastTime = 0;
+        state.lastDrawTime = 0;
+      };
+
+      const handleResize = () => {
+        resize();
+        rebuildDots();
+      };
+
+      const handleMotionChange = () => {
+        state.progress = reducedMotionQuery.matches ? 1 : updateOpening();
+        state.target = state.progress;
+        startDrawing();
+      };
+
+      const handleVisibilityChange = () => {
+        if (document.hidden) {
+          stopDrawing();
+        } else {
+          startDrawing();
+        }
+      };
+
+      window.addEventListener('resize', handleResize);
+      reducedMotionQuery.addEventListener('change', handleMotionChange);
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+
+      if (isChromium && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(([entry]) => {
+          state.visible = Boolean(entry?.isIntersecting);
+          if (state.visible) {
+            startDrawing();
+          } else {
+            stopDrawing();
+          }
         });
-      });
-    });
-    const splashPalettes = [
-      { name: 'rose', bg: '#f9f7f7', ink: '#e676b6' },
-      { name: 'red', bg: '#f7f7f7', ink: '#e63e3e' },
-      { name: 'orange', bg: '#ffffff', ink: '#e78e29' },
-      { name: 'sky', bg: '#fbdada', ink: '#ace8fc' },
-    ];
-
-    const contentPalettes = [
-      { name: 'blush-brown', primary: '#f1b5c2', primaryInk: '#392e2b', secondary: '#392e2b', secondaryInk: '#f9f7f7' },
-      { name: 'olive-red', primary: '#6e7b48', primaryInk: '#ffffff', secondary: '#e02a47', secondaryInk: '#ffffff' },
-      { name: 'forest-peach', primary: '#152d22', primaryInk: '#f9f7f7', secondary: '#f3af87', secondaryInk: '#152d22' },
-      { name: 'clay-violet', primary: '#907e74', primaryInk: '#191817', secondary: '#3e2ab4', secondaryInk: '#f9f7f7' },
-      { name: 'earth-coral', primary: '#3c3829', primaryInk: '#f9f7f7', secondary: '#f07082', secondaryInk: '#191817' },
-      { name: 'orange-mint', primary: '#d15022', primaryInk: '#ffffff', secondary: '#75dfb5', secondaryInk: '#152d22' },
-      { name: 'pink-indigo', primary: '#fe2bf7', primaryInk: '#191817', secondary: '#1c008c', secondaryInk: '#f9f7f7' },
-      { name: 'lime-slate', primary: '#dbf863', primaryInk: '#191817', secondary: '#556f6e', secondaryInk: '#f9f7f7' },
-    ];
-
-    const openingThemes = splashPalettes.flatMap((splash) =>
-      contentPalettes.map((content) => ({
-        name: `${splash.name}-${content.name}`,
-        bg: splash.bg,
-        ink: splash.ink,
-        accent: content.primary,
-        accentInk: content.primaryInk,
-        content: content.secondary,
-        contentInk: content.secondaryInk,
-        soft: '#ffffff',
-      })),
-    );
-
-    const chooseOpeningTheme = () => {
-      const previous = sessionStorage.getItem('opening-theme-key');
-      const choices = openingThemes.filter((theme) => theme.name !== previous);
-      const theme = choices[Math.floor(Math.random() * choices.length)] ?? openingThemes[0];
-      sessionStorage.setItem('opening-theme-key', theme.name);
-      return theme;
-    };
-
-    const startOpeningSequence = () => {
-      if (!opening || !openingStage) return;
-      const theme = chooseOpeningTheme();
-      opening.style.setProperty('--opening-bg', theme.bg);
-      opening.style.setProperty('--opening-ink', theme.ink);
-      opening.style.setProperty('--opening-accent', theme.accent);
-      opening.style.setProperty('--opening-accent-ink', theme.accentInk);
-      opening.style.setProperty('--opening-content', theme.content);
-      opening.style.setProperty('--opening-content-ink', theme.contentInk);
-      opening.style.setProperty('--opening-soft', theme.soft);
-      body.style.setProperty('--opening-bg', theme.bg);
-      body.style.setProperty('--opening-ink', theme.ink);
-      body.style.setProperty('--opening-accent', theme.accent);
-      body.style.setProperty('--opening-accent-ink', theme.accentInk);
-      body.style.setProperty('--opening-content', theme.content);
-      body.style.setProperty('--opening-content-ink', theme.contentInk);
-      body.style.setProperty('--opening-soft', theme.soft);
-      document.documentElement.style.setProperty('--opening-bg', theme.bg);
-      document.documentElement.style.setProperty('--opening-ink', theme.ink);
-      document.documentElement.style.setProperty('--opening-accent', theme.accent);
-      document.documentElement.style.setProperty('--opening-accent-ink', theme.accentInk);
-      document.documentElement.style.setProperty('--opening-content', theme.content);
-      document.documentElement.style.setProperty('--opening-content-ink', theme.contentInk);
-      document.documentElement.style.setProperty('--opening-soft', theme.soft);
-      document.documentElement.dataset.openingTheme = theme.name;
-      sessionStorage.setItem('opening-theme-values', JSON.stringify(theme));
-      opening.dataset.theme = theme.name;
-      const blockedScrollKeys = new Set([
-        'ArrowDown',
-        'ArrowUp',
-        'End',
-        'Home',
-        'PageDown',
-        'PageUp',
-        ' ',
-      ]);
-      const preventOpeningScroll = (event: Event) => event.preventDefault();
-      const preventOpeningKey = (event: KeyboardEvent) => {
-        if (blockedScrollKeys.has(event.key)) event.preventDefault();
-      };
-
-      document.documentElement.classList.add('opening-locked');
-      body.classList.add('opening-locked');
-      body.classList.remove('opening-complete');
-      window.addEventListener('wheel', preventOpeningScroll, { passive: false });
-      window.addEventListener('touchmove', preventOpeningScroll, { passive: false });
-      window.addEventListener('keydown', preventOpeningKey);
-
-      const setPhase = (phase: number) => {
-        openingStage.dataset.phase = String(phase);
-        body.dataset.openingPhase = String(phase);
-      };
-
-      const unlockOpening = () => {
-        document.documentElement.classList.remove('opening-locked');
-        body.classList.remove('opening-locked');
-        body.classList.add('opening-complete');
-        window.removeEventListener('wheel', preventOpeningScroll);
-        window.removeEventListener('touchmove', preventOpeningScroll);
-        window.removeEventListener('keydown', preventOpeningKey);
-      };
-
-      if (reducedMotionQuery.matches) {
-        setPhase(3);
-        opening.classList.add('opening-ready');
-        unlockOpening();
-        return;
+        observer.observe(section);
       }
 
-      setPhase(0);
-      opening.classList.add('opening-ready');
-      [
-        window.setTimeout(() => setPhase(1), 1000),
-        window.setTimeout(() => setPhase(2), 3000),
-        window.setTimeout(() => setPhase(3), 4000),
-        window.setTimeout(unlockOpening, 4500),
-      ];
+      rebuildDots();
+      resize();
+      section.classList.add('opening-ready');
+      startDrawing();
     };
 
     const onScroll = () => {
-      if (body.classList.contains('opening-locked')) {
-        window.scrollTo(0, 0);
-        return;
-      }
       updateHeader();
-      updateOpeningColor();
+      updateOpening();
     };
 
+    brandRows.forEach((row) => {
+      const activate = () => {
+        const src = row.dataset.brandImage;
+        const name = row.dataset.brandName;
+        if (!src || !previewImage || !previewCaption) return;
+        previewImage.src = src;
+        previewImage.alt = `${name} preview`;
+        previewCaption.textContent = name || '';
+        brandRows.forEach((item) => item.classList.toggle('is-active', item === row));
+      };
+
+      row.addEventListener('mouseenter', activate);
+      row.addEventListener('focus', activate);
+    });
+
+    brandRows[0]?.classList.add('is-active');
     updateHeader();
-    updateOpeningColor();
-    startOpeningSequence();
+    if (openingCanvas && opening) {
+      createOpeningScene(openingCanvas, opening);
+    }
     window.addEventListener('scroll', onScroll, { passive: true });
   </script>
 </Layout>
