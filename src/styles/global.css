@@ -5144,27 +5144,27 @@ html[data-opening-theme] body.app-detail-page .meta-grid {
 }
 
 @media (hover: hover) {
-  .site-menu__music:hover,
-  .site-menu__music:focus-visible {
+  .site-menu__music.is-art-loaded:hover,
+  .site-menu__music.is-art-loaded:focus-visible {
     background-color: transparent;
     color: var(--opening-accent, #f1b5c2);
     transition: background-color 0s linear 260ms, color 180ms ease;
   }
 
-  .site-menu__music:hover .site-menu__music-record,
-  .site-menu__music:focus-visible .site-menu__music-record {
+  .site-menu__music.is-art-loaded:hover .site-menu__music-record,
+  .site-menu__music.is-art-loaded:focus-visible .site-menu__music-record {
     opacity: 1;
     animation: music-disc-spin 7s linear infinite;
     transition: opacity 220ms ease 180ms;
   }
 
-  .site-menu__music:hover .site-menu__music-disc,
-  .site-menu__music:focus-visible .site-menu__music-disc {
+  .site-menu__music.is-art-loaded:hover .site-menu__music-disc,
+  .site-menu__music.is-art-loaded:focus-visible .site-menu__music-disc {
     animation: none;
   }
 
-  .site-menu__music:hover .site-menu__music-label,
-  .site-menu__music:focus-visible .site-menu__music-label {
+  .site-menu__music.is-art-loaded:hover .site-menu__music-label,
+  .site-menu__music.is-art-loaded:focus-visible .site-menu__music-label {
     opacity: 0;
     transform: rotate(330deg) scale(0.76);
     transition:
