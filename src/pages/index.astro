@@ -90,8 +90,21 @@ import Layout from '../layouts/Layout.astro';
 
   <script>
     const body = document.body;
+    const useMaskedLandingFrames = false;
     const opening = document.querySelector<HTMLElement>('.opening-experience');
     const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const setMaskedLandingFrames = (enabled: boolean) => {
+      body.classList.toggle('landing-masked-frames', enabled);
+    };
+
+    setMaskedLandingFrames(useMaskedLandingFrames);
+    Object.assign(window, {
+      toggleLandingMasks: (enabled = !body.classList.contains('landing-masked-frames')) => {
+        setMaskedLandingFrames(enabled);
+        return enabled;
+      },
+    });
 
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual';

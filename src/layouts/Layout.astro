@@ -17,7 +17,8 @@ const {
 } = Astro.props;
 
 const classes = [legal ? 'legal' : '', bodyClass].filter(Boolean).join(' ');
-const spotifyStatusEndpoint = import.meta.env.PUBLIC_SPOTIFY_STATUS_ENDPOINT ?? '';
+const defaultSpotifyStatusEndpoint = 'https://edizy-spotify-status.kickle-edizy.workers.dev';
+const spotifyStatusEndpoint = import.meta.env.PUBLIC_SPOTIFY_STATUS_ENDPOINT?.trim() || defaultSpotifyStatusEndpoint;
 
 const logoDots = [
   [6.6,72.7],[6.6,59.5],[6.6,46.3],[19.8,85.9],[19.8,72.7],[19.8,59.5],[19.8,46.3],[19.8,33],
@@ -551,6 +552,7 @@ const logoDotLitByIndex = new Map(
         const musicAlbum = musicLink?.querySelector('[data-spotify-album]');
         const musicPlayed = musicLink?.querySelector('[data-spotify-played]');
         let musicLoaded = false;
+        let musicArtworkRequest = 0;
 
         const setOtherMenuOpen = (open) => {
           otherMenu?.setAttribute('data-open', String(open));
@@ -570,7 +572,12 @@ const logoDotLitByIndex = new Map(
           if (!endpoint) return;
 
           try {
-            const response = await fetch(endpoint, { headers: { Accept: 'application/json' } });
+            const statusUrl = new URL(endpoint, window.location.href);
+            statusUrl.searchParams.set('_', String(Date.now()));
+            const response = await fetch(statusUrl, {
+              cache: 'no-store',
+              headers: { Accept: 'application/json' },
+            });
             if (!response.ok) throw new Error(`Spotify status ${response.status}`);
             const data = await response.json();
             const image =
@@ -607,6 +614,18 @@ const logoDotLitByIndex = new Map(
                 data?.album ||
                 data?.item?.album?.name,
             );
+            const readImage = (value) => (typeof value === 'string' ? value.trim() : '');
+            const loadArtwork = (src) =>
+              new Promise((resolve, reject) => {
+                const artwork = new Image();
+                artwork.decoding = 'async';
+                artwork.onload = () => {
+                  const decode = typeof artwork.decode === 'function' ? artwork.decode() : Promise.resolve();
+                  decode.catch(() => {}).then(resolve);
+                };
+                artwork.onerror = reject;
+                artwork.src = src;
+              });
             const readTime = (value) => {
               if (!value) return null;
               if (typeof value === 'number') return new Date(value < 1e12 ? value * 1000 : value);
@@ -632,9 +651,14 @@ const logoDotLitByIndex = new Map(
               const days = Math.round(hours / 24);
               return `${days} day${days === 1 ? '' : 's'} ago`;
             })();
+            const artworkSrc = readImage(image);
 
-            if (image) {
-              musicCover.src = image;
+            if (artworkSrc) {
+              const requestId = ++musicArtworkRequest;
+              await loadArtwork(artworkSrc);
+              if (requestId !== musicArtworkRequest) return;
+
+              musicCover.src = artworkSrc;
               musicCover.alt = title;
               if (musicTitle) musicTitle.textContent = title;
               if (musicArtist && artist) musicArtist.textContent = artist;
@@ -647,7 +671,9 @@ const logoDotLitByIndex = new Map(
                 'aria-label',
                 ['Open on Spotify', title, artist, album, relativePlayed].filter(Boolean).join(' — '),
               );
-              musicLink.classList.add('is-art-loaded');
+              requestAnimationFrame(() => {
+                if (requestId === musicArtworkRequest) musicLink.classList.add('is-art-loaded');
+              });
             }
           } catch (_) {
             musicLoaded = false;

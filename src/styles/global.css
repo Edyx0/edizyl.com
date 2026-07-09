@@ -1376,13 +1376,13 @@ footer {
   margin: 0;
   color: var(--opening-ink);
   font-family: 'Anton', 'Arial Narrow', Impact, sans-serif;
-  font-size: clamp(8rem, 24vw, 24rem);
+  font-size: clamp(8rem, 21vw, 24rem);
   font-weight: 400;
   line-height: 0.72;
   letter-spacing: -0.04em;
   text-transform: lowercase;
   pointer-events: none;
-  transform: scale(0.62);
+  transform: scale(0.558);
   transform-origin: 50% 50%;
   transition:
     color 500ms var(--ease),
@@ -1445,6 +1445,20 @@ footer {
   will-change: transform, opacity;
 }
 
+.home.landing-masked-frames .opening-shot__surface {
+  overflow: hidden;
+  contain: paint;
+  -webkit-mask-image: var(--shot-mask);
+  mask-image: var(--shot-mask);
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  mask-mode: alpha;
+}
+
 .opening-media--back .opening-shot__surface {
   transform: translate3d(0, 52vh, 0);
 }
@@ -1475,6 +1489,7 @@ footer {
 
 .opening-shot--top-1 {
   --shot-ratio: 1171 / 1544;
+  --shot-mask: url('/landing/self-brand/burger-streak.webp');
   --flow-duration: 30s;
   --flow-delay: -7.5s;
   top: 0;
@@ -1483,6 +1498,7 @@ footer {
 
 .opening-shot--top-2 {
   --shot-ratio: 1580 / 866;
+  --shot-mask: url('/landing/self-brand/eat-like-an-italian.webp');
   --flow-duration: 30s;
   --flow-delay: -17.1s;
   top: 4%;
@@ -1491,6 +1507,7 @@ footer {
 
 .opening-shot--top-3 {
   --shot-ratio: 1163 / 2342;
+  --shot-mask: url('/landing/self-brand/holy-shift-characters-a.webp');
   --flow-duration: 30s;
   --flow-delay: -22.8s;
   top: -2%;
@@ -1499,6 +1516,7 @@ footer {
 
 .opening-shot--top-4 {
   --shot-ratio: 2342 / 2333;
+  --shot-mask: url('/landing/self-brand/imposter.webp');
   --flow-duration: 30s;
   --flow-delay: -29.1s;
   top: 2%;
@@ -1507,6 +1525,7 @@ footer {
 
 .opening-shot--bottom-1 {
   --shot-ratio: 1171 / 1544;
+  --shot-mask: url('/landing/self-brand/kebap-streak.webp');
   --flow-duration: 40s;
   --flow-delay: -2s;
   bottom: -8%;
@@ -1515,6 +1534,7 @@ footer {
 
 .opening-shot--bottom-2 {
   --shot-ratio: 1382 / 1048;
+  --shot-mask: url('/landing/self-brand/food-trip.webp');
   --flow-duration: 40s;
   --flow-delay: -10s;
   bottom: 0;
@@ -1523,6 +1543,7 @@ footer {
 
 .opening-shot--bottom-3 {
   --shot-ratio: 1374 / 782;
+  --shot-mask: url('/landing/self-brand/summer-words.webp');
   --flow-duration: 40s;
   --flow-delay: -18s;
   bottom: 4%;
@@ -1531,6 +1552,7 @@ footer {
 
 .opening-shot--bottom-4 {
   --shot-ratio: 1163 / 2342;
+  --shot-mask: url('/landing/self-brand/holy-shift-characters-b.webp');
   --flow-duration: 40s;
   --flow-delay: -26s;
   bottom: -5%;
@@ -1539,6 +1561,7 @@ footer {
 
 .opening-shot--bottom-5 {
   --shot-ratio: 1311 / 582;
+  --shot-mask: url('/landing/self-brand/tabu-ekstra.webp');
   --flow-duration: 40s;
   --flow-delay: -34s;
   bottom: 2%;
@@ -1666,7 +1689,7 @@ footer {
 }
 
 .opening-stage[data-phase="1"] .opening-wordmark {
-  transform: scale(1.36);
+  transform: scale(1.32);
 }
 
 .opening-stage[data-phase="2"] {
@@ -1675,7 +1698,7 @@ footer {
 
 .opening-stage[data-phase="2"] .opening-wordmark,
 .opening-stage[data-phase="3"] .opening-wordmark {
-  transform: scale(1.36);
+  transform: scale(1.32);
 }
 
 .opening-stage[data-phase="2"] .opening-wordmark {
@@ -3616,6 +3639,11 @@ header.site nav a:focus-visible .dot-word--sampled .dot-word__dot,
   text-transform: lowercase;
 }
 
+.site-menu a {
+  background-image: none !important;
+  background-size: auto !important;
+}
+
 .site-menu__close {
   right: clamp(1rem, 2.5vw, 2rem);
 }
@@ -3803,8 +3831,12 @@ body.menu-open {
 }
 
 @keyframes music-disc-spin {
+  from {
+    transform: translate3d(0, 0, 0) rotate(0turn);
+  }
+
   to {
-    transform: rotate(1turn);
+    transform: translate3d(0, 0, 0) rotate(1turn);
   }
 }
 
@@ -4945,8 +4977,8 @@ html[data-opening-theme] body.app-detail-page .meta-grid {
   height: var(--music-size);
   aspect-ratio: 1;
   position: fixed;
-  top: 7.5vh;
-  right: 20vw;
+  top: calc(7.5vh + 1.5rem);
+  right: calc(20vw + 1.5rem);
   z-index: 4;
   display: flex;
   align-items: center;
@@ -4976,8 +5008,10 @@ html[data-opening-theme] body.app-detail-page .meta-grid {
   opacity: 0;
   overflow: hidden;
   pointer-events: none;
-  transform: none;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0) rotate(0turn);
   transition: opacity 140ms ease;
+  will-change: opacity, transform;
 }
 
 .site-menu__music-disc {
@@ -5024,7 +5058,7 @@ html[data-opening-theme] body.app-detail-page .meta-grid {
   gap: 0.22rem;
   color: var(--opening-content, #392e2b);
   font-family: 'Helvetica Now Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  line-height: 0.98;
+  line-height: 1.14;
   text-align: left;
   opacity: 0;
   pointer-events: none;
@@ -5042,6 +5076,8 @@ html[data-opening-theme] body.app-detail-page .meta-grid {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  line-height: 1.12;
+  padding-block: 0.04em 0.1em;
 }
 
 .site-menu__music-title {
@@ -5098,6 +5134,8 @@ html[data-opening-theme] body.app-detail-page .meta-grid {
   display: block;
   object-fit: cover;
   opacity: 0;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
   transition: none;
 }
 
@@ -5442,5 +5480,289 @@ body.legal header.site .logo {
   .legal main::after {
     min-height: 45svh;
     font-size: clamp(4rem, 21vw, 7rem);
+  }
+}
+
+/* App detail - compact case-study revision */
+.app-detail-page {
+  --detail-gap: clamp(1.25rem, 3vw, 3rem);
+}
+
+.app-detail-page .app-hero {
+  min-height: auto;
+  padding: clamp(5.25rem, 10vw, 7.5rem) clamp(1rem, 4vw, 4rem) clamp(2rem, 4vw, 3.25rem);
+}
+
+.app-detail-page .app-hero-content {
+  width: min(100%, 920px);
+  display: grid;
+  grid-template-columns: clamp(4.6rem, 8vw, 7.2rem) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1rem, 2.8vw, 2.4rem);
+}
+
+.app-detail-page .app-hero-icon {
+  width: clamp(4.6rem, 8vw, 7.2rem);
+  height: clamp(4.6rem, 8vw, 7.2rem);
+  border-radius: clamp(16px, 1.8vw, 24px);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, currentColor 18%, transparent),
+    0 18px 50px rgba(0, 0, 0, 0.18);
+}
+
+.app-detail-page .app-hero-text h1 {
+  max-width: 11ch;
+  font-size: clamp(4.4rem, 10.5vw, 8.25rem);
+  line-height: 0.88;
+  letter-spacing: -0.01em;
+}
+
+.app-detail-page .app-hero-text .hero-sub {
+  margin-top: clamp(0.8rem, 1.8vw, 1.25rem);
+  font-size: clamp(0.95rem, 1.35vw, 1.18rem);
+}
+
+.app-detail-page .app-hero-text .hero-tagline {
+  max-width: 36rem;
+  margin-bottom: 0.75rem;
+  font-size: clamp(1.02rem, 1.55vw, 1.35rem);
+  line-height: 1.25;
+}
+
+.app-hero-note {
+  max-width: 40rem;
+  margin: 0 0 1.15rem;
+  color: currentColor;
+  font-size: clamp(0.92rem, 1.08vw, 1.04rem);
+  font-weight: 650;
+  line-height: 1.38;
+  opacity: 0.68;
+  text-wrap: pretty;
+}
+
+.app-detail-page .cta {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  color: currentColor !important;
+  background: none !important;
+  border: 0 !important;
+  border-bottom: 2px solid currentColor !important;
+  box-shadow: none !important;
+  font-family: var(--body);
+  font-size: clamp(0.92rem, 1vw, 1rem);
+  font-weight: 850;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.app-detail-page .cta::before,
+.app-detail-page .cta::after {
+  content: none !important;
+}
+
+.app-detail-page .cta:hover,
+.app-detail-page .cta:focus-visible {
+  color: currentColor !important;
+  opacity: 0.66;
+}
+
+.app-detail-page .stat-pills {
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  margin-top: clamp(1.5rem, 3vw, 2.4rem);
+  border-top-width: 1px;
+}
+
+.app-detail-page .stat-pill {
+  position: relative;
+  padding: 0.75rem 1rem 0 0;
+}
+
+.app-detail-page .stat-pill::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -1px;
+  width: min(3rem, 46%);
+  height: 1px;
+  background: currentColor;
+  opacity: 0.82;
+}
+
+.app-detail-page .stat-label {
+  font-size: 0.74rem;
+}
+
+.app-detail-page .stat-value {
+  font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+}
+
+.app-detail-page .app-gallery {
+  padding: clamp(2.8rem, 6vw, 5rem) 0 clamp(2.8rem, 6vw, 5rem);
+}
+
+.app-detail-page .app-gallery__header {
+  padding-inline: clamp(1rem, 4vw, 4rem);
+}
+
+.app-detail-page .app-gallery__header p,
+.app-detail-page .app-gallery__motion {
+  font-weight: 850;
+}
+
+.app-detail-page .app-gallery__header p {
+  color: color-mix(in srgb, #191817 72%, transparent);
+}
+
+.app-detail-page .app-gallery h2 {
+  font-size: clamp(3.3rem, 7vw, 5.6rem);
+  letter-spacing: -0.01em;
+}
+
+.app-detail-page .app-gallery__motion {
+  padding-top: 0.9rem;
+  padding-inline: clamp(1rem, 4vw, 4rem);
+  color: color-mix(in srgb, #191817 54%, transparent);
+  text-transform: none;
+}
+
+.app-detail-page .app-gallery__progress {
+  height: 3px;
+  border-radius: 999px;
+}
+
+.app-detail-page .app-gallery__progress > span {
+  background: color-mix(in srgb, var(--app-accent-surface, var(--app-accent)) 82%, #191817);
+}
+
+.app-detail-page .app-gallery .shots-scroll {
+  gap: clamp(0.85rem, 1.8vw, 1.5rem);
+  padding: clamp(1.4rem, 3vw, 2.4rem) clamp(1rem, 4vw, 4rem) 0;
+}
+
+.app-detail-page .app-gallery .shots-scroll img,
+.app-detail-page .app-gallery .shot-video {
+  width: clamp(13rem, 17vw, 17rem);
+  outline: 1px solid color-mix(in srgb, #191817 14%, transparent);
+  outline-offset: -1px;
+}
+
+.app-detail-page .app-section {
+  min-height: auto;
+  grid-template-columns: minmax(11rem, 0.62fr) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(1.5rem, 5vw, 5rem);
+  padding: clamp(3.5rem, 7vw, 6rem) clamp(1rem, 4vw, 4rem);
+}
+
+.app-detail-page .app-section h2 {
+  max-width: 9ch;
+  font-size: clamp(2.9rem, 5.6vw, 4.85rem);
+  line-height: 0.96;
+  letter-spacing: -0.01em;
+}
+
+.app-detail-page .app-section__body {
+  align-self: start;
+  max-width: 58ch;
+  font-size: clamp(0.98rem, 1.25vw, 1.15rem);
+  font-weight: 620;
+  line-height: 1.5;
+}
+
+.app-section__body p + p {
+  margin-top: 0.9rem;
+}
+
+.app-detail-page .list li {
+  padding: 0.78rem 0;
+  font-weight: 680;
+}
+
+.app-detail-page .chips {
+  margin-top: 1.35rem;
+}
+
+.app-detail-page .chip {
+  min-height: 34px;
+  padding: 0 0.7rem;
+  border-color: color-mix(in srgb, currentColor 52%, transparent) !important;
+  font-size: 0.8rem;
+}
+
+.app-detail-page .chip:hover {
+  color: inherit;
+  border-color: currentColor !important;
+  box-shadow: none;
+}
+
+.app-detail-page .tech-details {
+  margin-top: 1.4rem;
+}
+
+.app-detail-page .meta-grid > div {
+  min-height: 5.2rem;
+  padding-block: 0.8rem;
+}
+
+.app-detail-page .app-final {
+  min-height: auto;
+  padding: clamp(3.8rem, 8vw, 6.5rem) clamp(1rem, 4vw, 4rem);
+}
+
+.app-detail-page .app-final h2 {
+  font-size: clamp(4rem, 8vw, 7rem);
+  letter-spacing: -0.01em;
+}
+
+.app-final .muted a {
+  color: inherit;
+  opacity: 0.72;
+}
+
+@media (max-width: 799px) {
+  .app-detail-page .app-hero {
+    padding-top: 4.8rem;
+  }
+
+  .app-detail-page .app-hero-content {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .app-detail-page .app-hero-text h1 {
+    font-size: clamp(3.8rem, 18vw, 6.3rem);
+  }
+
+  .app-hero-note {
+    max-width: 34ch;
+  }
+
+  .app-detail-page .app-gallery__header {
+    display: block;
+  }
+
+  .app-detail-page .app-section {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding-block: clamp(3.2rem, 9vw, 5rem);
+  }
+
+  .app-detail-page .app-section h2,
+  .app-detail-page .app-final h2 {
+    font-size: clamp(3rem, 14vw, 5.3rem);
+  }
+}
+
+@media (max-width: 520px) {
+  .app-detail-page .app-gallery .shots-scroll img,
+  .app-detail-page .app-gallery .shot-video {
+    width: min(72vw, 17rem);
+  }
+
+  .app-detail-page .stat-pills,
+  .app-detail-page .meta-grid {
+    grid-template-columns: 1fr;
   }
 }
