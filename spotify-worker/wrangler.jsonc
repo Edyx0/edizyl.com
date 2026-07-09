@@ -1,0 +1,9 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "edizy-spotify-status",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-09",
+  "vars": {
+    "ALLOWED_ORIGINS": "https://edyx0.github.io"
+  }
+}

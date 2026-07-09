@@ -17,6 +17,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      PUBLIC_SPOTIFY_STATUS_ENDPOINT: ${{ vars.PUBLIC_SPOTIFY_STATUS_ENDPOINT }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6

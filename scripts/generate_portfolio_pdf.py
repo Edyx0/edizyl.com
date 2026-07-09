@@ -241,13 +241,13 @@ def page_bg(c, page_num, label):
 
 APPS = [
     {
-        "name": "Tabu Ekstra",
-        "subtitle": "Words of 2026",
+        "name": "Tabum Ekstra",
+        "subtitle": "2026 Kelimeleri",
         "accent": "#9d4edd",
         "icon": "/icons/tabu-ekstra.png",
-        "url": "https://apps.apple.com/app/tabu-ekstra-2026-kelimeleri/id6757464030",
-        "summary": "A modern Taboo-style iOS game with 2026 word lists, offline play, and fast rounds for friends, families, and campus groups.",
-        "stats": ["#18 TR Card Games", "7,000+ users", "12.23% conversion"],
+        "url": "https://apps.apple.com/tr/app/tabum-ekstra-2026-kelimeleri/id6757464030",
+        "summary": "A fast offline 2026 word game with fresh cards for friends, families, school, and campus groups.",
+        "stats": ["#18 TR Card Games", "Version 1.8.2", "4.5 stars (36)"],
         "tech": ["SwiftUI", "StoreKit 2", "RevenueCat", "AdMob", "PlayFab"],
         "shots": ["/screenshots/tabu-ekstra/1.jpg", "/screenshots/tabu-ekstra/2.jpg", "/screenshots/tabu-ekstra/3.jpg"],
     },
@@ -297,7 +297,7 @@ def cover_page(c):
     draw_link(c, "github.com/Edyx0", "https://github.com/Edyx0", x + 150, y - 214, size=10, color=PAPER_2)
     draw_link(c, "linkedin.com/in/edizylm", "https://linkedin.com/in/edizylm/", x + 270, y - 214, size=10, color=PAPER_2)
 
-    stats = [("3", "App Store app"), ("7K+", "Tabu Ekstra users"), ("3.88", "Yeditepe CE GPA"), ("#18", "TR Card Games")]
+    stats = [("3", "App Store app"), ("7K+", "Tabum Ekstra users"), ("3.88", "Yeditepe CE GPA"), ("#18", "TR Card Games")]
     sx, sy = x, 112
     for value, label in stats:
         c.setFillColor(CHAR)
@@ -395,10 +395,10 @@ def case_page(c):
     draw_label(c, "Featured", x + 18, top_y + 124, hex_color("#9d4edd"))
     c.setFillColor(PAPER)
     c.setFont("PortfolioSans-Bold", 20)
-    c.drawString(x + 18, top_y + 96, "Tabu Ekstra")
+    c.drawString(x + 18, top_y + 96, "Tabum Ekstra")
     draw_text(
         c,
-        "Free baseline + Ekstra Plus kelime setleri, RevenueCat ile entitlement sync, AdMob rewarded/interstitial dengesi ve PlayFab ile hafif içerik/analytics yönetimi.",
+        "Ücretsiz çevrimdışı oyun, güncel 2026 kelimeleri, RevenueCat ile entitlement sync, AdMob monetization ve PlayFab ile hafif içerik/analytics yönetimi.",
         x + 18,
         top_y + 70,
         312,

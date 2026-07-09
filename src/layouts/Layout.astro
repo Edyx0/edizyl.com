@@ -17,6 +17,7 @@ const {
 } = Astro.props;
 
 const classes = [legal ? 'legal' : '', bodyClass].filter(Boolean).join(' ');
+const spotifyStatusEndpoint = import.meta.env.PUBLIC_SPOTIFY_STATUS_ENDPOINT ?? '';
 
 const logoDots = [
   [6.6,72.7],[6.6,59.5],[6.6,46.3],[19.8,85.9],[19.8,72.7],[19.8,59.5],[19.8,46.3],[19.8,33],
@@ -134,7 +135,7 @@ const logoDotLitByIndex = new Map(
         <nav class="site-menu__nav" aria-label="Site">
           <section class="site-menu__group site-menu__group--apps">
             <p>Apps</p>
-            <a href="/tabu-ekstra/">Tabu Ekstra <span class="site-menu__count">01</span></a>
+            <a href="/tabu-ekstra/">Tabum Ekstra <span class="site-menu__count">01</span></a>
             <a href="/imposter/">Imposter <span class="site-menu__count">02</span></a>
             <a href="/holy-shift/">Holy Shift <span class="site-menu__count">03</span></a>
           </section>
@@ -162,7 +163,23 @@ const logoDotLitByIndex = new Map(
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Open Music on Spotify"
-        >Music</a>
+          data-spotify-endpoint={spotifyStatusEndpoint}
+        >
+          <span class="site-menu__music-label">Music</span>
+          <span class="site-menu__music-record" aria-hidden="true">
+            <span class="site-menu__music-disc">
+              <span class="site-menu__music-cover">
+                <img data-spotify-cover alt="" loading="lazy" decoding="async" />
+              </span>
+            </span>
+          </span>
+          <span class="site-menu__music-meta" aria-hidden="true">
+            <span class="site-menu__music-played" data-spotify-played hidden></span>
+            <span class="site-menu__music-title" data-spotify-title>Music</span>
+            <span class="site-menu__music-artist" data-spotify-artist>Artist</span>
+            <span class="site-menu__music-album" data-spotify-album>Album</span>
+          </span>
+        </a>
 
         <div class="site-menu__footer">
           <a href="https://linkedin.com/in/edizylm/">LinkedIn</a>
@@ -527,6 +544,13 @@ const logoDotLitByIndex = new Map(
         const menuClose = document.querySelector('.site-menu__close');
         const otherMenu = menu?.querySelector('.site-menu__group--other');
         const otherTrigger = menu?.querySelector('.site-menu__other-trigger');
+        const musicLink = menu?.querySelector('.site-menu__music');
+        const musicCover = musicLink?.querySelector('[data-spotify-cover]');
+        const musicTitle = musicLink?.querySelector('[data-spotify-title]');
+        const musicArtist = musicLink?.querySelector('[data-spotify-artist]');
+        const musicAlbum = musicLink?.querySelector('[data-spotify-album]');
+        const musicPlayed = musicLink?.querySelector('[data-spotify-played]');
+        let musicLoaded = false;
 
         const setOtherMenuOpen = (open) => {
           otherMenu?.setAttribute('data-open', String(open));
@@ -538,12 +562,105 @@ const logoDotLitByIndex = new Map(
           menu.close();
         };
 
+        const updateMusicArtwork = async () => {
+          if (!musicLink || !musicCover || musicLoaded) return;
+          musicLoaded = true;
+
+          const endpoint = musicLink.dataset.spotifyEndpoint;
+          if (!endpoint) return;
+
+          try {
+            const response = await fetch(endpoint, { headers: { Accept: 'application/json' } });
+            if (!response.ok) throw new Error(`Spotify status ${response.status}`);
+            const data = await response.json();
+            const image =
+              data?.albumImage ||
+              data?.image ||
+              data?.artworkUrl ||
+              data?.album?.image ||
+              data?.album?.images?.[0]?.url ||
+              data?.item?.album?.images?.[0]?.url;
+            const title = data?.title || data?.track || data?.name || data?.item?.name || 'Spotify album cover';
+            const readName = (value) => {
+              if (!value) return '';
+              if (typeof value === 'string') return value.trim();
+              if (Array.isArray(value)) {
+                return value
+                  .map((item) => readName(item))
+                  .filter(Boolean)
+                  .join(', ');
+              }
+              return (value.name || value.title || '').trim();
+            };
+            const artist = readName(
+              data?.artist ||
+                data?.artists ||
+                data?.item?.artists ||
+                data?.album?.artist ||
+                data?.album?.artists ||
+                data?.item?.album?.artists,
+            );
+            const album = readName(
+              data?.albumName ||
+                data?.albumTitle ||
+                data?.album?.name ||
+                data?.album ||
+                data?.item?.album?.name,
+            );
+            const readTime = (value) => {
+              if (!value) return null;
+              if (typeof value === 'number') return new Date(value < 1e12 ? value * 1000 : value);
+              const parsed = new Date(value);
+              return Number.isNaN(parsed.getTime()) ? null : parsed;
+            };
+            const playedAt = readTime(
+              data?.playedAt ||
+                data?.played_at ||
+                data?.lastPlayedAt ||
+                data?.last_played_at ||
+                data?.timestamp ||
+                data?.item?.played_at,
+            );
+            const relativePlayed = (() => {
+              if (data?.isPlaying || data?.is_playing || data?.currentlyPlaying) return 'Now playing';
+              if (!playedAt) return '';
+              const minutes = Math.max(0, Math.round((Date.now() - playedAt.getTime()) / 60000));
+              if (minutes < 1) return 'Just listened';
+              if (minutes < 60) return `${minutes} min ago`;
+              const hours = Math.round(minutes / 60);
+              if (hours < 24) return `${hours} hr ago`;
+              const days = Math.round(hours / 24);
+              return `${days} day${days === 1 ? '' : 's'} ago`;
+            })();
+
+            if (image) {
+              musicCover.src = image;
+              musicCover.alt = title;
+              if (musicTitle) musicTitle.textContent = title;
+              if (musicArtist && artist) musicArtist.textContent = artist;
+              if (musicAlbum && album) musicAlbum.textContent = album;
+              if (musicPlayed && relativePlayed) {
+                musicPlayed.textContent = relativePlayed;
+                musicPlayed.hidden = false;
+              }
+              musicLink.setAttribute(
+                'aria-label',
+                ['Open on Spotify', title, artist, album, relativePlayed].filter(Boolean).join(' — '),
+              );
+              musicLink.classList.add('is-art-loaded');
+            }
+          } catch (_) {
+            musicLoaded = false;
+          }
+        };
+
         menuToggle?.addEventListener('click', () => {
           if (!menu || typeof menu.showModal !== 'function') return;
           menu.showModal();
           menu.focus({ preventScroll: true });
           menuToggle.setAttribute('aria-expanded', 'true');
           document.body.classList.add('menu-open');
+          updateMusicArtwork();
         });
 
         menuClose?.addEventListener('click', closeMenu);
@@ -556,6 +673,8 @@ const logoDotLitByIndex = new Map(
         menu?.querySelectorAll('a').forEach((link) => {
           link.addEventListener('click', closeMenu);
         });
+        musicLink?.addEventListener('mouseenter', updateMusicArtwork);
+        musicLink?.addEventListener('focus', updateMusicArtwork);
         menu?.addEventListener('close', () => {
           setOtherMenuOpen(false);
           menuToggle?.setAttribute('aria-expanded', 'false');

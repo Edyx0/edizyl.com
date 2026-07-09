@@ -137,52 +137,9 @@ import Layout from '../layouts/Layout.astro';
       wasContentActive = isContentActive;
       body.classList.toggle('home-content-active', isContentActive);
       body.classList.toggle('home-content-color', progress > 0.1);
-      body.classList.toggle('home-content-exit', progress > 0.8);
     };
 
     const openingStage = opening?.querySelector<HTMLElement>('.opening-stage');
-    const openingShots = Array.from(
-      opening?.querySelectorAll<HTMLElement>('.opening-shot') ?? [],
-    );
-    let flowRateFrame = 0;
-
-    const getFlowAnimations = () =>
-      openingShots
-        .flatMap((shot) => shot.getAnimations())
-        .filter(
-          (animation) =>
-            animation instanceof CSSAnimation && animation.animationName === 'opening-photo-flow',
-        );
-
-    const easeFlowRate = (targetRate: number, duration: number) => {
-      cancelAnimationFrame(flowRateFrame);
-      const animations = getFlowAnimations();
-      if (!animations.length) return;
-      const initialRates = animations.map((animation) => animation.playbackRate);
-      const startedAt = performance.now();
-
-      const updateRate = (now: number) => {
-        const progress = Math.min((now - startedAt) / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        animations.forEach((animation, index) => {
-          animation.updatePlaybackRate(
-            initialRates[index] + (targetRate - initialRates[index]) * eased,
-          );
-        });
-        if (progress < 1) flowRateFrame = requestAnimationFrame(updateRate);
-      };
-
-      flowRateFrame = requestAnimationFrame(updateRate);
-    };
-
-    openingShots.forEach((shot) => {
-      shot.addEventListener('pointerenter', () => easeFlowRate(0.22, 420));
-      shot.addEventListener('pointerleave', () => {
-        requestAnimationFrame(() => {
-          if (!openingShots.some((item) => item.matches(':hover'))) easeFlowRate(1, 700);
-        });
-      });
-    });
     const splashPalettes = [
       { name: 'rose', bg: '#f9f7f7', ink: '#e676b6' },
       { name: 'red', bg: '#f7f7f7', ink: '#e63e3e' },
