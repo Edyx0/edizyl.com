@@ -70,10 +70,9 @@ export const apps: AppData[] = [
       'Offline 2026 word game for groups',
     ],
     stats: [
-      { label: 'App Store rank', value: '#18 TR Card Games' },
-      { label: 'Version', value: '1.8.2' },
+      { label: 'App Store rank - All time high', value: '#8 TR Card Games' },
       { label: 'Rating', value: '4.5 ★ (36)' },
-      { label: 'Updated', value: 'Jul 2, 2026' },
+      { label: 'Released', value: 'Jan 25, 2026' },
     ],
     screenshots: [
       '/screenshots/tabu-ekstra/1.jpg',

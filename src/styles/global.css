@@ -313,6 +313,7 @@ header.site nav .num {
 
 @media (max-width: 640px) {
   .logo-name { display: none; }
+  header.site > div { padding-right: 0; }
   header.site nav { gap: 0.85rem; }
   header.site nav .num { display: none; }
 }
@@ -1422,7 +1423,8 @@ footer {
   left: 0;
   margin: 0;
   aspect-ratio: var(--shot-ratio);
-  overflow: visible;
+  overflow: hidden;
+  contain: paint;
   background: transparent;
   opacity: 0;
   transform: translate3d(-32vw, 0, 0) scale(0.94);
@@ -1436,6 +1438,10 @@ footer {
   inset: 0;
   display: block;
   overflow: hidden;
+  overflow: clip;
+  contain: paint;
+  isolation: isolate;
+  clip-path: inset(0);
   background: transparent;
   opacity: 0;
   transition:
@@ -1447,7 +1453,6 @@ footer {
 
 .home.landing-masked-frames .opening-shot__surface {
   overflow: hidden;
-  contain: paint;
   -webkit-mask-image: var(--shot-mask);
   mask-image: var(--shot-mask);
   -webkit-mask-position: center;
@@ -1473,7 +1478,7 @@ footer {
   display: block;
   object-fit: contain;
   opacity: 0;
-  transform: scale(1.035);
+  transform: scale(0.965);
   transition:
     opacity 500ms var(--ease),
     transform 700ms cubic-bezier(0.19, 1, 0.22, 1);
@@ -1481,10 +1486,10 @@ footer {
 }
 
 .opening-shot:hover img {
-  transform: scale(1.055);
+  transform: scale(1);
   transition:
     opacity 500ms var(--ease),
-    transform 850ms cubic-bezier(0.7, 0, 0.84, 0);
+    transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .opening-shot--top-1 {
@@ -1603,11 +1608,11 @@ footer {
 
 .opening-stage[data-phase="3"] .opening-shot img {
   opacity: 1;
-  transform: scale(1.001);
+  transform: scale(0.965);
 }
 
 .opening-stage[data-phase="3"] .opening-shot:hover img {
-  transform: scale(1.055);
+  transform: scale(1);
 }
 
 .home.home-content-active .opening-stage[data-phase="3"] .opening-shot {
@@ -1764,7 +1769,7 @@ footer {
     justify-content: center;
     font-size: clamp(7.2rem, 43vw, 12rem);
     line-height: 0.72;
-    transform: scale(0.46);
+    transform: scale(0.368);
   }
 
   .opening-wordmark span:last-child {
@@ -1773,12 +1778,12 @@ footer {
   }
 
   .opening-stage[data-phase="1"] .opening-wordmark {
-    transform: scale(0.8);
+    transform: scale(0.64);
   }
 
   .opening-stage[data-phase="2"] .opening-wordmark,
   .opening-stage[data-phase="3"] .opening-wordmark {
-    transform: scale(0.8);
+    transform: scale(0.64);
   }
 
   .opening-shot--top-1,
@@ -3312,7 +3317,7 @@ header.site nav a:focus-visible .dot-word--sampled .dot-word__dot,
 .studio-profile {
   min-height: 110svh;
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.65fr);
+  grid-template-columns: minmax(0, 1.15fr) minmax(22rem, 0.85fr);
   grid-template-rows: auto 1fr;
   gap: clamp(2rem, 6vw, 7rem);
   padding: clamp(5.5rem, 10vw, 9rem) clamp(1rem, 3vw, 2.5rem) clamp(2rem, 4vw, 4rem);
@@ -3351,29 +3356,41 @@ header.site nav a:focus-visible .dot-word--sampled .dot-word__dot,
   grid-row: 1 / span 2;
   align-self: end;
   margin: 0;
+  display: grid;
+  gap: 4.5rem;
+  align-content: end;
 }
 
 .studio-profile__facts div {
-  padding: 1rem 0;
-  border-top: 1px solid currentColor;
+  max-width: 29rem;
+  padding: 0;
 }
 
 .studio-profile__facts div:last-child {
-  border-bottom: 1px solid currentColor;
+  margin-left: clamp(1rem, 3.5vw, 3.5rem);
 }
 
 .studio-profile__facts dt {
-  margin-bottom: 0.35rem;
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  font-weight: 700;
+  margin-bottom: 0.55rem;
+  font-family: var(--body);
+  font-size: 1.05rem;
+  font-weight: 850;
+  line-height: 1.1;
   text-transform: uppercase;
 }
 
 .studio-profile__facts dd {
   margin: 0;
-  font-size: clamp(1rem, 1.5vw, 1.25rem);
-  font-weight: 700;
+  font-family: 'Anton', 'Arial Narrow', Impact, sans-serif;
+  font-size: 4rem;
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.studio-profile__facts dd span {
+  display: block;
 }
 
 .contact-stage {
@@ -3547,6 +3564,21 @@ header.site nav a:focus-visible .dot-word--sampled .dot-word__dot,
   .studio-profile__facts {
     grid-column: 1;
     grid-row: auto;
+    gap: 2.75rem;
+  }
+
+  .studio-profile__facts div:first-child,
+  .studio-profile__facts div:last-child {
+    max-width: 22rem;
+  }
+
+  .studio-profile__facts div:last-child {
+    margin-left: 0;
+  }
+
+  .studio-profile__facts dd {
+    font-size: 2.45rem;
+    line-height: 1.08;
   }
 
   .contact-stage h2 {
@@ -3810,7 +3842,7 @@ header.site nav a:focus-visible .dot-word--sampled .dot-word__dot,
     color: #8f97e8;
   }
 
-  .site-menu__music:hover {
+  .site-menu__music.is-disc-active {
     color: #8f97e8;
   }
 }
@@ -3827,16 +3859,6 @@ body.menu-open {
   to {
     opacity: 1;
     clip-path: inset(0);
-  }
-}
-
-@keyframes music-disc-spin {
-  from {
-    transform: translate3d(0, 0, 0) rotate(0turn);
-  }
-
-  to {
-    transform: translate3d(0, 0, 0) rotate(1turn);
   }
 }
 
@@ -3891,7 +3913,8 @@ body.menu-open {
   }
 
   .site-menu__music-disc,
-  .site-menu__music:is(:hover, :focus-visible) .site-menu__music-disc,
+  .site-menu__music.is-disc-active .site-menu__music-disc,
+  .site-menu__music:focus-visible .site-menu__music-disc,
   .site-menu__music-status {
     animation: none;
     transition: none;
@@ -3975,8 +3998,16 @@ html.opening-locked,
 }
 
 @media (max-width: 767px) {
+  .home header.site > div {
+    padding-top: 0;
+    padding-right: 0;
+  }
+
   .home header.site .menu-toggle {
-    align-items: flex-start;
+    position: fixed;
+    top: 0;
+    right: 0;
+    align-items: flex-end;
     writing-mode: vertical-lr;
   }
 }
@@ -4003,12 +4034,12 @@ html.opening-locked,
 }
 
 .studio-profile__facts dt {
-  color: #3a342c;
+  color: var(--opening-accent, #8f97e8);
 }
 
 .home.home-content-color .studio-profile__statement,
 .home.home-content-color .studio-profile__facts dt {
-  color: var(--opening-content-ink, #f9f7f7);
+  color: var(--opening-accent, #8f97e8);
 }
 
 .contact-stage {
@@ -4312,11 +4343,6 @@ body.app-detail-page .menu-toggle {
   justify-content: space-between;
   gap: 2rem;
   padding: 0 clamp(1rem, 2.5vw, 2.5rem);
-}
-
-.app-gallery__header p {
-  margin: 0 0 0.65rem;
-  font-weight: 800;
 }
 
 .app-gallery h2 {
@@ -4847,6 +4873,16 @@ html[data-opening-theme] body.app-detail-page .meta-grid {
   user-select: none;
 }
 
+.app-gallery .shots-scroll[data-gallery-overflow="false"] {
+  overflow-x: hidden;
+  cursor: default;
+  scroll-snap-type: none;
+}
+
+.app-gallery .shots-scroll[data-gallery-overflow="false"].is-dragging {
+  cursor: default;
+}
+
 .app-gallery .shots-scroll img,
 .app-gallery .shot-video {
   width: clamp(15.5rem, 20vw, 20rem);
@@ -5009,8 +5045,8 @@ html[data-opening-theme] body.app-detail-page .meta-grid {
   overflow: hidden;
   pointer-events: none;
   backface-visibility: hidden;
-  transform: translate3d(0, 0, 0) rotate(0turn);
-  transition: opacity 140ms ease;
+  transform: translate3d(0, 0, 0) rotate(var(--music-disc-rotation, 0deg));
+  transition: opacity 320ms cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
 
@@ -5144,26 +5180,20 @@ html[data-opening-theme] body.app-detail-page .meta-grid {
 }
 
 @media (hover: hover) {
-  .site-menu__music.is-art-loaded:hover,
+  .site-menu__music.is-art-loaded.is-disc-active,
   .site-menu__music.is-art-loaded:focus-visible {
     background-color: transparent;
     color: var(--opening-accent, #f1b5c2);
     transition: background-color 0s linear 260ms, color 180ms ease;
   }
 
-  .site-menu__music.is-art-loaded:hover .site-menu__music-record,
+  .site-menu__music.is-art-loaded.is-disc-active .site-menu__music-record,
   .site-menu__music.is-art-loaded:focus-visible .site-menu__music-record {
     opacity: 1;
-    animation: music-disc-spin 7s linear infinite;
-    transition: opacity 220ms ease 180ms;
+    transition: opacity 260ms cubic-bezier(0.16, 1, 0.3, 1) 120ms;
   }
 
-  .site-menu__music.is-art-loaded:hover .site-menu__music-disc,
-  .site-menu__music.is-art-loaded:focus-visible .site-menu__music-disc {
-    animation: none;
-  }
-
-  .site-menu__music.is-art-loaded:hover .site-menu__music-label,
+  .site-menu__music.is-art-loaded.is-disc-active .site-menu__music-label,
   .site-menu__music.is-art-loaded:focus-visible .site-menu__music-label {
     opacity: 0;
     transform: rotate(330deg) scale(0.76);
@@ -5172,7 +5202,7 @@ html[data-opening-theme] body.app-detail-page .meta-grid {
       transform 440ms cubic-bezier(0.19, 1, 0.22, 1);
   }
 
-  .site-menu__music.is-art-loaded:hover .site-menu__music-meta,
+  .site-menu__music.is-art-loaded.is-disc-active .site-menu__music-meta,
   .site-menu__music.is-art-loaded:focus-visible .site-menu__music-meta {
     opacity: 1;
     transform: translate3d(0, -50%, 0);
@@ -5197,16 +5227,17 @@ html[data-opening-theme] body.app-detail-page .meta-grid {
 
   .site-menu__group--apps {
     align-self: stretch;
+    text-align: right;
   }
 
   .site-menu__group--apps a {
     width: 100%;
+    justify-content: flex-end;
     font-size: clamp(3.5rem, 16vw, 5.5rem);
   }
 
-  .site-menu__group--apps a:nth-of-type(even) {
+  .site-menu__group--apps p {
     justify-content: flex-end;
-    text-align: right;
   }
 
   .site-menu__music {
@@ -5228,7 +5259,7 @@ html[data-opening-theme] body.app-detail-page .meta-grid {
     transform: translate3d(-0.45rem, -50%, 0);
   }
 
-  .site-menu__music.is-art-loaded:hover .site-menu__music-meta,
+  .site-menu__music.is-art-loaded.is-disc-active .site-menu__music-meta,
   .site-menu__music.is-art-loaded:focus-visible .site-menu__music-meta {
     transform: translate3d(0, -50%, 0);
   }
@@ -5606,13 +5637,8 @@ body.legal header.site .logo {
   padding-inline: clamp(1rem, 4vw, 4rem);
 }
 
-.app-detail-page .app-gallery__header p,
 .app-detail-page .app-gallery__motion {
   font-weight: 850;
-}
-
-.app-detail-page .app-gallery__header p {
-  color: color-mix(in srgb, #191817 72%, transparent);
 }
 
 .app-detail-page .app-gallery h2 {
@@ -5764,5 +5790,954 @@ body.legal header.site .logo {
   .app-detail-page .stat-pills,
   .app-detail-page .meta-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Tabum Ekstra — Figma page implementation */
+.app-detail-shell[data-app="tabu-ekstra"] {
+  --tabu-purple: #9f54dc;
+  --tabu-purple-deep: #8f3ed0;
+  --tabu-ink: #0e0c0a;
+  --tabu-shell: #392e2b;
+  color: #fff;
+  background: #fff;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .app-detail__back,
+body.app-detail-page:has(.app-detail-shell[data-app="tabu-ekstra"]) header.site {
+  color: #fff !important;
+  mix-blend-mode: normal;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .app-hero {
+  position: relative;
+  isolation: isolate;
+  min-height: clamp(32rem, 34vw, 40.75rem);
+  padding: clamp(5.5rem, 6.25vw, 7.5rem) clamp(1.25rem, 3.333vw, 4rem) clamp(2.5rem, 2.7vw, 3.25rem);
+  overflow: hidden;
+  color: #fff;
+  background: var(--tabu-purple);
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .app-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  display: block;
+  background: url("/tabu-ekstra/tabubg.jpg") center / cover;
+  opacity: 1;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .app-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  display: block;
+  background:
+    linear-gradient(180deg, rgba(14, 12, 10, 0.05), rgba(14, 12, 10, 0)),
+    linear-gradient(90deg, rgba(14, 12, 10, 0.08), rgba(14, 12, 10, 0) 34%, rgba(14, 12, 10, 0.1));
+  pointer-events: none;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .app-hero-content {
+  width: min(100%, 920px);
+  height: clamp(18rem, 19.47vw, 23.36rem);
+  grid-template-columns: clamp(5rem, 6vw, 7.2rem) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1.4rem, 2vw, 2.4rem);
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .app-hero-icon {
+  width: clamp(5rem, 6vw, 7.2rem);
+  height: clamp(5rem, 6vw, 7.2rem);
+  border-radius: clamp(18px, 1.25vw, 24px);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .app-hero-text h1 {
+  max-width: none;
+  color: #fff;
+  font-size: 6rem;
+  line-height: 0.88;
+  letter-spacing: 0;
+  transform: scaleX(0.78) !important;
+  transform-origin: left top;
+  white-space: nowrap;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .app-hero-text {
+  align-self: start;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .app-hero-text .hero-tagline {
+  width: min(36rem, 100%);
+  max-width: none;
+  margin: clamp(1.15rem, 1.9vw, 2.25rem) 0 0;
+  color: #fff;
+  font-family: var(--body);
+  font-size: clamp(1rem, 1.125vw, 1.35rem);
+  font-weight: 750;
+  line-height: 1.25;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .stat-pills {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(9rem, 28rem));
+  justify-content: space-between;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  margin-top: clamp(2rem, 2vw, 2.4rem);
+  border: 0;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .stat-pill {
+  padding: clamp(0.55rem, 0.625vw, 0.75rem) 1rem 0 0;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .stat-pill::before {
+  content: none;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .stat-label {
+  color: #fff;
+  font-size: clamp(0.64rem, 0.617vw, 0.74rem);
+  font-weight: 800;
+  line-height: 1.55;
+  opacity: 0.72;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .stat-value {
+  color: #fff;
+  font-family: var(--display);
+  font-size: clamp(1.05rem, 1.125vw, 1.35rem);
+  font-weight: 850;
+  line-height: 1.55;
+  letter-spacing: 0;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .app-gallery {
+  min-height: clamp(42rem, 47vw, 56.4rem);
+  padding: clamp(4rem, 4.167vw, 5rem) 0 clamp(3.5rem, 5vw, 6rem);
+  color: var(--tabu-ink);
+  background: #fff;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .app-gallery__header {
+  padding-inline: clamp(1.25rem, 3.333vw, 4rem);
+  align-items: flex-end;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .app-gallery h2 {
+  color: var(--tabu-purple-deep);
+  font-size: clamp(4rem, 4.667vw, 5.6rem);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .app-gallery__motion {
+  gap: clamp(1rem, 1.25vw, 1.5rem);
+  padding-top: 0.9rem;
+  padding-inline: clamp(1.25rem, 3.333vw, 4rem);
+  color: #000;
+  font-size: clamp(0.7rem, 0.65vw, 0.78rem);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .app-gallery__progress {
+  width: clamp(11rem, 18.333vw, 22rem);
+  height: 3px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .app-gallery__progress > span {
+  background: var(--tabu-purple-deep);
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .app-gallery .shots-scroll {
+  gap: clamp(1rem, 1.25vw, 1.5rem);
+  padding: clamp(2rem, 2vw, 2.4rem) clamp(1.25rem, 3.333vw, 4rem) 0;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .app-gallery .shots-scroll img {
+  width: clamp(13.5rem, 14.167vw, 17rem);
+  aspect-ratio: 600 / 1298;
+  background: var(--tabu-shell);
+  outline: 0;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .tabu-spread {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: clamp(1rem, 3vw, 3rem);
+  min-height: auto;
+  padding: clamp(4rem, 7vw, 6.5rem) clamp(1.25rem, 4vw, 4rem);
+  color: #fff;
+  background: #000;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .tabu-spread h2 {
+  grid-column: 1 / -1;
+  margin: 0 0 clamp(1.5rem, 4vw, 4rem);
+  color: #fff;
+  font-family: 'Anton', 'Arial Narrow', Impact, sans-serif;
+  font-size: clamp(3.25rem, 7vw, 7rem);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .tabu-spread__image {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  overflow: visible;
+  background: transparent;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .tabu-spread__image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .tabu-top {
+  position: relative;
+  isolation: isolate;
+  min-height: clamp(20rem, 38vw, 34rem);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  padding: clamp(5.25rem, 7vw, 6.5rem) clamp(1.25rem, 4vw, 4rem) clamp(2rem, 4vw, 4rem);
+  color: #fff;
+  background: var(--tabu-ink);
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .tabu-top::before,
+.app-detail-shell[data-app="tabu-ekstra"] .tabu-top::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .tabu-top::before {
+  background: url("/tabu-ekstra/tabubg.jpg") center / cover;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .tabu-top::after {
+  z-index: -1;
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .tabu-top__inner {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: clamp(1rem, 2.8vw, 3rem);
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .app-top__store-stack {
+  display: grid;
+  justify-items: center;
+  gap: clamp(0.55rem, 0.9vw, 0.9rem);
+  margin-bottom: clamp(0.35rem, 1.1vw, 1.4rem);
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .tabu-top h2 {
+  margin: 0;
+  max-width: 100%;
+  color: #fff;
+  font-family: 'Anton', 'Arial Narrow', Impact, sans-serif;
+  font-size: clamp(5rem, calc(10vw - 0.5rem), 12rem);
+  font-weight: 400;
+  line-height: 0.84;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .tabu-top__logo {
+  width: clamp(5.2rem, 9vw, 9.5rem);
+  height: clamp(5.2rem, 9vw, 9.5rem);
+  border-radius: clamp(18px, 1.25vw, 24px);
+  object-fit: cover;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .tabu-final__link {
+  width: max-content;
+  min-height: 2.45rem;
+  display: inline-flex;
+  align-items: center;
+  justify-self: center;
+  padding-inline: 0.85rem;
+  color: var(--tabu-ink);
+  background: #fff;
+  border-radius: 999px;
+  background-image: none;
+  font-size: clamp(0.82rem, 0.82vw, 0.95rem);
+  font-weight: 900;
+}
+
+.app-detail-shell[data-app="imposter"] {
+  --opening-content: #17100d;
+  --opening-content-ink: #fff4df;
+  --opening-accent: #f2b45e;
+  --opening-accent-ink: #16100c;
+  --opening-soft: #fff7e8;
+  --brand-hot: #f03f2f;
+  --brand-cool: #35d2be;
+  color: var(--opening-content-ink);
+  background: var(--opening-content);
+}
+
+.app-detail-shell[data-app="holy-shift"] {
+  --opening-content: #05040b;
+  --opening-content-ink: #fff4fb;
+  --opening-accent: #ff19b8;
+  --opening-accent-ink: #09030b;
+  --opening-soft: #e9fff9;
+  --brand-hot: #ff19b8;
+  --brand-cool: #00f0ff;
+  color: var(--opening-content-ink);
+  background: var(--opening-content);
+}
+
+.app-detail-shell[data-app="imposter"] .app-detail__back,
+.app-detail-shell[data-app="holy-shift"] .app-detail__back,
+body.app-detail-page:has(.app-detail-shell[data-app="imposter"]) header.site,
+body.app-detail-page:has(.app-detail-shell[data-app="holy-shift"]) header.site {
+  color: var(--opening-content-ink) !important;
+  mix-blend-mode: normal;
+}
+
+.app-detail-shell[data-app="imposter"] .app-top,
+.app-detail-shell[data-app="holy-shift"] .app-top {
+  position: relative;
+  isolation: isolate;
+  min-height: clamp(32rem, 48vw, 42rem);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  padding: clamp(5.25rem, 7vw, 6.5rem) clamp(1.25rem, 4vw, 4rem) clamp(2rem, 4vw, 4rem);
+  color: var(--opening-content-ink);
+  background:
+    radial-gradient(circle at 78% 30%, color-mix(in srgb, var(--brand-hot) 34%, transparent), transparent 32rem),
+    linear-gradient(135deg, var(--opening-content), color-mix(in srgb, var(--opening-content) 78%, var(--brand-hot)));
+}
+
+.app-detail-shell[data-app="imposter"] .app-top {
+  background:
+    radial-gradient(circle at 80% 34%, rgba(242, 180, 94, 0.34), transparent 29rem),
+    radial-gradient(circle at 14% 82%, rgba(53, 210, 190, 0.18), transparent 20rem),
+    linear-gradient(135deg, #17100d, #32140f 62%, #120d0b);
+}
+
+.app-detail-shell[data-app="imposter"] .tabu-top__inner {
+  gap: clamp(0.85rem, 1.8vw, 2.25rem);
+}
+
+.app-detail-shell[data-app="holy-shift"] .app-top {
+  background:
+    radial-gradient(circle at 78% 22%, rgba(0, 240, 255, 0.26), transparent 26rem),
+    radial-gradient(circle at 22% 88%, rgba(255, 25, 184, 0.3), transparent 24rem),
+    linear-gradient(135deg, #05040b, #170025 56%, #030208);
+}
+
+.app-detail-shell[data-app="imposter"] .app-top::after,
+.app-detail-shell[data-app="holy-shift"] .app-top::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.02) 58%, rgba(0, 0, 0, 0.26)),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.42));
+}
+
+.app-detail-shell[data-app="holy-shift"] .app-top::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.055) 0 1px, transparent 1px 7.5rem),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.045) 0 1px, transparent 1px 5.5rem);
+  mask-image: linear-gradient(90deg, transparent, #000 25%, #000 84%, transparent);
+}
+
+.app-detail-shell[data-app="imposter"] .app-top__art,
+.app-detail-shell[data-app="holy-shift"] .app-top__art {
+  position: absolute;
+  right: clamp(-7rem, -4vw, -2rem);
+  bottom: clamp(-5rem, -4vw, -1rem);
+  z-index: -1;
+  width: min(58vw, 42rem);
+  height: auto;
+  max-height: 98%;
+  object-fit: contain;
+  object-position: right bottom;
+  pointer-events: none;
+  filter: drop-shadow(0 28px 42px rgba(0, 0, 0, 0.34));
+}
+
+.app-detail-shell[data-app="holy-shift"] .app-top__art {
+  right: clamp(6rem, 15vw, 18rem);
+  bottom: -11%;
+  width: min(30vw, 24rem);
+  max-height: 112%;
+}
+
+.app-detail-shell[data-app="holy-shift"] .app-top__art--alt {
+  right: clamp(-4rem, 2vw, 2rem);
+  bottom: -9%;
+}
+
+.app-detail-shell[data-app="imposter"] .tabu-top__inner,
+.app-detail-shell[data-app="holy-shift"] .tabu-top__inner {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 1120px);
+  display: grid;
+  grid-template-columns: minmax(0, max-content) auto;
+  align-items: end;
+  gap: clamp(1rem, 2.8vw, 3rem);
+}
+
+.app-detail-shell[data-app="imposter"] .app-top__store-stack,
+.app-detail-shell[data-app="holy-shift"] .app-top__store-stack {
+  display: grid;
+  justify-items: center;
+  gap: clamp(0.55rem, 0.9vw, 0.9rem);
+  margin-bottom: clamp(0.35rem, 1.1vw, 1.4rem);
+}
+
+.app-detail-shell[data-app="imposter"] .app-top__store-stack,
+.app-detail-shell[data-app="holy-shift"] .app-top__store-stack {
+  width: max-content;
+  justify-self: start;
+  margin-bottom: 0;
+}
+
+.app-detail-shell[data-app="imposter"] .app-top__store-stack {
+  transform: translateY(clamp(1.75rem, 2.7vw, 2.5rem));
+}
+
+.app-detail-shell[data-app="holy-shift"] .app-top__store-stack {
+  --holy-wordmark-half-height: clamp(5.56rem, 9.43vw, 10.64rem);
+  --holy-logo-half-size: clamp(2.6rem, 4.5vw, 4.75rem);
+  --holy-store-tail: calc(2.45rem + clamp(0.55rem, 0.9vw, 0.9rem));
+  transform: translateY(calc(var(--holy-store-tail) + var(--holy-logo-half-size) - var(--holy-wordmark-half-height)));
+}
+
+.app-detail-shell[data-app="imposter"] .tabu-top h2,
+.app-detail-shell[data-app="holy-shift"] .tabu-top h2 {
+  max-width: 8ch;
+  margin: 0;
+  color: var(--opening-content-ink);
+  font-family: 'Anton', 'Arial Narrow', Impact, sans-serif;
+  font-size: clamp(5.6rem, 13vw, 13.5rem);
+  font-weight: 400;
+  line-height: 0.84;
+  letter-spacing: 0;
+}
+
+.app-detail-shell[data-app="holy-shift"] .tabu-top h2 {
+  max-width: 7.5ch;
+  color: #fff4fb;
+  text-shadow:
+    0 0 18px rgba(255, 25, 184, 0.46),
+    0 0 42px rgba(0, 240, 255, 0.28);
+}
+
+.app-detail-shell[data-app="holy-shift"] .app-top__wordmark-wrap {
+  align-self: end;
+  width: clamp(23rem, 39vw, 44rem);
+  max-width: 100%;
+}
+
+.app-detail-shell[data-app="holy-shift"] .app-top__wordmark {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 18px rgba(255, 25, 184, 0.46))
+    drop-shadow(0 0 36px rgba(0, 240, 255, 0.18));
+}
+
+.app-detail-shell[data-app="imposter"] .tabu-top__logo,
+.app-detail-shell[data-app="holy-shift"] .tabu-top__logo {
+  width: clamp(5.2rem, 9vw, 9.5rem);
+  height: clamp(5.2rem, 9vw, 9.5rem);
+  border-radius: clamp(18px, 1.25vw, 24px);
+  object-fit: cover;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.28);
+}
+
+.app-detail-shell[data-app="imposter"] .tabu-final__link,
+.app-detail-shell[data-app="holy-shift"] .tabu-final__link {
+  width: max-content;
+  min-height: 2.45rem;
+  display: inline-flex;
+  align-items: center;
+  justify-self: center;
+  padding-inline: 0.85rem;
+  color: var(--opening-accent-ink);
+  background: var(--opening-accent);
+  border-radius: 999px;
+  background-image: none;
+  font-size: clamp(0.82rem, 0.82vw, 0.95rem);
+  font-weight: 900;
+}
+
+.app-detail-shell[data-app="holy-shift"] .tabu-final__link {
+  color: #05040b;
+  background: var(--brand-cool);
+  box-shadow: 0 0 28px rgba(0, 240, 255, 0.32);
+}
+
+.app-detail-shell[data-app="imposter"] .app-gallery {
+  color: #17100d;
+  background: #fff7e8;
+}
+
+.app-detail-shell[data-app="imposter"] .app-gallery h2 {
+  color: #d7382b;
+}
+
+.app-detail-shell[data-app="imposter"] .app-gallery__motion {
+  display: none;
+}
+
+.app-detail-shell[data-app="holy-shift"] .app-gallery {
+  color: #fff4fb;
+  background:
+    radial-gradient(circle at 75% 0%, rgba(0, 240, 255, 0.2), transparent 24rem),
+    linear-gradient(180deg, #05040b, #0c0714);
+}
+
+.app-detail-shell[data-app="holy-shift"] .app-gallery h2 {
+  color: var(--brand-hot);
+  text-shadow: 0 0 24px rgba(255, 25, 184, 0.34);
+}
+
+.app-detail-shell[data-app="holy-shift"] .app-gallery__motion {
+  display: none;
+}
+
+.app-detail-shell[data-app="holy-shift"] .app-gallery__progress {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.app-detail-shell[data-app="holy-shift"] .app-gallery__progress > span {
+  background: var(--brand-cool);
+}
+
+.app-detail-shell[data-app="imposter"] .app-gallery .shots-scroll img,
+.app-detail-shell[data-app="holy-shift"] .app-gallery .shots-scroll img,
+.app-detail-shell[data-app="holy-shift"] .app-gallery .shot-video {
+  background: var(--opening-content);
+  outline: 0;
+}
+
+.app-detail-shell[data-app="imposter"] .app-showcase,
+.app-detail-shell[data-app="holy-shift"] .app-showcase {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(19rem, 1.2fr);
+  align-items: end;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  min-height: auto;
+  padding: clamp(4rem, 7vw, 6.5rem) clamp(1.25rem, 4vw, 4rem);
+  color: var(--opening-content-ink);
+  background: var(--opening-content);
+}
+
+.app-detail-shell[data-app="imposter"] .app-showcase {
+  background:
+    radial-gradient(circle at 92% 18%, rgba(53, 210, 190, 0.14), transparent 22rem),
+    linear-gradient(135deg, #17100d, #27140f);
+}
+
+.app-detail-shell[data-app="holy-shift"] .app-showcase {
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 25, 184, 0.24), transparent 21rem),
+    radial-gradient(circle at 92% 82%, rgba(0, 240, 255, 0.18), transparent 22rem),
+    #05040b;
+}
+
+.app-detail-shell[data-app="imposter"] .app-showcase h2,
+.app-detail-shell[data-app="holy-shift"] .app-showcase h2 {
+  grid-column: 1 / 2;
+  margin: 0;
+  color: var(--opening-accent);
+  font-family: 'Anton', 'Arial Narrow', Impact, sans-serif;
+  font-size: clamp(3.4rem, 7vw, 7.5rem);
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.app-detail-shell[data-app="holy-shift"] .app-showcase h2 {
+  color: var(--brand-cool);
+}
+
+.app-showcase__intro {
+  grid-column: 2 / 3;
+  max-width: 48rem;
+  margin: 0;
+  font-size: clamp(1.05rem, 1.55vw, 1.35rem);
+  font-weight: 720;
+  line-height: 1.35;
+  text-wrap: pretty;
+}
+
+.app-showcase__cards {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: clamp(1.5rem, 3vw, 2.75rem);
+  background: color-mix(in srgb, currentColor 32%, transparent);
+}
+
+.app-detail-shell[data-app="holy-shift"] .app-showcase__cards {
+  background: transparent;
+}
+
+.app-showcase__card {
+  min-height: 12rem;
+  padding: clamp(1.1rem, 2.4vw, 2rem);
+  background: color-mix(in srgb, var(--opening-content) 86%, #ffffff);
+}
+
+.app-detail-shell[data-app="holy-shift"] .app-showcase__card {
+  background: transparent;
+}
+
+.app-showcase__card h3 {
+  margin: 0 0 0.85rem;
+  color: var(--opening-accent);
+  font-family: var(--body);
+  font-size: clamp(1.2rem, 1.7vw, 1.65rem);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.app-detail-shell[data-app="holy-shift"] .app-showcase__card h3 {
+  color: var(--brand-hot);
+}
+
+.app-showcase__card p {
+  margin: 0;
+  color: inherit;
+  font-weight: 650;
+  line-height: 1.42;
+  opacity: 0.82;
+}
+
+@media (max-width: 900px) {
+  .app-detail-shell[data-app="tabu-ekstra"] .app-hero {
+    min-height: auto;
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .stat-pills {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .app-gallery .shots-scroll img {
+    width: clamp(13.5rem, 42vw, 17rem);
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .tabu-spread,
+  .app-detail-shell[data-app="tabu-ekstra"] .tabu-top__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .tabu-top__inner {
+    align-items: start;
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .tabu-top h2 {
+    font-size: clamp(4.4rem, 12vw, 6.5rem);
+    white-space: normal;
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .app-top__store-stack {
+    justify-self: start;
+  }
+
+  .app-detail-shell[data-app="imposter"] .tabu-top__inner,
+  .app-detail-shell[data-app="holy-shift"] .tabu-top__inner,
+  .app-detail-shell[data-app="imposter"] .app-showcase,
+  .app-detail-shell[data-app="holy-shift"] .app-showcase {
+    grid-template-columns: 1fr;
+  }
+
+  .app-detail-shell[data-app="imposter"] .tabu-top__inner,
+  .app-detail-shell[data-app="holy-shift"] .tabu-top__inner {
+    align-items: start;
+  }
+
+  .app-detail-shell[data-app="imposter"] .tabu-top h2,
+  .app-detail-shell[data-app="holy-shift"] .tabu-top h2 {
+    font-size: clamp(5rem, 17vw, 8rem);
+  }
+
+  .app-detail-shell[data-app="holy-shift"] .app-top__wordmark-wrap {
+    width: clamp(19rem, 58vw, 30rem);
+  }
+
+  .app-detail-shell[data-app="imposter"] .app-top__store-stack {
+    justify-self: start;
+    transform: none;
+  }
+
+  .app-detail-shell[data-app="holy-shift"] .app-top__store-stack {
+    --holy-wordmark-half-height: clamp(4.59rem, 14.02vw, 7.25rem);
+    justify-self: start;
+  }
+
+  .app-detail-shell[data-app="imposter"] .app-top__art {
+    right: -8rem;
+    width: min(82vw, 34rem);
+    opacity: 0.62;
+  }
+
+  .app-detail-shell[data-app="holy-shift"] .app-top__art {
+    right: 8rem;
+    width: min(34vw, 15rem);
+    opacity: 0.54;
+  }
+
+  .app-detail-shell[data-app="holy-shift"] .app-top__art--alt {
+    right: -1rem;
+  }
+
+  .app-showcase__intro {
+    grid-column: 1 / -1;
+  }
+
+  .app-showcase__cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .app-detail-shell[data-app="tabu-ekstra"] .app-hero {
+    padding-top: 5.25rem;
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .app-hero-content {
+    grid-template-columns: 4.8rem minmax(0, 1fr);
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .app-hero-icon {
+    width: 4.8rem;
+    height: 4.8rem;
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .app-hero-text h1 {
+    font-size: clamp(3.2rem, 14vw, 3.45rem);
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .stat-pills {
+    grid-template-columns: 1fr;
+    margin-top: 2rem;
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .app-gallery__header {
+    display: flex;
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .app-gallery h2 {
+    font-size: clamp(3.3rem, 16vw, 5rem);
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .tabu-top {
+    min-height: clamp(20rem, 78svw, 24rem);
+    align-items: flex-end;
+    padding: 5.5rem clamp(1rem, 5vw, 1.45rem) clamp(1.25rem, 4vw, 1.75rem);
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .tabu-top__inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: clamp(0.7rem, 3vw, 1rem);
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .tabu-top h2 {
+    font-size: clamp(3.25rem, 15vw, 4.45rem);
+    line-height: 0.86;
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .app-top__store-stack {
+    justify-self: end;
+    align-self: end;
+    gap: 0.45rem;
+    margin-bottom: 0.1rem;
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .tabu-top__logo {
+    width: clamp(4.4rem, 18vw, 5.8rem);
+    height: clamp(4.4rem, 18vw, 5.8rem);
+    border-radius: clamp(16px, 4vw, 20px);
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .tabu-final__link {
+    min-height: 2.25rem;
+    padding-inline: 0.75rem;
+    font-size: 0.86rem;
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .tabu-spread {
+    grid-template-columns: 1fr;
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .tabu-spread h2 {
+    font-size: clamp(3rem, 12vw, 4.25rem);
+  }
+
+  .app-detail-shell[data-app="imposter"] .app-top,
+  .app-detail-shell[data-app="holy-shift"] .app-top {
+    min-height: clamp(20rem, 82svw, 25rem);
+    align-items: flex-end;
+    padding: 5.5rem clamp(1rem, 5vw, 1.45rem) clamp(1.25rem, 4vw, 1.75rem);
+  }
+
+  .app-detail-shell[data-app="holy-shift"] .app-top {
+    min-height: clamp(21rem, 84svw, 25rem);
+  }
+
+  .app-detail-shell[data-app="imposter"] .tabu-top__inner,
+  .app-detail-shell[data-app="holy-shift"] .tabu-top__inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: clamp(0.7rem, 3vw, 1rem);
+  }
+
+  .app-detail-shell[data-app="imposter"] .tabu-top h2,
+  .app-detail-shell[data-app="holy-shift"] .tabu-top h2 {
+    font-size: clamp(3.45rem, 15.5vw, 4.9rem);
+    line-height: 0.86;
+  }
+
+  .app-detail-shell[data-app="holy-shift"] .app-top__wordmark-wrap {
+    width: min(100%, clamp(12.5rem, 57vw, 14.5rem));
+  }
+
+  .app-detail-shell[data-app="imposter"] .app-top__store-stack,
+  .app-detail-shell[data-app="holy-shift"] .app-top__store-stack {
+    justify-self: end;
+    align-self: end;
+    gap: 0.45rem;
+    margin-bottom: 0.1rem;
+  }
+
+  .app-detail-shell[data-app="imposter"] .tabu-top__logo,
+  .app-detail-shell[data-app="holy-shift"] .tabu-top__logo {
+    width: clamp(4.4rem, 18vw, 5.8rem);
+    height: clamp(4.4rem, 18vw, 5.8rem);
+    border-radius: clamp(16px, 4vw, 20px);
+  }
+
+  .app-detail-shell[data-app="holy-shift"] .app-top__store-stack {
+    --holy-wordmark-half-height: clamp(3.02rem, 13.78vw, 3.5rem);
+    --holy-logo-half-size: clamp(2.2rem, 9vw, 2.9rem);
+    --holy-store-tail: 2.7rem;
+  }
+
+  .app-detail-shell[data-app="imposter"] .tabu-final__link,
+  .app-detail-shell[data-app="holy-shift"] .tabu-final__link {
+    min-height: 2.25rem;
+    padding-inline: 0.75rem;
+    font-size: 0.86rem;
+  }
+
+  .app-detail-shell[data-app="imposter"] .app-top__art {
+    width: 26rem;
+    opacity: 0.42;
+  }
+
+  .app-detail-shell[data-app="holy-shift"] .app-top__art {
+    right: 7.5rem;
+    width: 9rem;
+    opacity: 0.42;
+  }
+
+  .app-detail-shell[data-app="holy-shift"] .app-top__art--alt {
+    right: -1.25rem;
+  }
+
+  .app-detail-shell[data-app="imposter"] .app-showcase h2,
+  .app-detail-shell[data-app="holy-shift"] .app-showcase h2 {
+    font-size: clamp(3rem, 12vw, 4.25rem);
+  }
+}
+
+/* Tabum Ekstra — refreshed seasonal section, original page retained */
+.app-detail-shell[data-app="tabu-ekstra"] .tabu-spread__header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: clamp(2rem, 6vw, 7rem);
+  margin-bottom: clamp(1.5rem, 4vw, 4rem);
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .tabu-spread .tabu-spread__header h2 {
+  max-width: 9ch;
+  margin: 0;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .tabu-spread__header p {
+  max-width: 34ch;
+  margin: 0 0 0.55rem;
+  color: rgba(255, 255, 255, 0.76);
+  font-family: var(--body);
+  font-size: clamp(1rem, 1.25vw, 1.3rem);
+  font-weight: 650;
+  line-height: 1.42;
+  text-wrap: pretty;
+}
+
+.app-detail-shell[data-app="tabu-ekstra"] .tabu-spread__image figcaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--body);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+@media (max-width: 620px) {
+  .app-detail-shell[data-app="tabu-ekstra"] .tabu-spread__header {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .tabu-spread .tabu-spread__header h2 {
+    max-width: 11ch;
+  }
+
+  .app-detail-shell[data-app="tabu-ekstra"] .tabu-spread__header p {
+    margin: 0;
   }
 }

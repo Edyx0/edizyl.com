@@ -7,6 +7,52 @@ interface Props {
 }
 
 const { app } = Astro.props;
+const isTabuEkstra = app.slug === 'tabu-ekstra';
+const isRebuiltMenuApp = app.slug === 'imposter' || app.slug === 'holy-shift';
+const usesBrandedMasthead = isTabuEkstra || isRebuiltMenuApp;
+const showsStandardAppSections = !isTabuEkstra && app.slug !== 'imposter' && app.slug !== 'holy-shift';
+const showsShowcaseCards = true;
+const presentation = {
+  'tabu-ekstra': {
+    title: 'Tabum Ekstra',
+    wordmark: '',
+    wordmarkAlt: '',
+    art: '',
+    artAlt: '',
+    ctaLabel: 'App Store',
+  },
+  imposter: {
+    title: 'Imposter',
+    wordmark: '',
+    wordmarkAlt: '',
+    art: '/landing/self-brand/imposter.webp',
+    artAlt: 'Imposter character artwork',
+    ctaLabel: 'App Store',
+    showcaseTitle: 'Bluff, read, vote',
+    showcaseIntro: 'A single-phone party loop built around private role reveals, careful clues, and a vote that turns every weak answer into evidence.',
+    cards: [
+      { title: 'Private reveal', text: 'Press-and-hold role cards keep the secret hidden while the phone moves player to player.' },
+      { title: 'Clue pressure', text: 'Everyone talks around the same word while the imposter improvises without giving themselves away.' },
+      { title: 'Table vote', text: 'The round closes with suspicion, discussion, and a group vote before the imposter can blend in.' },
+    ],
+  },
+  'holy-shift': {
+    title: 'Holy Shift',
+    wordmark: '/holy-shift/logo-hs.svg',
+    wordmarkAlt: 'Holy Shift',
+    art: '/landing/self-brand/holy-shift-characters-a.webp',
+    altArt: '/landing/self-brand/holy-shift-characters-b.webp',
+    artAlt: 'Holy Shift neon character artwork',
+    ctaLabel: 'App Store',
+    showcaseTitle: 'Reflex system',
+    showcaseIntro: 'Holy Shift keeps the Tabu-style page rhythm but switches the energy to arcade pressure: color shifting, anomaly bursts, multipliers, and unlockable skins.',
+    cards: [
+      { title: 'RIFT anomaly', text: 'Sudden speed bursts destabilize the run and force instant color decisions.' },
+      { title: 'Shield & Strike', text: 'Risk windows let players charge multipliers while the screen is at its most volatile.' },
+      { title: 'Sparks shop', text: 'Runs feed an unlock loop with skins earned through in-game sparks.' },
+    ],
+  },
+}[app.slug];
 const appColor = {
   'tabu-ekstra': { surface: '#6f35a1', ink: '#ffffff' },
   imposter: { surface: '#c89446', ink: '#191817' },
@@ -15,47 +61,84 @@ const appColor = {
 const heroStyle = `--app-accent: ${app.accent}; --app-accent-surface: ${appColor.surface}; --app-accent-ink: ${appColor.ink};`;
 ---
 
-<Layout title={`${app.name} — ${app.subtitle}`} description={app.tagline} bodyClass="app-detail-page">
+<Layout title={`${app.name} — Ediz Yılmaz`} description={app.tagline} bodyClass="app-detail-page">
   <div class="app-detail-shell" style={heroStyle} data-app={app.slug}>
   <a href="/" class="back-link app-detail__back">Index — Back</a>
 
-  <section class="app-hero">
-    <div class="app-hero-glow"></div>
-    <div class="app-hero-content">
-      <img src={app.icon} alt={`${app.name} icon`} class="app-hero-icon" width="120" height="120" />
-      <div class="app-hero-text">
-        <h1>{app.name}</h1>
-        <p class="hero-sub">{app.subtitle}</p>
-        <p class="hero-tagline">{app.tagline}</p>
-        <p class="app-hero-note">{app.short}</p>
-        <p>
-          <a href={app.appStoreUrl} class="cta">Download on the App Store →</a>
-        </p>
-      </div>
-    </div>
-
-    {app.stats && app.stats.length > 0 && (
-      <div class="stat-pills">
-        {app.stats.map((s) => (
-          <div class="stat-pill">
-            <span class="stat-label">{s.label}</span>
-            <span class="stat-value">{s.value}</span>
+  {usesBrandedMasthead && (
+    <section class={`tabu-top app-top app-top--${app.slug}`} aria-label={`${app.name} masthead`}>
+      {presentation?.art && (
+        <img src={presentation.art} alt={presentation.artAlt} class="app-top__art" width="900" height="900" />
+      )}
+      {presentation?.altArt && (
+        <img src={presentation.altArt} alt="" class="app-top__art app-top__art--alt" width="900" height="1800" />
+      )}
+      <div class="tabu-top__inner">
+        {presentation?.wordmark ? (
+          <div class="app-top__wordmark-wrap">
+            <h2 class="sr-only">{presentation?.title ?? app.name}</h2>
+            <img
+              src={presentation.wordmark}
+              alt={presentation.wordmarkAlt}
+              class="app-top__wordmark"
+              width="687"
+              height="332"
+            />
           </div>
-        ))}
+        ) : (
+          <h2>{presentation?.title ?? app.name}</h2>
+        )}
+        <div class="app-top__store-stack">
+          <img src={app.icon} alt="" class="tabu-top__logo" width="120" height="120" />
+          <a href={app.appStoreUrl} class="tabu-final__link" aria-label={`Open ${app.name} on the App Store`}>
+            {presentation?.ctaLabel ?? 'App Store'}
+          </a>
+        </div>
       </div>
-    )}
-  </section>
+    </section>
+  )}
+
+  {!usesBrandedMasthead && (
+    <section class="app-hero">
+      <div class="app-hero-glow"></div>
+      <div class="app-hero-content">
+        <img src={app.icon} alt={`${app.name} icon`} class="app-hero-icon" width="120" height="120" />
+        <div class="app-hero-text">
+          <h1>{app.name}</h1>
+          <p class="hero-sub">{app.subtitle}</p>
+          <p class="hero-tagline">{app.tagline}</p>
+          <p class="app-hero-note">{app.short}</p>
+          <p>
+            <a href={app.appStoreUrl} class="cta">Download on the App Store →</a>
+          </p>
+        </div>
+      </div>
+
+      {app.stats && app.stats.length > 0 && (
+        <div class="stat-pills">
+          {app.stats.map((s) => (
+            <div class="stat-pill">
+              <span class="stat-label">{s.label}</span>
+              <span class="stat-value">{s.value}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  )}
 
   {(app.screenshots.length > 0 || app.previewVideoHls) && (
     <section class="section-screenshots app-gallery">
-      <div class="app-gallery__header">
-        <p>Selected screens</p>
-        <h2>Screenshots</h2>
-      </div>
-      <div class="app-gallery__motion" aria-hidden="true">
-        <span>Scroll / drag</span>
-        <span class="app-gallery__progress"><span data-gallery-progress></span></span>
-      </div>
+      {!isTabuEkstra && (
+        <div class="app-gallery__header">
+          <h2>Screenshots</h2>
+        </div>
+      )}
+      {!isTabuEkstra && (
+        <div class="app-gallery__motion" aria-hidden="true">
+          <span class="app-gallery__progress"><span data-gallery-progress></span></span>
+        </div>
+      )}
       <div
         class="shots-scroll"
         data-smooth-gallery
@@ -136,6 +219,18 @@ const heroStyle = `--app-accent: ${app.accent}; --app-accent-surface: ${appColor
       let velocity = 0;
 
       const maxScroll = () => Math.max(0, track.scrollWidth - track.clientWidth);
+      const hasOverflow = () => maxScroll() > 1;
+      const updateOverflowState = () => {
+        const overflow = hasOverflow();
+        track.dataset.galleryOverflow = overflow ? 'true' : 'false';
+        track.tabIndex = overflow ? 0 : -1;
+        if (!overflow) {
+          target = 0;
+          track.scrollLeft = 0;
+          progress?.style.setProperty('transform', 'scaleX(1)');
+        }
+        return overflow;
+      };
       const clamp = (value: number) => Math.min(maxScroll(), Math.max(0, value));
       const updateProgress = () => {
         const max = maxScroll();
@@ -166,7 +261,8 @@ const heroStyle = `--app-accent: ${app.accent}; --app-accent-surface: ${appColor
         if (!frame) frame = requestAnimationFrame(glide);
       };
 
-      track.addEventListener('wheel', (event) => {
+      const handleWheel = (event: WheelEvent) => {
+        if (!updateOverflowState()) return;
         const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
         const max = maxScroll();
         const atStart = target <= 0.5 || track.scrollLeft <= 0.5;
@@ -174,9 +270,12 @@ const heroStyle = `--app-accent: ${app.accent}; --app-accent-surface: ${appColor
         if (!max || (delta < 0 && atStart) || (delta > 0 && atEnd)) return;
         event.preventDefault();
         moveTo(target + delta * 1.15);
-      }, { passive: false });
+      };
+
+      (gallery ?? track).addEventListener('wheel', handleWheel, { passive: false });
 
       track.addEventListener('pointerdown', (event) => {
+        if (!updateOverflowState()) return;
         if (event.pointerType !== 'mouse') return;
         if ((event.target as HTMLElement).closest('video, button, a')) return;
         dragging = true;
@@ -214,6 +313,7 @@ const heroStyle = `--app-accent: ${app.accent}; --app-accent-surface: ${appColor
       track.addEventListener('pointerup', release);
       track.addEventListener('pointercancel', release);
       track.addEventListener('keydown', (event) => {
+        if (!updateOverflowState()) return;
         if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
         event.preventDefault();
         const direction = event.key === 'ArrowRight' ? 1 : -1;
@@ -224,87 +324,137 @@ const heroStyle = `--app-accent: ${app.accent}; --app-accent-surface: ${appColor
         updateProgress();
       }, { passive: true });
       window.addEventListener('resize', () => {
+        updateOverflowState();
         target = clamp(target);
         updateProgress();
       }, { passive: true });
+      track.querySelectorAll('img').forEach((image) => {
+        image.addEventListener('load', () => {
+          updateOverflowState();
+          updateProgress();
+        }, { once: true });
+      });
 
+      updateOverflowState();
       updateProgress();
     });
   </script>
 
-  <section class="app-section app-section--about">
-    <h2>About</h2>
-    <div class="app-section__body">{app.about.map((p) => <p>{p}</p>)}</div>
-  </section>
+  {isTabuEkstra && (
+    <>
+      <section class="tabu-spread" aria-label="Tabum Ekstra visual system">
+        <header class="tabu-spread__header">
+          <h2>Words change with the room.</h2>
+          <p>Seasonal decks keep the game current without changing the one-phone rhythm.</p>
+        </header>
+        <figure class="tabu-spread__image tabu-spread__image--wide">
+          <img src="/landing/self-brand/summer-words.webp" alt="Summer Words event artwork for Tabum Ekstra" loading="lazy" />
+          <figcaption>Summer Words · 2026</figcaption>
+        </figure>
+        <figure class="tabu-spread__image tabu-spread__image--poster">
+          <img src="/tabu-ekstra/ramadantabu.webp" alt="Ramadan event artwork for Tabum Ekstra" loading="lazy" />
+          <figcaption>Ramadan deck · 2026</figcaption>
+        </figure>
+      </section>
+    </>
+  )}
 
-  <section class="app-section app-section--features">
-    <h2>Features</h2>
-    <div class="app-section__body">
-      <ul class="list">
-        {app.features.map((f) => <li>{f}</li>)}
-      </ul>
-    </div>
-  </section>
-
-  <section class="app-section app-section--build">
-    <h2>How it was built?</h2>
-    <div class="app-section__body">
-      {app.builtStory.map((p) => <p>{p}</p>)}
-
-      <div class="chips">
-        {app.techChips.map((c) => <span class="chip">{c}</span>)}
-      </div>
-
-      <details class="tech-details">
-        <summary>Full tech stack</summary>
-        <dl class="stack">
-          {app.stack.map((s) => (
-            <>
-              <dt>{s.label}</dt>
-              <dd>{s.value}</dd>
-            </>
-          ))}
-        </dl>
-      </details>
-    </div>
-  </section>
-
-  {app.highlights && app.highlights.length > 0 && (
-    <section class="app-section app-section--highlights">
-      <h2>Highlights</h2>
-      <div class="app-section__body">
-        <ul class="list">
-          {app.highlights.map((h) => <li>{h}</li>)}
-        </ul>
-      </div>
+  {isRebuiltMenuApp && presentation && (
+    <section class={`tabu-spread app-showcase app-showcase--${app.slug}`} aria-label={`${app.name} gameplay system`}>
+      <h2>{presentation.showcaseTitle}</h2>
+      <p class="app-showcase__intro">{presentation.showcaseIntro}</p>
+      {showsShowcaseCards && (
+        <>
+          <div class="app-showcase__cards">
+            {presentation.cards.map((card) => (
+              <article class="app-showcase__card">
+                <h3>{card.title}</h3>
+                <p>{card.text}</p>
+              </article>
+            ))}
+          </div>
+        </>
+      )}
     </section>
   )}
 
-  <section class="app-section app-section--technical">
-    <h2>Technical details</h2>
-    <div class="app-section__body">
-      <div class="meta-grid">
-        <div><span class="muted">Version</span><br />{app.meta.version}</div>
-        <div><span class="muted">Released</span><br />{app.meta.released}</div>
-        <div><span class="muted">Updated</span><br />{app.meta.updated}</div>
-        <div><span class="muted">Requires</span><br />{app.meta.minOS}</div>
-        <div><span class="muted">Size</span><br />{app.meta.size}</div>
-        <div><span class="muted">Genre</span><br />{app.meta.genre}</div>
-        {app.meta.rating && <div><span class="muted">Rating</span><br />{app.meta.rating}</div>}
-      </div>
-    </div>
-  </section>
+  {showsStandardAppSections && (
+    <>
+      <section class="app-section app-section--about">
+        <h2>About</h2>
+        <div class="app-section__body">{app.about.map((p) => <p>{p}</p>)}</div>
+      </section>
 
-  <section class="bottom-cta app-final">
-    <h2>Try it</h2>
-    <p>{app.tagline}</p>
-    <p>
-      <a href={app.appStoreUrl} class="cta">Get {app.name} on the App Store →</a>
-    </p>
-    <p class="muted" style="margin-top: 1rem;">
-      See the <a href={`/${app.slug}/privacy`}>{app.name} privacy policy</a>.
-    </p>
-  </section>
+      <section class="app-section app-section--features">
+        <h2>Features</h2>
+        <div class="app-section__body">
+          <ul class="list">
+            {app.features.map((f) => <li>{f}</li>)}
+          </ul>
+        </div>
+      </section>
+
+      <section class="app-section app-section--build">
+        <h2>How it was built?</h2>
+        <div class="app-section__body">
+          {app.builtStory.map((p) => <p>{p}</p>)}
+
+          <div class="chips">
+            {app.techChips.map((c) => <span class="chip">{c}</span>)}
+          </div>
+
+          <details class="tech-details">
+            <summary>Full tech stack</summary>
+            <dl class="stack">
+              {app.stack.map((s) => (
+                <>
+                  <dt>{s.label}</dt>
+                  <dd>{s.value}</dd>
+                </>
+              ))}
+            </dl>
+          </details>
+        </div>
+      </section>
+
+      {app.highlights && app.highlights.length > 0 && (
+        <section class="app-section app-section--highlights">
+          <h2>Highlights</h2>
+          <div class="app-section__body">
+            <ul class="list">
+              {app.highlights.map((h) => <li>{h}</li>)}
+            </ul>
+          </div>
+        </section>
+      )}
+
+      <section class="app-section app-section--technical">
+        <h2>Technical details</h2>
+        <div class="app-section__body">
+          <div class="meta-grid">
+            <div><span class="muted">Version</span><br />{app.meta.version}</div>
+            <div><span class="muted">Released</span><br />{app.meta.released}</div>
+            <div><span class="muted">Updated</span><br />{app.meta.updated}</div>
+            <div><span class="muted">Requires</span><br />{app.meta.minOS}</div>
+            <div><span class="muted">Size</span><br />{app.meta.size}</div>
+            <div><span class="muted">Genre</span><br />{app.meta.genre}</div>
+            {app.meta.rating && <div><span class="muted">Rating</span><br />{app.meta.rating}</div>}
+          </div>
+        </div>
+      </section>
+
+      <section class="bottom-cta app-final">
+        <h2>Try it</h2>
+        <p>{app.tagline}</p>
+        <p>
+          <a href={app.appStoreUrl} class="cta">Get {app.name} on the App Store →</a>
+        </p>
+        <p class="muted" style="margin-top: 1rem;">
+          See the <a href={`/${app.slug}/privacy`}>{app.name} privacy policy</a>.
+        </p>
+      </section>
+    </>
+  )}
   </div>
 
 </Layout>

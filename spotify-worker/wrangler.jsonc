@@ -4,6 +4,6 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-07-09",
   "vars": {
-    "ALLOWED_ORIGINS": "https://edyx0.github.io"
+    "ALLOWED_ORIGINS": "https://edizyl.com,http://edizyl.com,https://www.edizyl.com,http://www.edizyl.com,https://edyx0.github.io"
   }
 }

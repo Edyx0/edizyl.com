@@ -63,11 +63,17 @@ import Layout from '../layouts/Layout.astro';
     <dl class="studio-profile__facts">
       <div>
         <dt>Study</dt>
-        <dd>Computer Engineering · Yeditepe University</dd>
+        <dd>
+          <span>Computer Engineering</span>
+          <span>Yeditepe University</span>
+        </dd>
       </div>
       <div>
         <dt>Based</dt>
-        <dd>Istanbul · Türkiye</dd>
+        <dd>
+          <span>Istanbul</span>
+          <span>Türkiye</span>
+        </dd>
       </div>
     </dl>
   </section>
@@ -280,8 +286,54 @@ import Layout from '../layouts/Layout.astro';
       updateOpeningColor();
     };
 
+    const setupOpeningFlowHover = () => {
+      if (!openingStage || reducedMotionQuery.matches) return;
+
+      const shots = Array.from(openingStage.querySelectorAll<HTMLElement>('.opening-shot'));
+      const hoveredShots = new Set<HTMLElement>();
+      let currentRate = 1;
+      let targetRate = 1;
+      let speedFrame = 0;
+
+      const getPhotoFlowAnimations = () =>
+        openingStage.getAnimations({ subtree: true }).filter((animation) => {
+          const effect = animation.effect;
+          if (!(effect instanceof KeyframeEffect)) return false;
+          const target = effect.target;
+          return target instanceof HTMLElement && target.classList.contains('opening-shot');
+        });
+
+      const setPlaybackRate = (rate: number) => {
+        targetRate = rate;
+        if (speedFrame) return;
+
+        const tick = () => {
+          currentRate += (targetRate - currentRate) * 0.18;
+          if (Math.abs(targetRate - currentRate) < 0.01) currentRate = targetRate;
+          getPhotoFlowAnimations().forEach((animation) => {
+            animation.playbackRate = currentRate;
+          });
+          speedFrame = currentRate === targetRate ? 0 : requestAnimationFrame(tick);
+        };
+
+        speedFrame = requestAnimationFrame(tick);
+      };
+
+      shots.forEach((shot) => {
+        shot.addEventListener('pointerenter', () => {
+          hoveredShots.add(shot);
+          setPlaybackRate(0.35);
+        });
+        shot.addEventListener('pointerleave', () => {
+          hoveredShots.delete(shot);
+          if (!hoveredShots.size) setPlaybackRate(1);
+        });
+      });
+    };
+
     updateHeader();
     updateOpeningColor();
+    setupOpeningFlowHover();
     startOpeningSequence();
     window.addEventListener('scroll', onScroll, { passive: true });
   </script>
