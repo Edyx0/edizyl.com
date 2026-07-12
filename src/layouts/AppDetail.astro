@@ -129,7 +129,7 @@ const heroStyle = `--app-accent: ${app.accent}; --app-accent-surface: ${appColor
 
   {(app.screenshots.length > 0 || app.previewVideoHls) && (
     <section class="section-screenshots app-gallery">
-      {!isTabuEkstra && (
+      {!isTabuEkstra && !['imposter', 'holy-shift'].includes(app.slug) && (
         <div class="app-gallery__header">
           <h2>Screenshots</h2>
         </div>
@@ -217,10 +217,13 @@ const heroStyle = `--app-accent: ${app.accent}; --app-accent-surface: ${appColor
       let lastX = 0;
       let lastTime = 0;
       let velocity = 0;
+      let cachedMaxScroll = 0;
+      let progressFrame = 0;
 
-      const maxScroll = () => Math.max(0, track.scrollWidth - track.clientWidth);
+      const maxScroll = () => cachedMaxScroll;
       const hasOverflow = () => maxScroll() > 1;
       const updateOverflowState = () => {
+        cachedMaxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
         const overflow = hasOverflow();
         track.dataset.galleryOverflow = overflow ? 'true' : 'false';
         track.tabIndex = overflow ? 0 : -1;
@@ -236,6 +239,13 @@ const heroStyle = `--app-accent: ${app.accent}; --app-accent-surface: ${appColor
         const max = maxScroll();
         const amount = max > 0 ? track.scrollLeft / max : 0;
         progress?.style.setProperty('transform', `scaleX(${Math.max(0.035, amount)})`);
+      };
+      const scheduleProgress = () => {
+        if (progressFrame) return;
+        progressFrame = requestAnimationFrame(() => {
+          progressFrame = 0;
+          updateProgress();
+        });
       };
 
       const glide = () => {
@@ -261,23 +271,11 @@ const heroStyle = `--app-accent: ${app.accent}; --app-accent-surface: ${appColor
         if (!frame) frame = requestAnimationFrame(glide);
       };
 
-      const handleWheel = (event: WheelEvent) => {
-        if (!updateOverflowState()) return;
-        const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
-        const max = maxScroll();
-        const atStart = target <= 0.5 || track.scrollLeft <= 0.5;
-        const atEnd = target >= max - 0.5 || track.scrollLeft >= max - 0.5;
-        if (!max || (delta < 0 && atStart) || (delta > 0 && atEnd)) return;
-        event.preventDefault();
-        moveTo(target + delta * 1.15);
-      };
-
-      (gallery ?? track).addEventListener('wheel', handleWheel, { passive: false });
-
       track.addEventListener('pointerdown', (event) => {
         if (!updateOverflowState()) return;
         if (event.pointerType !== 'mouse') return;
         if ((event.target as HTMLElement).closest('video, button, a')) return;
+        event.preventDefault();
         dragging = true;
         if (frame) cancelAnimationFrame(frame);
         frame = 0;
@@ -299,7 +297,7 @@ const heroStyle = `--app-accent: ${app.accent}; --app-accent-surface: ${appColor
         track.scrollLeft = target;
         lastX = event.clientX;
         lastTime = now;
-        updateProgress();
+        scheduleProgress();
       });
 
       const release = (event: PointerEvent) => {
@@ -321,7 +319,7 @@ const heroStyle = `--app-accent: ${app.accent}; --app-accent-surface: ${appColor
       });
       track.addEventListener('scroll', () => {
         if (!frame && !dragging) target = track.scrollLeft;
-        updateProgress();
+        scheduleProgress();
       }, { passive: true });
       window.addEventListener('resize', () => {
         updateOverflowState();

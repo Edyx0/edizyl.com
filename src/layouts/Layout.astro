@@ -554,6 +554,7 @@ const logoDotLitByIndex = new Map(
         const musicAlbum = musicLink?.querySelector('[data-spotify-album]');
         const musicPlayed = musicLink?.querySelector('[data-spotify-played]');
         const musicReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const mobileMenuMedia = window.matchMedia('(max-width: 767px)');
         let musicLoaded = false;
         let musicArtworkRequest = 0;
         let musicSpinFrame = 0;
@@ -758,7 +759,11 @@ const logoDotLitByIndex = new Map(
           menuToggle.setAttribute('aria-expanded', 'true');
           document.body.classList.add('menu-open');
           updateMusicArtwork();
-          scheduleMusicDiscReveal();
+          if (mobileMenuMedia.matches) {
+            setMusicSpinActive(true);
+          } else {
+            scheduleMusicDiscReveal();
+          }
         });
 
         menuClose?.addEventListener('click', closeMenu);
