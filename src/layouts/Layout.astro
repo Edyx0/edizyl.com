@@ -84,6 +84,32 @@ const logoDotLitByIndex = new Map(
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bitcount+Prop+Double:wght@400;500;600;700&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:wght@400;500;700&display=swap" />
     <script is:inline>
       try {
+        const contrastInk = (background) => {
+          const hex = typeof background === 'string' ? background.trim().replace('#', '') : '';
+          const normalized = hex.length === 3
+            ? hex.split('').map((character) => character + character).join('')
+            : hex;
+          if (!/^[0-9a-f]{6}$/i.test(normalized)) return '#191817';
+
+          const luminance = (value) => {
+            const channels = value.match(/.{2}/g).map((channel) => {
+              const srgb = Number.parseInt(channel, 16) / 255;
+              return srgb <= 0.04045
+                ? srgb / 12.92
+                : ((srgb + 0.055) / 1.055) ** 2.4;
+            });
+            return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
+          };
+          const contrast = (first, second) =>
+            (Math.max(first, second) + 0.05) / (Math.min(first, second) + 0.05);
+          const backgroundLuminance = luminance(normalized);
+          const darkLuminance = luminance('191817');
+          const lightLuminance = luminance('f9f7f7');
+
+          return contrast(backgroundLuminance, lightLuminance) > contrast(backgroundLuminance, darkLuminance)
+            ? '#f9f7f7'
+            : '#191817';
+        };
         const theme = JSON.parse(sessionStorage.getItem('opening-theme-values') || 'null');
         if (theme) {
           const root = document.documentElement;
@@ -94,6 +120,7 @@ const logoDotLitByIndex = new Map(
           root.style.setProperty('--opening-content', theme.content || theme.bg);
           root.style.setProperty('--opening-content-ink', theme.contentInk || theme.ink);
           root.style.setProperty('--opening-soft', theme.soft);
+          root.style.setProperty('--opening-soft-ink', theme.softInk || contrastInk(theme.soft));
           root.dataset.openingTheme = theme.name;
         }
       } catch (_) {
@@ -143,18 +170,10 @@ const logoDotLitByIndex = new Map(
             <a href="/holy-shift/">Holy Shift <span class="site-menu__count">03</span></a>
           </section>
 
-          <section class="site-menu__group site-menu__group--other" data-open="false">
-            <button
-              class="site-menu__other-trigger"
-              type="button"
-              aria-expanded="false"
-              aria-controls="site-menu-other-panel"
-            >Other</button>
-            <div class="site-menu__other-panel" id="site-menu-other-panel">
-              <div>
-                <a href="https://edizy.itch.io/ayasofya-kutsal-bilgelik-tasi" target="_blank" rel="noopener noreferrer">Ayasofya</a>
-              </div>
-            </div>
+          <section class="site-menu__group site-menu__group--other">
+            <a class="site-menu__other-link" href="/other/" data-scene-link>
+              <span class="site-menu__count site-menu__count--other">04</span> Other
+            </a>
           </section>
 
           <a class="site-menu__page-link site-menu__page-link--about" href="/#about">About</a>
@@ -191,6 +210,15 @@ const logoDotLitByIndex = new Map(
         </div>
       </div>
     </dialog>
+
+    <div class="site-scene-transition" aria-hidden="true">
+      <div class="site-scene-transition__wash"></div>
+      <figure style="--scene-i: 0; --scene-x: -34vw; --scene-y: -28vh; --scene-r: -2deg;"><img src="/other-projects/ayasofya/shot-1.png" alt="" /></figure>
+      <figure style="--scene-i: 1; --scene-x: 10vw; --scene-y: -38vh; --scene-r: 1deg;"><img src="/other-projects/ayasofya/cover.png" alt="" /></figure>
+      <figure style="--scene-i: 2; --scene-x: 36vw; --scene-y: -16vh; --scene-r: 2deg;"><img src="/other-projects/ayasofya/shot-2.png" alt="" /></figure>
+      <figure style="--scene-i: 3; --scene-x: -32vw; --scene-y: 30vh; --scene-r: 1deg;"><img src="/other-projects/ayasofya/shot-3.png" alt="" /></figure>
+      <figure style="--scene-i: 4; --scene-x: 32vw; --scene-y: 32vh; --scene-r: -2deg;"><img src="/landing/self-brand/food-trip.webp" alt="" /></figure>
+    </div>
 
     <main>
       <slot />
@@ -545,8 +573,7 @@ const logoDotLitByIndex = new Map(
         const menu = document.querySelector('#site-menu');
         const menuToggle = document.querySelector('.menu-toggle');
         const menuClose = document.querySelector('.site-menu__close');
-        const otherMenu = menu?.querySelector('.site-menu__group--other');
-        const otherTrigger = menu?.querySelector('.site-menu__other-trigger');
+        const sceneTransition = document.querySelector('.site-scene-transition');
         const musicLink = menu?.querySelector('.site-menu__music');
         const musicCover = musicLink?.querySelector('[data-spotify-cover]');
         const musicTitle = musicLink?.querySelector('[data-spotify-title]');
@@ -564,11 +591,7 @@ const logoDotLitByIndex = new Map(
         let musicSpinActive = false;
         let musicDiscExitTimer = 0;
         let musicAutoDiscTimer = 0;
-
-        const setOtherMenuOpen = (open) => {
-          otherMenu?.setAttribute('data-open', String(open));
-          otherTrigger?.setAttribute('aria-expanded', String(open));
-        };
+        let menuCloseTimer = 0;
 
         const closeMenu = () => {
           if (!menu?.open) return;
@@ -754,27 +777,58 @@ const logoDotLitByIndex = new Map(
 
         menuToggle?.addEventListener('click', () => {
           if (!menu || typeof menu.showModal !== 'function') return;
-          menu.showModal();
-          menu.focus({ preventScroll: true });
-          menuToggle.setAttribute('aria-expanded', 'true');
-          document.body.classList.add('menu-open');
-          updateMusicArtwork();
-          if (mobileMenuMedia.matches) {
-            setMusicSpinActive(true);
+          window.clearTimeout(menuCloseTimer);
+          const openMenu = () => {
+            menu.showModal();
+            menu.focus({ preventScroll: true });
+            menuToggle.setAttribute('aria-expanded', 'true');
+            document.body.classList.add('menu-open');
+            updateMusicArtwork();
+            if (mobileMenuMedia.matches) {
+              setMusicSpinActive(true);
+            } else {
+              scheduleMusicDiscReveal();
+            }
+          };
+
+          const animateLandingFrames =
+            document.body.classList.contains('home') &&
+            document.body.dataset.openingPhase === '3' &&
+            !musicReducedMotion.matches;
+
+          if (animateLandingFrames) {
+            window.dispatchEvent(new CustomEvent('site-menu:opening'));
+            menuCloseTimer = window.setTimeout(openMenu, 520);
           } else {
-            scheduleMusicDiscReveal();
+            openMenu();
           }
         });
 
         menuClose?.addEventListener('click', closeMenu);
-        otherTrigger?.addEventListener('click', () => {
-          setOtherMenuOpen(otherMenu?.getAttribute('data-open') !== 'true');
-        });
         menu?.addEventListener('click', (event) => {
           if (event.target === menu) closeMenu();
         });
         menu?.querySelectorAll('a').forEach((link) => {
-          link.addEventListener('click', closeMenu);
+          link.addEventListener('click', (event) => {
+            if (!(link instanceof HTMLAnchorElement) || !link.matches('[data-scene-link]')) {
+              closeMenu();
+              return;
+            }
+
+            event.preventDefault();
+            if (musicReducedMotion.matches || !sceneTransition) {
+              window.location.assign(link.href);
+              return;
+            }
+
+            window.clearTimeout(menuCloseTimer);
+            menu?.classList.remove('is-opening');
+            menu?.classList.add('is-scene-leaving');
+            sceneTransition.classList.remove('is-arriving');
+            sceneTransition.classList.add('is-leaving');
+            sessionStorage.setItem('scene-arrival', 'other');
+            window.setTimeout(() => window.location.assign(link.href), 860);
+          });
         });
         musicLink?.addEventListener('mouseenter', updateMusicArtwork);
         musicLink?.addEventListener('mouseenter', () => setMusicSpinActive(true));
@@ -786,12 +840,19 @@ const logoDotLitByIndex = new Map(
         musicLink?.addEventListener('focus', () => setMusicSpinActive(true));
         musicLink?.addEventListener('blur', () => setMusicSpinActive(false));
         menu?.addEventListener('close', () => {
+          window.clearTimeout(menuCloseTimer);
           window.clearTimeout(musicAutoDiscTimer);
-          setOtherMenuOpen(false);
           setMusicSpinActive(false);
           menuToggle?.setAttribute('aria-expanded', 'false');
           document.body.classList.remove('menu-open');
+          window.dispatchEvent(new CustomEvent('site-menu:closed'));
         });
+
+        if (sceneTransition && sessionStorage.getItem('scene-arrival')) {
+          sessionStorage.removeItem('scene-arrival');
+          sceneTransition.classList.add('is-arriving');
+          window.setTimeout(() => sceneTransition.classList.remove('is-arriving'), 1050);
+        }
 
         if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', renderAll, { once: true });

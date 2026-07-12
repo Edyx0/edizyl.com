@@ -1,0 +1,283 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const gallery = [
+  {
+    src: '/other-projects/ayasofya/cover.png',
+    alt: 'Ayasofya: Kutsal Bilgelik Taşı oyununda kahraman, alevlerin üzerindeki bir platformda',
+  },
+  {
+    src: '/other-projects/ayasofya/shot-1.png',
+    alt: 'Ayasofya: Kutsal Bilgelik Taşı piksel oyun ana menüsü',
+  },
+  {
+    src: '/other-projects/ayasofya/shot-2.png',
+    alt: 'Ayasofya yer altı bölümünde platformların arasında duran oyun karakteri',
+  },
+  {
+    src: '/other-projects/ayasofya/shot-3.png',
+    alt: 'Ayasofya yer altı bölümünde alevli bir yokuştan inen oyun karakteri',
+  },
+];
+---
+
+<Layout
+  title="Other Projects — Ediz Yılmaz"
+  description="Independent experiments and playable side projects by Ediz Yılmaz."
+  bodyClass="other-page"
+>
+  <section class="other-index" data-other-index>
+    <button class="other-project" type="button" data-gallery-open aria-controls="other-gallery" aria-label="Open Ayasofya project gallery">
+      <span class="other-project__frame other-project__frame--cover" style="--frame-i: 0; --frame-x: -18vw; --frame-y: -22vh;" aria-hidden="true">
+        <img src={gallery[0].src} alt={gallery[0].alt} decoding="async" />
+      </span>
+      <span class="other-project__frame other-project__frame--one" style="--frame-i: 1; --frame-x: 20vw; --frame-y: -28vh;" aria-hidden="true">
+        <img src={gallery[1].src} alt={gallery[1].alt} loading="lazy" decoding="async" />
+      </span>
+      <span class="other-project__frame other-project__frame--two" style="--frame-i: 2; --frame-x: -24vw; --frame-y: 26vh;" aria-hidden="true">
+        <img src={gallery[2].src} alt={gallery[2].alt} loading="lazy" decoding="async" />
+      </span>
+      <span class="other-project__frame other-project__frame--three" style="--frame-i: 3; --frame-x: 24vw; --frame-y: 24vh;" aria-hidden="true">
+        <img src={gallery[3].src} alt={gallery[3].alt} loading="lazy" decoding="async" />
+      </span>
+      <span class="other-project__identity">
+        <span>Ayasofya</span>
+        <small>Kutsal Bilgelik Taşı · browser game</small>
+        <b aria-hidden="true">View project ↗</b>
+      </span>
+    </button>
+  </section>
+
+  <section
+    class="other-gallery"
+    id="other-gallery"
+    style="--project-canvas: #0b0f1c; --project-ink: #f2d7a6; --project-frame: #ed46d5;"
+    aria-label="Ayasofya project gallery"
+    aria-hidden="true"
+    data-other-gallery
+    hidden
+  >
+    <header class="other-gallery__header">
+      <button type="button" class="back-link other-gallery__back" data-gallery-back>Index — Back</button>
+      <span class="other-gallery__counter" data-gallery-counter>1 / {gallery.length}</span>
+    </header>
+
+    <div class="other-gallery__stage" aria-live="polite">
+      <div
+        class="other-gallery__track"
+        data-gallery-track
+        tabindex="0"
+        aria-label="Project photos. Scroll vertically or horizontally to browse."
+      >
+        {gallery.map((item, imageIndex) => (
+          <figure
+            class:list={[
+              'other-gallery__frame',
+              `other-gallery__frame--${['lead', 'middle', 'edge', 'tail'][imageIndex % 4]}`,
+            ]}
+            data-gallery-frame
+            data-gallery-index={imageIndex}
+            style={`--gallery-i: ${imageIndex}; --gallery-local-i: ${imageIndex}; --gallery-exit: 0; --gallery-side: 0;`}
+          >
+            <span class="other-gallery__surface">
+              <img
+                src={item.src}
+                alt={item.alt}
+                loading={imageIndex === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+            </span>
+          </figure>
+        ))}
+      </div>
+    </div>
+
+    <h2 class="other-gallery__intro-title" aria-hidden="true">
+      Ayasofya — Kutsal Bilgelik Taşı
+    </h2>
+
+    <footer class="other-gallery__footer">
+      <span class="other-gallery__project-title">Ayasofya — Kutsal Bilgelik Taşı</span>
+      <a class="other-gallery__project-link" href="https://edizy.itch.io/ayasofya-kutsal-bilgelik-tasi" target="_blank" rel="noopener noreferrer">Play on itch.io ↗</a>
+    </footer>
+  </section>
+
+  <script define:vars={{ gallery }}>
+    const index = document.querySelector('[data-other-index]');
+    const galleryScene = document.querySelector('[data-other-gallery]');
+    const openButton = document.querySelector('[data-gallery-open]');
+    const backButton = document.querySelector('[data-gallery-back]');
+    const counter = document.querySelector('[data-gallery-counter]');
+    const galleryTrack = document.querySelector('[data-gallery-track]');
+    const frames = [...document.querySelectorAll('[data-gallery-frame]')];
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let active = 0;
+    let scrollFrame = 0;
+    let revealEnabled = false;
+    let revealCycle = 0;
+    const revealTimers = new Map();
+
+    const resetPhotoReveals = () => {
+      revealCycle += 1;
+      revealTimers.forEach((timer) => window.clearTimeout(timer));
+      revealTimers.clear();
+      frames.forEach((frame) => frame instanceof HTMLElement && frame.classList.remove('is-photo-visible'));
+    };
+
+    const queuePhotoReveal = (frame, opening) => {
+      if (
+        !revealEnabled
+        || !(frame instanceof HTMLElement)
+        || frame.classList.contains('is-photo-visible')
+        || revealTimers.has(frame)
+      ) return;
+
+      const image = frame.querySelector('img');
+      if (!(image instanceof HTMLImageElement)) return;
+      image.loading = 'eager';
+
+      const cycle = revealCycle;
+      const delay = reducedMotion.matches ? 0 : opening
+        ? 340 + Number(frame.dataset.galleryIndex || 0) * 48
+        : 340;
+
+      const decoded = image.complete
+        ? image.decode().catch(() => undefined)
+        : new Promise((resolve) => {
+            image.addEventListener('load', resolve, { once: true });
+            image.addEventListener('error', resolve, { once: true });
+          });
+
+      const delayed = new Promise((resolve) => {
+        const timer = window.setTimeout(resolve, delay);
+        revealTimers.set(frame, timer);
+      });
+
+      Promise.all([decoded, delayed]).then(() => {
+        if (cycle !== revealCycle || !revealEnabled) return;
+        revealTimers.delete(frame);
+        frame.classList.add('is-photo-visible');
+      });
+    };
+
+    const updateFrames = () => {
+      scrollFrame = 0;
+      if (!(galleryTrack instanceof HTMLElement)) return;
+
+      if (galleryTrack.scrollLeft > 8) {
+        galleryScene?.classList.remove('is-intro-title-visible');
+      }
+
+      const trackRect = galleryTrack.getBoundingClientRect();
+      const viewportCenter = trackRect.left + trackRect.width / 2;
+      let nearest = active;
+      let nearestDistance = Number.POSITIVE_INFINITY;
+
+      frames.forEach((frame, frameIndex) => {
+        if (!(frame instanceof HTMLElement)) return;
+        const rect = frame.getBoundingClientRect();
+        const center = rect.left + rect.width / 2;
+        const distance = Math.abs(center - viewportCenter);
+        const side = center < viewportCenter ? -1 : 1;
+        const exit = Math.min(1, Math.max(0, (distance / (trackRect.width * 0.58) - 0.5) / 0.5));
+
+        frame.style.setProperty('--gallery-exit', exit.toFixed(3));
+        frame.style.setProperty('--gallery-side', String(side));
+
+        const isApproaching = rect.right > trackRect.left + trackRect.width * 0.04
+          && rect.left < trackRect.right - trackRect.width * 0.04;
+        if (isApproaching) {
+          queuePhotoReveal(frame, galleryScene?.classList.contains('is-opening'));
+        }
+
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearest = Number(frame.dataset.galleryIndex || 0);
+        }
+      });
+
+      if (nearest !== active) {
+        active = nearest;
+        if (counter) counter.textContent = `${active + 1} / ${gallery.length}`;
+      }
+
+    };
+
+    const requestFrameUpdate = () => {
+      if (scrollFrame) return;
+      scrollFrame = requestAnimationFrame(updateFrames);
+    };
+
+    const openGallery = () => {
+      if (!(galleryScene instanceof HTMLElement) || !(index instanceof HTMLElement)) return;
+      galleryScene.hidden = false;
+      galleryScene.setAttribute('aria-hidden', 'false');
+      index.setAttribute('aria-hidden', 'true');
+      document.body.classList.add('other-gallery-open');
+      galleryScene.classList.add('is-opening');
+      galleryScene.classList.add('is-intro-title-visible');
+      resetPhotoReveals();
+      revealEnabled = true;
+      active = 0;
+      if (counter) counter.textContent = `1 / ${gallery.length}`;
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (galleryTrack instanceof HTMLElement) galleryTrack.scrollLeft = 0;
+        galleryScene.classList.add('is-visible');
+        updateFrames();
+        window.setTimeout(
+          () => galleryScene.classList.remove('is-opening'),
+          reducedMotion.matches ? 0 : 760,
+        );
+      }));
+      window.setTimeout(() => backButton?.focus({ preventScroll: true }), reducedMotion.matches ? 0 : 780);
+    };
+
+    const closeGallery = () => {
+      if (!(galleryScene instanceof HTMLElement) || !(index instanceof HTMLElement)) return;
+      revealEnabled = false;
+      resetPhotoReveals();
+      galleryScene.classList.remove('is-visible');
+      galleryScene.classList.remove('is-opening');
+      galleryScene.classList.remove('is-intro-title-visible');
+      galleryScene.classList.add('is-returning');
+      const finish = () => {
+        galleryScene.hidden = true;
+        galleryScene.classList.remove('is-returning');
+        galleryScene.setAttribute('aria-hidden', 'true');
+        index.removeAttribute('aria-hidden');
+        document.body.classList.remove('other-gallery-open');
+        openButton?.focus({ preventScroll: true });
+      };
+      window.setTimeout(finish, reducedMotion.matches ? 0 : 620);
+    };
+
+    galleryTrack?.addEventListener('scroll', requestFrameUpdate, { passive: true });
+    galleryTrack?.addEventListener('wheel', (event) => {
+      if (!(event instanceof WheelEvent) || !(galleryTrack instanceof HTMLElement)) return;
+      const movement = Math.abs(event.deltaY) > Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+      if (!movement) return;
+      galleryScene?.classList.remove('is-intro-title-visible');
+      event.preventDefault();
+      galleryTrack.scrollLeft += movement;
+      requestFrameUpdate();
+    }, { passive: false });
+    window.addEventListener('resize', () => {
+      requestFrameUpdate();
+    }, { passive: true });
+
+    openButton?.addEventListener('click', openGallery);
+    backButton?.addEventListener('click', closeGallery);
+    window.addEventListener('keydown', (event) => {
+      if (!(galleryScene instanceof HTMLElement) || galleryScene.hidden) return;
+      if (event.key === 'Escape') closeGallery();
+      if ((event.key === 'ArrowRight' || event.key === 'ArrowLeft') && galleryTrack instanceof HTMLElement) {
+        event.preventDefault();
+        galleryScene.classList.remove('is-intro-title-visible');
+        galleryTrack.scrollBy({
+          left: (event.key === 'ArrowRight' ? 1 : -1) * Math.min(window.innerWidth * 0.45, 560),
+          behavior: reducedMotion.matches ? 'auto' : 'smooth',
+        });
+      }
+    });
+  </script>
+</Layout>

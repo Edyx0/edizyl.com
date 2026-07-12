@@ -99,6 +99,29 @@ import Layout from '../layouts/Layout.astro';
     const useMaskedLandingFrames = false;
     const opening = document.querySelector<HTMLElement>('.opening-experience');
     const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let menuFrameReturnTimer = 0;
+
+    const beginMenuFrameTransition = () => {
+      if (!opening || body.dataset.openingPhase !== '3') return;
+      window.clearTimeout(menuFrameReturnTimer);
+      body.classList.remove('opening-menu-return');
+      body.classList.add('opening-menu-transition');
+    };
+
+    const restoreMenuFrames = () => {
+      if (!body.classList.contains('opening-menu-transition')) return;
+      window.clearTimeout(menuFrameReturnTimer);
+      body.classList.add('opening-menu-return');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => body.classList.remove('opening-menu-transition'));
+      });
+      menuFrameReturnTimer = window.setTimeout(() => {
+        body.classList.remove('opening-menu-return');
+      }, 920);
+    };
+
+    window.addEventListener('site-menu:opening', beginMenuFrameTransition);
+    window.addEventListener('site-menu:closed', restoreMenuFrames);
 
     const setMaskedLandingFrames = (enabled: boolean) => {
       body.classList.toggle('landing-masked-frames', enabled);

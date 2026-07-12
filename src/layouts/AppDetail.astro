@@ -134,11 +134,6 @@ const heroStyle = `--app-accent: ${app.accent}; --app-accent-surface: ${appColor
           <h2>Screenshots</h2>
         </div>
       )}
-      {!isTabuEkstra && (
-        <div class="app-gallery__motion" aria-hidden="true">
-          <span class="app-gallery__progress"><span data-gallery-progress></span></span>
-        </div>
-      )}
       <div
         class="shots-scroll"
         data-smooth-gallery
@@ -146,22 +141,31 @@ const heroStyle = `--app-accent: ${app.accent}; --app-accent-surface: ${appColor
         role="region"
         aria-label={`${app.name} screenshot gallery`}
       >
-        {app.previewVideoHls && (
-          <video
-            class="shot-video"
-            controls
-            autoplay
-            muted
-            loop
-            playsinline
-            preload="metadata"
-            poster={app.previewVideoPoster}
-            data-hls={app.previewVideoHls}
-          ></video>
-        )}
-        {app.screenshots.map((src, i) => (
-          <img src={src} alt={`${app.name} screenshot ${i + 1}`} loading="lazy" />
-        ))}
+        <div class="shots-scroll__track" data-gallery-track>
+          {app.previewVideoHls && (
+            <video
+              class="shot-video"
+              controls
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              poster={app.previewVideoPoster}
+              data-hls={app.previewVideoHls}
+            ></video>
+          )}
+          {app.screenshots.map((src, i) => (
+            <img
+              src={src}
+              alt={`${app.name} screenshot ${i + 1}`}
+              width="600"
+              height="1299"
+              loading="eager"
+              decoding="async"
+            />
+          ))}
+        </div>
       </div>
     </section>
   )}
@@ -206,10 +210,13 @@ const heroStyle = `--app-accent: ${app.accent}; --app-accent-surface: ${appColor
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-    document.querySelectorAll<HTMLElement>('[data-smooth-gallery]').forEach((track) => {
-      const gallery = track.closest<HTMLElement>('.app-gallery');
-      const progress = gallery?.querySelector<HTMLElement>('[data-gallery-progress]');
-      let target = track.scrollLeft;
+    document.querySelectorAll<HTMLElement>('[data-smooth-gallery]').forEach((viewport) => {
+      const rail = viewport.querySelector<HTMLElement>('[data-gallery-track]');
+      if (!rail) return;
+
+      const usesTransform = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      let position = usesTransform ? 0 : viewport.scrollLeft;
+      let target = position;
       let frame = 0;
       let dragging = false;
       let startX = 0;
@@ -218,60 +225,74 @@ const heroStyle = `--app-accent: ${app.accent}; --app-accent-surface: ${appColor
       let lastTime = 0;
       let velocity = 0;
       let cachedMaxScroll = 0;
-      let progressFrame = 0;
 
       const maxScroll = () => cachedMaxScroll;
       const hasOverflow = () => maxScroll() > 1;
+      const clamp = (value: number) => Math.min(maxScroll(), Math.max(0, value));
+      const currentPosition = () => usesTransform ? position : viewport.scrollLeft;
+      const renderPosition = (value: number) => {
+        position = clamp(value);
+        if (usesTransform) rail.style.left = `${-position}px`;
+        else viewport.scrollLeft = position;
+      };
       const updateOverflowState = () => {
-        cachedMaxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+        cachedMaxScroll = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
         const overflow = hasOverflow();
-        track.dataset.galleryOverflow = overflow ? 'true' : 'false';
-        track.tabIndex = overflow ? 0 : -1;
+        viewport.dataset.galleryOverflow = overflow ? 'true' : 'false';
+        viewport.tabIndex = overflow ? 0 : -1;
         if (!overflow) {
           target = 0;
-          track.scrollLeft = 0;
-          progress?.style.setProperty('transform', 'scaleX(1)');
+          renderPosition(0);
+        } else {
+          target = clamp(currentPosition());
+          renderPosition(target);
         }
         return overflow;
       };
-      const clamp = (value: number) => Math.min(maxScroll(), Math.max(0, value));
-      const updateProgress = () => {
-        const max = maxScroll();
-        const amount = max > 0 ? track.scrollLeft / max : 0;
-        progress?.style.setProperty('transform', `scaleX(${Math.max(0.035, amount)})`);
-      };
-      const scheduleProgress = () => {
-        if (progressFrame) return;
-        progressFrame = requestAnimationFrame(() => {
-          progressFrame = 0;
-          updateProgress();
-        });
-      };
 
       const glide = () => {
-        const distance = target - track.scrollLeft;
+        const distance = target - currentPosition();
         if (reducedMotion.matches || Math.abs(distance) < 0.35) {
-          track.scrollLeft = target;
+          renderPosition(target);
           frame = 0;
-          updateProgress();
           return;
         }
-        track.scrollLeft += distance * 0.105;
-        updateProgress();
+        renderPosition(currentPosition() + distance * 0.105);
         frame = requestAnimationFrame(glide);
       };
 
       const moveTo = (value: number) => {
         target = clamp(value);
         if (reducedMotion.matches) {
-          track.scrollLeft = target;
-          updateProgress();
+          renderPosition(target);
           return;
         }
         if (!frame) frame = requestAnimationFrame(glide);
       };
 
-      track.addEventListener('pointerdown', (event) => {
+      const handlePointerMove = (event: PointerEvent) => {
+        if (!dragging) return;
+        const now = performance.now();
+        const elapsed = Math.max(1, now - lastTime);
+        velocity = (lastX - event.clientX) / elapsed;
+        target = clamp(startScroll - (event.clientX - startX));
+        renderPosition(target);
+        lastX = event.clientX;
+        lastTime = now;
+      };
+
+      const release = (event: PointerEvent) => {
+        if (!dragging) return;
+        dragging = false;
+        viewport.classList.remove('is-dragging');
+        if (viewport.hasPointerCapture(event.pointerId)) viewport.releasePointerCapture(event.pointerId);
+        viewport.removeEventListener('pointermove', handlePointerMove);
+        viewport.removeEventListener('pointerup', release);
+        viewport.removeEventListener('pointercancel', release);
+        moveTo(currentPosition() + velocity * 240);
+      };
+
+      viewport.addEventListener('pointerdown', (event) => {
         if (!updateOverflowState()) return;
         if (event.pointerType !== 'mouse') return;
         if ((event.target as HTMLElement).closest('video, button, a')) return;
@@ -279,62 +300,35 @@ const heroStyle = `--app-accent: ${app.accent}; --app-accent-surface: ${appColor
         dragging = true;
         if (frame) cancelAnimationFrame(frame);
         frame = 0;
-        target = track.scrollLeft;
+        target = currentPosition();
         startX = lastX = event.clientX;
-        startScroll = track.scrollLeft;
+        startScroll = currentPosition();
         lastTime = performance.now();
         velocity = 0;
-        track.classList.add('is-dragging');
-        track.setPointerCapture(event.pointerId);
+        viewport.classList.add('is-dragging');
+        viewport.setPointerCapture(event.pointerId);
+        viewport.addEventListener('pointermove', handlePointerMove);
+        viewport.addEventListener('pointerup', release);
+        viewport.addEventListener('pointercancel', release);
       });
-
-      track.addEventListener('pointermove', (event) => {
-        if (!dragging) return;
-        const now = performance.now();
-        const elapsed = Math.max(1, now - lastTime);
-        velocity = (lastX - event.clientX) / elapsed;
-        target = clamp(startScroll - (event.clientX - startX));
-        track.scrollLeft = target;
-        lastX = event.clientX;
-        lastTime = now;
-        scheduleProgress();
-      });
-
-      const release = (event: PointerEvent) => {
-        if (!dragging) return;
-        dragging = false;
-        track.classList.remove('is-dragging');
-        if (track.hasPointerCapture(event.pointerId)) track.releasePointerCapture(event.pointerId);
-        moveTo(track.scrollLeft + velocity * 240);
-      };
-
-      track.addEventListener('pointerup', release);
-      track.addEventListener('pointercancel', release);
-      track.addEventListener('keydown', (event) => {
+      viewport.addEventListener('keydown', (event) => {
         if (!updateOverflowState()) return;
         if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
         event.preventDefault();
         const direction = event.key === 'ArrowRight' ? 1 : -1;
-        moveTo(target + track.clientWidth * 0.72 * direction);
+        moveTo(currentPosition() + viewport.clientWidth * 0.72 * direction);
       });
-      track.addEventListener('scroll', () => {
-        if (!frame && !dragging) target = track.scrollLeft;
-        scheduleProgress();
-      }, { passive: true });
       window.addEventListener('resize', () => {
         updateOverflowState();
-        target = clamp(target);
-        updateProgress();
+        target = clamp(currentPosition());
       }, { passive: true });
-      track.querySelectorAll('img').forEach((image) => {
+      rail.querySelectorAll('img').forEach((image) => {
         image.addEventListener('load', () => {
           updateOverflowState();
-          updateProgress();
         }, { once: true });
       });
 
       updateOverflowState();
-      updateProgress();
     });
   </script>
 
