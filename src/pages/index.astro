@@ -300,6 +300,23 @@ import Layout from '../layouts/Layout.astro';
       ];
     };
 
+    const waitForOpeningFonts = async () => {
+      if (!document.fonts) return;
+
+      try {
+        await document.fonts.load('400 1em "Anton"');
+        await document.fonts.ready;
+      } catch (_) {
+        // Continue with the fallback stack if the web font cannot be loaded.
+      }
+    };
+
+    const startOpeningWhenFontsAreReady = async () => {
+      await waitForOpeningFonts();
+      body.classList.remove('font-loading');
+      startOpeningSequence();
+    };
+
     const onScroll = () => {
       if (body.classList.contains('opening-locked')) {
         window.scrollTo(0, 0);
@@ -357,7 +374,7 @@ import Layout from '../layouts/Layout.astro';
     updateHeader();
     updateOpeningColor();
     setupOpeningFlowHover();
-    startOpeningSequence();
+    startOpeningWhenFontsAreReady();
     window.addEventListener('scroll', onScroll, { passive: true });
   </script>
 </Layout>

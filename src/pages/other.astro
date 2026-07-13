@@ -1,127 +1,380 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-const gallery = [
+const ayasofyaGallery = [
   {
-    src: '/other-projects/ayasofya/cover.png',
-    alt: 'Ayasofya: Kutsal Bilgelik Taşı oyununda kahraman, alevlerin üzerindeki bir platformda',
+    src: '/other-projects/ayasofya/cover.webp',
+    alt: 'Hagia Sophia: Sacred Wisdom Stone — the hero standing on a platform above flames',
   },
   {
-    src: '/other-projects/ayasofya/shot-1.png',
-    alt: 'Ayasofya: Kutsal Bilgelik Taşı piksel oyun ana menüsü',
+    src: '/other-projects/ayasofya/shot-1.webp',
+    alt: 'Hagia Sophia: Sacred Wisdom Stone pixel-art main menu',
   },
   {
-    src: '/other-projects/ayasofya/shot-2.png',
-    alt: 'Ayasofya yer altı bölümünde platformların arasında duran oyun karakteri',
+    src: '/other-projects/ayasofya/shot-2.webp',
+    alt: 'Hagia Sophia: Sacred Wisdom Stone — the hero among platforms in an underground level',
   },
   {
-    src: '/other-projects/ayasofya/shot-3.png',
-    alt: 'Ayasofya yer altı bölümünde alevli bir yokuştan inen oyun karakteri',
+    src: '/other-projects/ayasofya/shot-3.webp',
+    alt: 'Hagia Sophia: Sacred Wisdom Stone — the hero descending a fiery underground slope',
   },
 ];
+
+const ayasofyaItems = [
+  { kind: 'image', role: 'lead', image: ayasofyaGallery[0] },
+  {
+    kind: 'text',
+    variant: 'one',
+    slot: 'after-photo-one',
+    text: 'Hagia Sophia: Sacred Wisdom Stone is a fast-paced parkour game inspired by the Byzantine tunnels beneath Hagia Sophia. Built with friends during our first and only game jam, the project earned 2nd place at BGM Game Jam, organized by the IEEE clubs of Bahçeşehir, Galatasaray, and Medipol Universities.',
+  },
+  { kind: 'image', role: 'middle', image: ayasofyaGallery[1] },
+  { kind: 'image', role: 'edge', image: ayasofyaGallery[2] },
+  {
+    kind: 'text',
+    variant: 'two',
+    slot: 'after-photo-three',
+    text: 'I led the programming and level design, using Unity and C# to build the movement systems, obstacles, and overall level flow. The project strengthened my ability to develop under pressure, make rapid design decisions, and deliver a polished, fully playable experience within a strict deadline.',
+  },
+  { kind: 'image', role: 'tail', image: ayasofyaGallery[3] },
+] as const;
+
+const lokalItems = [
+  {
+    kind: 'image',
+    role: 'lead',
+    image: {
+      src: '/other-projects/lokal/l1.webp',
+      alt: 'Lokal App Store visual introducing nearby places and Kadıköy cafes',
+    },
+  },
+  {
+    kind: 'text',
+    variant: 'one',
+    slot: 'lokal-intro',
+    text: 'Lokal is a visual direction for a friend’s iOS app: a calmer way to find places worth stepping into. The App Store story uses platinum surfaces, graphite type, and one cobalt signal to make local discovery feel considered rather than crowded.',
+  },
+  {
+    kind: 'image',
+    role: 'middle',
+    image: {
+      src: '/other-projects/lokal/l2.webp',
+      alt: 'Lokal App Store visual showing curated places and local trends',
+    },
+  },
+  {
+    kind: 'image',
+    role: 'edge',
+    image: {
+      src: '/other-projects/lokal/l3.webp',
+      alt: 'Lokal App Store visual showing the Damga Kartı cafe loyalty experience',
+    },
+  },
+  {
+    kind: 'text',
+    variant: 'two',
+    slot: 'lokal-outro',
+    text: 'The direction treats every screen like a small city poster: strong words first, useful context second, and enough empty space for the place itself to stay memorable. It was designed in Figma as a compact App Store visual system that can stretch across a full screenshot set.',
+  },
+  {
+    kind: 'image',
+    role: 'tail',
+    image: {
+      src: '/other-projects/lokal/l4.webp',
+      alt: 'Lokal App Store visual showing discounts and gift coffee offers',
+    },
+  },
+] as const;
+
+const projects = [
+  {
+    id: 'ayasofya',
+    title: 'Hagia Sophia: Sacred Wisdom Stone',
+    indexLabel: 'Hagia Sophia',
+    indexMeta: 'Sacred Wisdom Stone · jam game',
+    galleryItems: ayasofyaItems,
+    canvas: '#0b0f1c',
+    ink: '#f2d7a6',
+    frame: '#ed46d5',
+    link: 'https://edizy.itch.io/ayasofya-kutsal-bilgelik-tasi',
+    linkLabel: 'Play on itch.io ↗',
+  },
+  {
+    id: 'lokal',
+    title: 'Lokal',
+    indexLabel: 'Lokal',
+    indexMeta: 'App Store visuals · product design',
+    galleryItems: lokalItems,
+    canvas: '#111820',
+    ink: '#e8e9e5',
+    frame: '#9eb4ff',
+    link: null,
+    linkLabel: 'App Store visual direction',
+  },
+] as const;
 ---
 
 <Layout
-  title="Other Projects — Ediz Yılmaz"
-  description="Independent experiments and playable side projects by Ediz Yılmaz."
+  title="Other — Ediz Yılmaz"
+  description="Independent experiments, visual studies, and playable side projects by Ediz Yılmaz."
   bodyClass="other-page"
 >
-  <section class="other-index" data-other-index>
-    <button class="other-project" type="button" data-gallery-open aria-controls="other-gallery" aria-label="Open Ayasofya project gallery">
-      <span class="other-project__frame other-project__frame--cover" style="--frame-i: 0; --frame-x: -18vw; --frame-y: -22vh;" aria-hidden="true">
-        <img src={gallery[0].src} alt={gallery[0].alt} decoding="async" />
-      </span>
-      <span class="other-project__frame other-project__frame--one" style="--frame-i: 1; --frame-x: 20vw; --frame-y: -28vh;" aria-hidden="true">
-        <img src={gallery[1].src} alt={gallery[1].alt} loading="lazy" decoding="async" />
-      </span>
-      <span class="other-project__frame other-project__frame--two" style="--frame-i: 2; --frame-x: -24vw; --frame-y: 26vh;" aria-hidden="true">
-        <img src={gallery[2].src} alt={gallery[2].alt} loading="lazy" decoding="async" />
-      </span>
-      <span class="other-project__frame other-project__frame--three" style="--frame-i: 3; --frame-x: 24vw; --frame-y: 24vh;" aria-hidden="true">
-        <img src={gallery[3].src} alt={gallery[3].alt} loading="lazy" decoding="async" />
-      </span>
-      <span class="other-project__identity">
-        <span>Ayasofya</span>
-        <small>Kutsal Bilgelik Taşı · browser game</small>
-        <b aria-hidden="true">View project ↗</b>
-      </span>
-    </button>
-  </section>
-
-  <section
-    class="other-gallery"
-    id="other-gallery"
-    style="--project-canvas: #0b0f1c; --project-ink: #f2d7a6; --project-frame: #ed46d5;"
-    aria-label="Ayasofya project gallery"
-    aria-hidden="true"
-    data-other-gallery
-    hidden
-  >
-    <header class="other-gallery__header">
-      <button type="button" class="back-link other-gallery__back" data-gallery-back>Index — Back</button>
-      <span class="other-gallery__counter" data-gallery-counter>1 / {gallery.length}</span>
-    </header>
-
-    <div class="other-gallery__stage" aria-live="polite">
-      <div
-        class="other-gallery__track"
-        data-gallery-track
-        tabindex="0"
-        aria-label="Project photos. Scroll vertically or horizontally to browse."
+  {projects.map((project) => (
+    <section
+      class:list={['other-index', project.id === 'lokal' && 'other-index--lokal']}
+      id={`other-index-${project.id}`}
+      data-other-index
+      style={`--project-frame: ${project.frame};`}
+      aria-label={`${project.title} project`}
+    >
+      <button
+        class="other-project"
+        type="button"
+        data-gallery-open={project.id}
+        aria-controls={`other-gallery-${project.id}`}
+        aria-label={`Open ${project.title} project gallery`}
       >
-        {gallery.map((item, imageIndex) => (
-          <figure
-            class:list={[
-              'other-gallery__frame',
-              `other-gallery__frame--${['lead', 'middle', 'edge', 'tail'][imageIndex % 4]}`,
-            ]}
-            data-gallery-frame
-            data-gallery-index={imageIndex}
-            style={`--gallery-i: ${imageIndex}; --gallery-local-i: ${imageIndex}; --gallery-exit: 0; --gallery-side: 0;`}
-          >
-            <span class="other-gallery__surface">
-              <img
-                src={item.src}
-                alt={item.alt}
-                loading={imageIndex === 0 ? 'eager' : 'lazy'}
-                decoding="async"
-              />
+{project.id === 'lokal' ? (
+          <>
+            <span class="other-project__frame other-project__frame--cover" style="--frame-i: 0; --frame-x: -18vw; --frame-y: -22vh;" data-index-frame aria-hidden="true">
+              <span class="other-project__surface">
+                <img src="/other-projects/lokal/l1.webp" alt="Lokal App Store visual introducing nearby places" decoding="async" />
+              </span>
             </span>
-          </figure>
-        ))}
+            <span class="other-project__frame other-project__frame--menu" style="--frame-i: 1; --frame-x: 20vw; --frame-y: -28vh;" data-index-frame aria-hidden="true">
+              <span class="other-project__surface">
+                <img src="/other-projects/lokal/l3.webp" alt="Lokal App Store visual showing the Damga Kartı experience" loading="lazy" decoding="async" />
+              </span>
+            </span>
+          </>
+        ) : (
+          <>
+            <span class="other-project__frame other-project__frame--cover" style="--frame-i: 0; --frame-x: -18vw; --frame-y: -22vh;" data-index-frame aria-hidden="true">
+              <span class="other-project__surface">
+                <img src={ayasofyaGallery[0].src} alt={ayasofyaGallery[0].alt} decoding="async" />
+              </span>
+            </span>
+            <span class="other-project__frame other-project__frame--menu" style="--frame-i: 1; --frame-x: 20vw; --frame-y: -28vh;" data-index-frame aria-hidden="true">
+              <span class="other-project__surface">
+                <img src={ayasofyaGallery[1].src} alt={ayasofyaGallery[1].alt} loading="lazy" decoding="async" />
+              </span>
+            </span>
+          </>
+        )}
+        <span class="other-project__identity">
+          {project.id === 'lokal' && (
+            <img class="lokal-index-logo" src="/other-projects/lokal/lokallogo.svg" alt="lokal logo" />
+          )}
+          <span class="other-project__title-line">
+            <span class="other-project__title-text">
+              {project.id === 'ayasofya' ? (
+                <>Hagia <span class="other-project__title-end">Sophia <small class="other-project__year">(2021)</small></span></>
+              ) : (
+                <>lokal <small class="other-project__year">(visual study)</small></>
+              )}
+            </span>
+          </span>
+          <small>{project.indexMeta}</small>
+        </span>
+      </button>
+    </section>
+  ))}
+
+  {projects.map((project) => (
+    <section
+      class:list={['other-gallery', project.id === 'lokal' && 'other-gallery--lokal']}
+      id={`other-gallery-${project.id}`}
+      style={`--project-canvas: ${project.canvas}; --project-ink: ${project.ink}; --project-frame: ${project.frame};`}
+      aria-label={`${project.title} project gallery`}
+      aria-hidden="true"
+      data-other-gallery
+      data-gallery-id={project.id}
+      data-gallery-count={project.galleryItems.length}
+      hidden
+    >
+      <header class="other-gallery__header">
+        <button type="button" class="back-link other-gallery__back" data-gallery-back>Index — Back</button>
+        <span class="other-gallery__counter" data-gallery-counter>1 / {project.galleryItems.length}</span>
+      </header>
+
+      <div class="other-gallery__stage" aria-live="polite">
+        <div
+          class="other-gallery__track"
+          data-gallery-track
+          tabindex="0"
+          aria-label="Project photos and text panels. Scroll vertically or horizontally to browse."
+        >
+          {project.galleryItems.map((item, itemIndex) => item.kind === 'image' ? (
+            <figure
+              class:list={['other-gallery__frame', `other-gallery__frame--${item.role}`]}
+              data-gallery-frame
+              data-gallery-index={itemIndex}
+              style={`--gallery-i: ${itemIndex}; --gallery-local-i: ${itemIndex}; --gallery-exit: 0; --gallery-side: 0;`}
+            >
+              <span class="other-gallery__surface">
+                <img
+                  src={item.image.src}
+                  alt={item.image.alt}
+                  loading={itemIndex === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                />
+              </span>
+            </figure>
+          ) : item.kind === 'visual' ? (
+            <figure
+              class:list={[
+                'other-gallery__frame',
+                `other-gallery__frame--${item.role}`,
+                'other-gallery__visual-frame',
+              ]}
+              data-gallery-frame
+              data-gallery-index={itemIndex}
+              style={`--gallery-i: ${itemIndex}; --gallery-local-i: ${itemIndex}; --gallery-exit: 0; --gallery-side: 0;`}
+            >
+              <span class="other-gallery__surface">
+                <span class:list={['lokal-screen', `lokal-screen--${item.variant}`]} role="img" aria-label={item.alt}>
+                  <span class="lokal-screen__status"><span>9:41</span><span>•••</span></span>
+                  {item.variant === 'discover' ? (
+                    <>
+                      <span class="lokal-screen__topline"><b>lokal</b><span>IST / 14°</span></span>
+                      <span class="lokal-screen__headline">Find your<br /><i>nearby.</i></span>
+                      <span class="lokal-screen__map">
+                        <span class="lokal-screen__map-road lokal-screen__map-road--one"></span>
+                        <span class="lokal-screen__map-road lokal-screen__map-road--two"></span>
+                        <span class="lokal-screen__map-pin lokal-screen__map-pin--one">L</span>
+                        <span class="lokal-screen__map-pin lokal-screen__map-pin--two">L</span>
+                        <span class="lokal-screen__map-caption">3 places nearby</span>
+                      </span>
+                      <span class="lokal-screen__nav"><b>Explore</b><span>Saved</span><span>Profile</span></span>
+                    </>
+                  ) : item.variant === 'places' ? (
+                    <>
+                      <span class="lokal-screen__topline"><b>lokal</b><span>NEAR YOU</span></span>
+                      <span class="lokal-screen__section-title">Good places,<br /><i>close by.</i></span>
+                      <span class="lokal-screen__place-list">
+                        <span><i class="lokal-screen__place-mark lokal-screen__place-mark--blue">01</i><b>Yeldeğirmeni</b><small>coffee · 8 min</small></span>
+                        <span><i class="lokal-screen__place-mark lokal-screen__place-mark--lime">02</i><b>Minoa Village</b><small>bookshop · 12 min</small></span>
+                        <span><i class="lokal-screen__place-mark lokal-screen__place-mark--orange">03</i><b>Moda Coast</b><small>walk · 18 min</small></span>
+                      </span>
+                      <span class="lokal-screen__nav"><span>Explore</span><b>Nearby</b><span>Saved</span></span>
+                    </>
+                  ) : item.variant === 'detail' ? (
+                    <>
+                      <span class="lokal-screen__topline"><span>← back</span><b>place</b></span>
+                      <span class="lokal-screen__place-image"><span>MN</span><i>quiet<br />corners</i></span>
+                      <span class="lokal-screen__detail-title">Minoa<br /><i>Village.</i></span>
+                      <span class="lokal-screen__detail-meta"><b>bookshop</b><span>4.7 · 12 min walk</span></span>
+                      <span class="lokal-screen__detail-action">Save this place <b>＋</b></span>
+                    </>
+                  ) : (
+                    <>
+                      <span class="lokal-screen__topline"><b>lokal</b><span>SAVED</span></span>
+                      <span class="lokal-screen__section-title">Your local<br /><i>list.</i></span>
+                      <span class="lokal-screen__saved-list">
+                        <span><b>Minoa Village</b><small>bookshop / Kadıköy</small><i>↗</i></span>
+                        <span><b>Arka Sokak</b><small>coffee / Yeldeğirmeni</small><i>↗</i></span>
+                        <span><b>Moda Coast</b><small>walk / Moda</small><i>↗</i></span>
+                      </span>
+                      <span class="lokal-screen__nav"><span>Explore</span><span>Nearby</span><b>Saved</b></span>
+                    </>
+                  )}
+                </span>
+              </span>
+            </figure>
+          ) : (
+            <article
+              class:list={[
+                'other-gallery__frame',
+                'other-gallery__text-frame',
+                `other-gallery__text-frame--${item.variant}`,
+              ]}
+              data-gallery-frame
+              data-gallery-index={itemIndex}
+              style={`--gallery-i: ${itemIndex}; --gallery-local-i: ${itemIndex}; --gallery-exit: 0; --gallery-side: 0;`}
+            >
+              <span class="other-gallery__surface other-gallery__text-surface">
+                <p class="other-gallery__text-slot" data-text-slot={item.slot}>{item.text}</p>
+              </span>
+            </article>
+          ))}
+        </div>
       </div>
-    </div>
 
-    <h2 class="other-gallery__intro-title" aria-hidden="true">
-      Ayasofya — Kutsal Bilgelik Taşı
-    </h2>
+      <h2 class="other-gallery__intro-title" aria-hidden="true">{project.title}</h2>
 
-    <footer class="other-gallery__footer">
-      <span class="other-gallery__project-title">Ayasofya — Kutsal Bilgelik Taşı</span>
-      <a class="other-gallery__project-link" href="https://edizy.itch.io/ayasofya-kutsal-bilgelik-tasi" target="_blank" rel="noopener noreferrer">Play on itch.io ↗</a>
-    </footer>
-  </section>
+      <footer class="other-gallery__footer">
+        <span class="other-gallery__project-title">{project.title}</span>
+        {project.link ? (
+          <a class="other-gallery__project-link" href={project.link} target="_blank" rel="noopener noreferrer">{project.linkLabel}</a>
+        ) : (
+          <span class="other-gallery__project-link other-gallery__project-link--static">{project.linkLabel}</span>
+        )}
+      </footer>
+    </section>
+  ))}
 
-  <script define:vars={{ gallery }}>
-    const index = document.querySelector('[data-other-index]');
-    const galleryScene = document.querySelector('[data-other-gallery]');
-    const openButton = document.querySelector('[data-gallery-open]');
-    const backButton = document.querySelector('[data-gallery-back]');
-    const counter = document.querySelector('[data-gallery-counter]');
-    const galleryTrack = document.querySelector('[data-gallery-track]');
-    const frames = [...document.querySelectorAll('[data-gallery-frame]')];
+  <script>
+    const indexSections = [...document.querySelectorAll('[data-other-index]')];
+    const galleryControllers = [...document.querySelectorAll('[data-other-gallery]')].map((scene) => ({
+      scene,
+      id: scene.dataset.galleryId,
+      count: Number(scene.dataset.galleryCount || 0),
+      backButton: scene.querySelector('[data-gallery-back]'),
+      counter: scene.querySelector('[data-gallery-counter]'),
+      track: scene.querySelector('[data-gallery-track]'),
+      frames: [...scene.querySelectorAll('[data-gallery-frame]')],
+    }));
+    const openButtons = [...document.querySelectorAll('[data-gallery-open]')];
+    const indexFrames = [...document.querySelectorAll('[data-index-frame]')];
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let activeGallery = null;
+    let activeOpenButton = null;
     let active = 0;
     let scrollFrame = 0;
     let revealEnabled = false;
     let revealCycle = 0;
+    let indexRevealCycle = 0;
     const revealTimers = new Map();
+
+    const resetIndexCards = () => {
+      indexRevealCycle += 1;
+      indexSections.forEach((section) => section.classList.remove('is-visible'));
+      indexFrames.forEach((frame) => frame instanceof HTMLElement && frame.classList.remove('is-photo-visible'));
+    };
+
+    const revealIndexCards = () => {
+      if (!indexSections.length) return;
+      const cycle = ++indexRevealCycle;
+      indexSections.forEach((section) => section.classList.add('is-visible'));
+
+      indexFrames.forEach((frame, frameIndex) => {
+        if (!(frame instanceof HTMLElement)) return;
+        const image = frame.querySelector('img');
+        const decoded = image instanceof HTMLImageElement
+          ? (image.complete
+            ? image.decode().catch(() => undefined)
+            : new Promise((resolve) => {
+                image.loading = 'eager';
+                image.addEventListener('load', resolve, { once: true });
+                image.addEventListener('error', resolve, { once: true });
+              }))
+          : Promise.resolve();
+        const delay = reducedMotion.matches ? 0 : 340 + frameIndex * 48;
+
+        Promise.all([decoded, new Promise((resolve) => window.setTimeout(resolve, delay))])
+          .then(() => {
+            if (cycle === indexRevealCycle) frame.classList.add('is-photo-visible');
+          });
+      });
+    };
+
+    requestAnimationFrame(() => requestAnimationFrame(revealIndexCards));
 
     const resetPhotoReveals = () => {
       revealCycle += 1;
       revealTimers.forEach((timer) => window.clearTimeout(timer));
       revealTimers.clear();
-      frames.forEach((frame) => frame instanceof HTMLElement && frame.classList.remove('is-photo-visible'));
+      activeGallery?.frames.forEach((frame) => frame instanceof HTMLElement && frame.classList.remove('is-photo-visible'));
     };
 
     const queuePhotoReveal = (frame, opening) => {
@@ -133,21 +386,19 @@ const gallery = [
       ) return;
 
       const image = frame.querySelector('img');
-      if (!(image instanceof HTMLImageElement)) return;
-      image.loading = 'eager';
-
       const cycle = revealCycle;
       const delay = reducedMotion.matches ? 0 : opening
         ? 340 + Number(frame.dataset.galleryIndex || 0) * 48
         : 340;
-
-      const decoded = image.complete
-        ? image.decode().catch(() => undefined)
-        : new Promise((resolve) => {
-            image.addEventListener('load', resolve, { once: true });
-            image.addEventListener('error', resolve, { once: true });
-          });
-
+      const decoded = image instanceof HTMLImageElement
+        ? (image.complete
+          ? image.decode().catch(() => undefined)
+          : new Promise((resolve) => {
+              image.loading = 'eager';
+              image.addEventListener('load', resolve, { once: true });
+              image.addEventListener('error', resolve, { once: true });
+            }))
+        : Promise.resolve();
       const delayed = new Promise((resolve) => {
         const timer = window.setTimeout(resolve, delay);
         revealTimers.set(frame, timer);
@@ -162,10 +413,12 @@ const gallery = [
 
     const updateFrames = () => {
       scrollFrame = 0;
-      if (!(galleryTrack instanceof HTMLElement)) return;
+      if (!activeGallery || !(activeGallery.track instanceof HTMLElement)) return;
+      const galleryScene = activeGallery.scene;
+      const galleryTrack = activeGallery.track;
 
       if (galleryTrack.scrollLeft > 8) {
-        galleryScene?.classList.remove('is-intro-title-visible');
+        galleryScene.classList.remove('is-intro-title-visible');
       }
 
       const trackRect = galleryTrack.getBoundingClientRect();
@@ -173,7 +426,7 @@ const gallery = [
       let nearest = active;
       let nearestDistance = Number.POSITIVE_INFINITY;
 
-      frames.forEach((frame, frameIndex) => {
+      activeGallery.frames.forEach((frame) => {
         if (!(frame instanceof HTMLElement)) return;
         const rect = frame.getBoundingClientRect();
         const center = rect.left + rect.width / 2;
@@ -186,9 +439,7 @@ const gallery = [
 
         const isApproaching = rect.right > trackRect.left + trackRect.width * 0.04
           && rect.left < trackRect.right - trackRect.width * 0.04;
-        if (isApproaching) {
-          queuePhotoReveal(frame, galleryScene?.classList.contains('is-opening'));
-        }
+        if (isApproaching) queuePhotoReveal(frame, galleryScene.classList.contains('is-opening'));
 
         if (distance < nearestDistance) {
           nearestDistance = distance;
@@ -198,9 +449,8 @@ const gallery = [
 
       if (nearest !== active) {
         active = nearest;
-        if (counter) counter.textContent = `${active + 1} / ${gallery.length}`;
+        if (activeGallery.counter) activeGallery.counter.textContent = `${active + 1} / ${activeGallery.count}`;
       }
-
     };
 
     const requestFrameUpdate = () => {
@@ -208,72 +458,85 @@ const gallery = [
       scrollFrame = requestAnimationFrame(updateFrames);
     };
 
-    const openGallery = () => {
-      if (!(galleryScene instanceof HTMLElement) || !(index instanceof HTMLElement)) return;
-      galleryScene.hidden = false;
-      galleryScene.setAttribute('aria-hidden', 'false');
-      index.setAttribute('aria-hidden', 'true');
+    const openGallery = (button) => {
+      const controller = galleryControllers.find((gallery) => gallery.id === button?.dataset.galleryOpen);
+      if (!controller) return;
+      activeGallery = controller;
+      activeOpenButton = button;
+      controller.scene.hidden = false;
+      controller.scene.setAttribute('aria-hidden', 'false');
+      galleryControllers.forEach((gallery) => {
+        if (gallery !== controller) {
+          gallery.scene.hidden = true;
+          gallery.scene.classList.remove('is-visible', 'is-opening', 'is-returning', 'is-intro-title-visible');
+          gallery.scene.setAttribute('aria-hidden', 'true');
+        }
+      });
+      indexSections.forEach((section) => section.setAttribute('aria-hidden', 'true'));
+      resetIndexCards();
       document.body.classList.add('other-gallery-open');
-      galleryScene.classList.add('is-opening');
-      galleryScene.classList.add('is-intro-title-visible');
+      controller.scene.classList.add('is-opening', 'is-intro-title-visible');
       resetPhotoReveals();
       revealEnabled = true;
       active = 0;
-      if (counter) counter.textContent = `1 / ${gallery.length}`;
+      if (controller.counter) controller.counter.textContent = `1 / ${controller.count}`;
       requestAnimationFrame(() => requestAnimationFrame(() => {
-        if (galleryTrack instanceof HTMLElement) galleryTrack.scrollLeft = 0;
-        galleryScene.classList.add('is-visible');
+        if (controller.track instanceof HTMLElement) controller.track.scrollLeft = 0;
+        controller.scene.classList.add('is-visible');
         updateFrames();
         window.setTimeout(
-          () => galleryScene.classList.remove('is-opening'),
+          () => controller.scene.classList.remove('is-opening'),
           reducedMotion.matches ? 0 : 760,
         );
       }));
-      window.setTimeout(() => backButton?.focus({ preventScroll: true }), reducedMotion.matches ? 0 : 780);
+      window.setTimeout(() => controller.backButton?.focus({ preventScroll: true }), reducedMotion.matches ? 0 : 780);
     };
 
     const closeGallery = () => {
-      if (!(galleryScene instanceof HTMLElement) || !(index instanceof HTMLElement)) return;
+      if (!activeGallery) return;
+      const controller = activeGallery;
       revealEnabled = false;
       resetPhotoReveals();
-      galleryScene.classList.remove('is-visible');
-      galleryScene.classList.remove('is-opening');
-      galleryScene.classList.remove('is-intro-title-visible');
-      galleryScene.classList.add('is-returning');
+      controller.scene.classList.remove('is-visible', 'is-opening', 'is-intro-title-visible');
+      controller.scene.classList.add('is-returning');
       const finish = () => {
-        galleryScene.hidden = true;
-        galleryScene.classList.remove('is-returning');
-        galleryScene.setAttribute('aria-hidden', 'true');
-        index.removeAttribute('aria-hidden');
+        controller.scene.hidden = true;
+        controller.scene.classList.remove('is-returning');
+        controller.scene.setAttribute('aria-hidden', 'true');
+        indexSections.forEach((section) => section.removeAttribute('aria-hidden'));
         document.body.classList.remove('other-gallery-open');
-        openButton?.focus({ preventScroll: true });
+        const button = activeOpenButton;
+        activeGallery = null;
+        activeOpenButton = null;
+        requestAnimationFrame(() => requestAnimationFrame(revealIndexCards));
+        button?.focus({ preventScroll: true });
       };
       window.setTimeout(finish, reducedMotion.matches ? 0 : 620);
     };
 
-    galleryTrack?.addEventListener('scroll', requestFrameUpdate, { passive: true });
-    galleryTrack?.addEventListener('wheel', (event) => {
-      if (!(event instanceof WheelEvent) || !(galleryTrack instanceof HTMLElement)) return;
-      const movement = Math.abs(event.deltaY) > Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
-      if (!movement) return;
-      galleryScene?.classList.remove('is-intro-title-visible');
-      event.preventDefault();
-      galleryTrack.scrollLeft += movement;
-      requestFrameUpdate();
-    }, { passive: false });
-    window.addEventListener('resize', () => {
-      requestFrameUpdate();
-    }, { passive: true });
-
-    openButton?.addEventListener('click', openGallery);
-    backButton?.addEventListener('click', closeGallery);
-    window.addEventListener('keydown', (event) => {
-      if (!(galleryScene instanceof HTMLElement) || galleryScene.hidden) return;
-      if (event.key === 'Escape') closeGallery();
-      if ((event.key === 'ArrowRight' || event.key === 'ArrowLeft') && galleryTrack instanceof HTMLElement) {
+    galleryControllers.forEach((controller) => {
+      controller.track?.addEventListener('scroll', requestFrameUpdate, { passive: true });
+      controller.track?.addEventListener('wheel', (event) => {
+        if (activeGallery !== controller || !(event instanceof WheelEvent) || !(controller.track instanceof HTMLElement)) return;
+        const movement = Math.abs(event.deltaY) > Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+        if (!movement) return;
+        controller.scene.classList.remove('is-intro-title-visible');
         event.preventDefault();
-        galleryScene.classList.remove('is-intro-title-visible');
-        galleryTrack.scrollBy({
+        controller.track.scrollLeft += movement;
+        requestFrameUpdate();
+      }, { passive: false });
+    });
+
+    window.addEventListener('resize', requestFrameUpdate, { passive: true });
+    openButtons.forEach((button) => button.addEventListener('click', () => openGallery(button)));
+    galleryControllers.forEach((controller) => controller.backButton?.addEventListener('click', closeGallery));
+    window.addEventListener('keydown', (event) => {
+      if (!activeGallery || activeGallery.scene.hidden) return;
+      if (event.key === 'Escape') closeGallery();
+      if ((event.key === 'ArrowRight' || event.key === 'ArrowLeft') && activeGallery.track instanceof HTMLElement) {
+        event.preventDefault();
+        activeGallery.scene.classList.remove('is-intro-title-visible');
+        activeGallery.track.scrollBy({
           left: (event.key === 'ArrowRight' ? 1 : -1) * Math.min(window.innerWidth * 0.45, 560),
           behavior: reducedMotion.matches ? 'auto' : 'smooth',
         });

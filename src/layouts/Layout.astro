@@ -16,7 +16,11 @@ const {
   bodyClass = '',
 } = Astro.props;
 
-const classes = [legal ? 'legal' : '', bodyClass].filter(Boolean).join(' ');
+const classes = [
+  legal ? 'legal' : '',
+  bodyClass,
+  bodyClass.split(/\s+/).includes('home') ? 'font-loading' : '',
+].filter(Boolean).join(' ');
 const defaultSpotifyStatusEndpoint = 'https://edizy-spotify-status.kickle-edizy.workers.dev';
 const spotifyStatusEndpoint = import.meta.env.PUBLIC_SPOTIFY_STATUS_ENDPOINT?.trim() || defaultSpotifyStatusEndpoint;
 
@@ -213,10 +217,10 @@ const logoDotLitByIndex = new Map(
 
     <div class="site-scene-transition" aria-hidden="true">
       <div class="site-scene-transition__wash"></div>
-      <figure style="--scene-i: 0; --scene-x: -34vw; --scene-y: -28vh; --scene-r: -2deg;"><img src="/other-projects/ayasofya/shot-1.png" alt="" /></figure>
-      <figure style="--scene-i: 1; --scene-x: 10vw; --scene-y: -38vh; --scene-r: 1deg;"><img src="/other-projects/ayasofya/cover.png" alt="" /></figure>
-      <figure style="--scene-i: 2; --scene-x: 36vw; --scene-y: -16vh; --scene-r: 2deg;"><img src="/other-projects/ayasofya/shot-2.png" alt="" /></figure>
-      <figure style="--scene-i: 3; --scene-x: -32vw; --scene-y: 30vh; --scene-r: 1deg;"><img src="/other-projects/ayasofya/shot-3.png" alt="" /></figure>
+      <figure style="--scene-i: 0; --scene-x: -34vw; --scene-y: -28vh; --scene-r: -2deg;"><img src="/other-projects/ayasofya/shot-1.webp" alt="" /></figure>
+      <figure style="--scene-i: 1; --scene-x: 10vw; --scene-y: -38vh; --scene-r: 1deg;"><img src="/other-projects/ayasofya/cover.webp" alt="" /></figure>
+      <figure style="--scene-i: 2; --scene-x: 36vw; --scene-y: -16vh; --scene-r: 2deg;"><img src="/other-projects/ayasofya/shot-2.webp" alt="" /></figure>
+      <figure style="--scene-i: 3; --scene-x: -32vw; --scene-y: 30vh; --scene-r: 1deg;"><img src="/other-projects/ayasofya/shot-3.webp" alt="" /></figure>
       <figure style="--scene-i: 4; --scene-x: 32vw; --scene-y: 32vh; --scene-r: -2deg;"><img src="/landing/self-brand/food-trip.webp" alt="" /></figure>
     </div>
 
@@ -573,6 +577,7 @@ const logoDotLitByIndex = new Map(
         const menu = document.querySelector('#site-menu');
         const menuToggle = document.querySelector('.menu-toggle');
         const menuClose = document.querySelector('.site-menu__close');
+        const logo = document.querySelector('.logo');
         const sceneTransition = document.querySelector('.site-scene-transition');
         const musicLink = menu?.querySelector('.site-menu__music');
         const musicCover = musicLink?.querySelector('[data-spotify-cover]');
@@ -592,11 +597,70 @@ const logoDotLitByIndex = new Map(
         let musicDiscExitTimer = 0;
         let musicAutoDiscTimer = 0;
         let menuCloseTimer = 0;
+        let logoHoverPreviewTimer = 0;
+        let logoSettleAnimations = [];
 
         const closeMenu = () => {
           if (!menu?.open) return;
           menu.close();
         };
+
+        const setLogoPointerState = (hovered) => {
+          if (!logo || musicReducedMotion.matches) return;
+          window.clearTimeout(logoHoverPreviewTimer);
+          logoSettleAnimations.forEach((animation) => animation.cancel());
+          logoSettleAnimations = [];
+
+          if (hovered) {
+            logo.classList.remove('is-hover-preview');
+            logo.classList.add('is-pointer-hovered');
+            return;
+          }
+
+          const dots = [...logo.querySelectorAll('.dot-logo span')];
+          const currentStyles = dots.map((dot) => {
+            const style = getComputedStyle(dot);
+            return {
+              dot,
+              current: {
+                backgroundColor: style.backgroundColor,
+                boxShadow: style.boxShadow,
+                opacity: style.opacity,
+                transform: style.transform,
+              },
+            };
+          });
+
+          logo.classList.remove('is-pointer-hovered', 'is-hover-preview');
+
+          currentStyles.forEach(({ dot, current }) => {
+            const idle = getComputedStyle(dot);
+            const settle = dot.animate(
+              [
+                current,
+                {
+                  backgroundColor: idle.backgroundColor,
+                  boxShadow: idle.boxShadow,
+                  opacity: idle.opacity,
+                  transform: idle.transform,
+                },
+              ],
+              {
+                duration: 1560,
+                easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                fill: 'forwards',
+              },
+            );
+
+            logoSettleAnimations.push(settle);
+            settle.finished
+              .then(() => settle.cancel())
+              .catch(() => {});
+          });
+        };
+
+        logo?.addEventListener('pointerenter', () => setLogoPointerState(true));
+        logo?.addEventListener('pointerleave', () => setLogoPointerState(false));
 
         const runMusicSpin = (time) => {
           if (!musicLink) return;
@@ -848,10 +912,21 @@ const logoDotLitByIndex = new Map(
           window.dispatchEvent(new CustomEvent('site-menu:closed'));
         });
 
-        if (sceneTransition && sessionStorage.getItem('scene-arrival')) {
+        const sceneArrival = sessionStorage.getItem('scene-arrival');
+        if (sceneTransition && sceneArrival) {
           sessionStorage.removeItem('scene-arrival');
           sceneTransition.classList.add('is-arriving');
           window.setTimeout(() => sceneTransition.classList.remove('is-arriving'), 1050);
+
+          if (sceneArrival === 'other' && document.body.classList.contains('other-page') && logo && !musicReducedMotion.matches) {
+            window.clearTimeout(logoHoverPreviewTimer);
+            logoHoverPreviewTimer = window.setTimeout(() => {
+              logo.classList.add('is-hover-preview');
+              logoHoverPreviewTimer = window.setTimeout(() => {
+                logo.classList.remove('is-hover-preview');
+              }, 4000);
+            }, 1050);
+          }
         }
 
         if (document.readyState === 'loading') {
