@@ -114,6 +114,17 @@ const logoDotLitByIndex = new Map(
             ? '#f9f7f7'
             : '#191817';
         };
+        const navigation = performance.getEntriesByType?.('navigation')[0];
+        const isHomeRefresh = window.location.pathname === '/' && (
+          navigation?.type === 'reload' ||
+          performance.navigation?.type === performance.navigation?.TYPE_RELOAD
+        );
+
+        if (isHomeRefresh) {
+          sessionStorage.removeItem('opening-complete');
+          sessionStorage.removeItem('opening-theme-values');
+        }
+
         const theme = JSON.parse(sessionStorage.getItem('opening-theme-values') || 'null');
         if (theme) {
           const root = document.documentElement;

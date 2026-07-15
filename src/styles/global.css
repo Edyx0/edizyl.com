@@ -4252,9 +4252,10 @@ body.other-page {
 }
 
 .other-page header.site {
+  --other-header-ink: #191817;
   position: fixed;
   inset: 0 0 auto;
-  color: var(--other-page-ink, #191817);
+  color: var(--other-header-ink);
   background: transparent !important;
   background-color: transparent !important;
   background-image: none !important;
@@ -4280,7 +4281,7 @@ body.other-page {
 }
 
 .other-page header.site .menu-toggle {
-  color: inherit;
+  color: var(--other-header-ink);
   font-family: 'Helvetica Now Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: max(20px, 2vw);
   font-weight: 800;
@@ -4289,12 +4290,12 @@ body.other-page {
 }
 
 .other-page header.site .logo {
-  color: inherit;
+  color: var(--other-header-ink);
   align-self: center;
 }
 
 .other-page .dot-logo {
-  --dot-base: currentColor;
+  --dot-base: var(--other-header-ink);
   width: clamp(11rem, 17.5vw, 16rem);
 }
 
