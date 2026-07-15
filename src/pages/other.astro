@@ -26,7 +26,7 @@ const ayasofyaItems = [
     kind: 'text',
     variant: 'one',
     slot: 'after-photo-one',
-    text: 'Hagia Sophia: Sacred Wisdom Stone is a fast-paced parkour game inspired by the Byzantine tunnels beneath Hagia Sophia. Built with friends during our first and only game jam, the project earned 2nd place at BGM Game Jam, organized by the IEEE clubs of Bahçeşehir, Galatasaray, and Medipol Universities.',
+    text: 'A game jam experiment set beneath Hagia Sophia: a fast parkour run through imagined Byzantine tunnels. We made it with friends over one intense weekend, and it came second at BGM Game Jam.',
   },
   { kind: 'image', role: 'middle', image: ayasofyaGallery[1] },
   { kind: 'image', role: 'edge', image: ayasofyaGallery[2] },
@@ -34,7 +34,7 @@ const ayasofyaItems = [
     kind: 'text',
     variant: 'two',
     slot: 'after-photo-three',
-    text: 'I led the programming and level design, using Unity and C# to build the movement systems, obstacles, and overall level flow. The project strengthened my ability to develop under pressure, make rapid design decisions, and deliver a polished, fully playable experience within a strict deadline.',
+    text: 'I handled the code and level design in Unity. Most of my time went into making movement feel quick, placing obstacles, and shaping a level that could teach itself while you ran. It was messy, fast, and a lot of fun—the kind of project that reminds me why I like making games.',
   },
   { kind: 'image', role: 'tail', image: ayasofyaGallery[3] },
 ] as const;
@@ -136,14 +136,14 @@ const projects = [
       >
 {project.id === 'lokal' ? (
           <>
-            <span class="other-project__frame other-project__frame--cover" style="--frame-i: 0; --frame-x: -18vw; --frame-y: -22vh;" data-index-frame aria-hidden="true">
+            <span class="other-project__frame other-project__frame--lokal-photo" style="--frame-i: 0; --frame-x: -18vw; --frame-y: -22vh;" data-index-frame aria-hidden="true">
               <span class="other-project__surface">
-                <img src="/other-projects/lokal/l1.webp" alt="Lokal App Store visual introducing nearby places" decoding="async" />
+                <img src="/other-projects/lokal/lokal-collage.webp" alt="Lokal için hazırlanan İstanbul mekanları görsel kolajı" decoding="async" />
               </span>
             </span>
-            <span class="other-project__frame other-project__frame--menu" style="--frame-i: 1; --frame-x: 20vw; --frame-y: -28vh;" data-index-frame aria-hidden="true">
+            <span class="other-project__frame other-project__frame--lokal-logo" style="--frame-i: 1; --frame-x: 20vw; --frame-y: -28vh;" data-index-frame aria-hidden="true">
               <span class="other-project__surface">
-                <img src="/other-projects/lokal/l3.webp" alt="Lokal App Store visual showing the Damga Kartı experience" loading="lazy" decoding="async" />
+                <img src="/other-projects/lokal/lokallogo.svg" alt="Lokal app logo" loading="lazy" decoding="async" />
               </span>
             </span>
           </>
@@ -162,15 +162,12 @@ const projects = [
           </>
         )}
         <span class="other-project__identity">
-          {project.id === 'lokal' && (
-            <img class="lokal-index-logo" src="/other-projects/lokal/lokallogo.svg" alt="lokal logo" />
-          )}
           <span class="other-project__title-line">
             <span class="other-project__title-text">
               {project.id === 'ayasofya' ? (
                 <>Hagia <span class="other-project__title-end">Sophia <small class="other-project__year">(2021)</small></span></>
               ) : (
-                <>lokal <small class="other-project__year">(2026)</small></>
+                <span class="other-project__title-end">lokal <small class="other-project__year">(2026)</small></span>
               )}
             </span>
           </span>

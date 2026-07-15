@@ -6814,8 +6814,8 @@ body.legal header.site .logo {
 
 /* Tabum Ekstra — Figma page implementation */
 .app-detail-shell[data-app="tabu-ekstra"] {
-  --tabu-purple: #9f54dc;
-  --tabu-purple-deep: #8f3ed0;
+  --tabu-purple: #A133FF;
+  --tabu-purple-deep: #A133FF;
   --tabu-ink: #0e0c0a;
   --tabu-shell: #392e2b;
   color: #fff;
@@ -8439,12 +8439,12 @@ body.other-page {
 }
 
 .other-index--lokal .other-project__identity > small {
-  color: var(--lokal-platinum);
+  color: #fff;
   background: var(--lokal-ink);
 }
 
 .other-index--lokal .other-project__identity .other-project__year {
-  color: var(--lokal-cobalt);
+  color: currentColor;
 }
 
 .lokal-index-art {
@@ -9010,34 +9010,25 @@ body.other-page {
   }
 }
 
-/* Real Lokal artwork supplied for the App Store case study. */
-.other-index--lokal .other-project__frame--cover,
-.other-index--lokal .other-project__frame--menu {
-  aspect-ratio: 1284 / 2778;
+/* Lokal index artwork: the app mark overlaps the supplied venue collage. */
+.other-index--lokal .other-project__frame--lokal-photo {
+  z-index: 1;
+  left: 7%;
+  top: 3%;
+  width: 58%;
+  aspect-ratio: 1284 / 1653;
 }
 
-.other-index--lokal .other-project__frame--cover {
-  left: 5%;
-  top: 4%;
-  width: 46%;
-}
-
-.other-index--lokal .other-project__frame--menu {
-  left: 38%;
-  right: auto;
+.other-index--lokal .other-project__frame--lokal-logo {
+  z-index: 3;
+  left: 55%;
   top: 18%;
-  width: 42%;
-}
-
-.other-index--lokal .other-project__frame img {
-  object-fit: cover;
-}
-
-.lokal-index-logo {
-  display: block;
-  width: clamp(3rem, 5vw, 4.75rem);
+  width: 26%;
   aspect-ratio: 1;
-  margin-bottom: clamp(0.35rem, 0.8vw, 0.7rem);
+}
+
+.other-index--lokal .other-project__frame--lokal-photo img,
+.other-index--lokal .other-project__frame--lokal-logo img {
   object-fit: contain;
 }
 
@@ -9075,17 +9066,17 @@ body.other-page {
 }
 
 @media (max-width: 760px) {
-  .other-index--lokal .other-project__frame--cover {
+  .other-index--lokal .other-project__frame--lokal-photo {
     left: 2%;
     top: 3%;
-    width: 55%;
+    width: 82%;
   }
 
-  .other-index--lokal .other-project__frame--menu {
-    left: 30%;
+  .other-index--lokal .other-project__frame--lokal-logo {
+    left: 62%;
     right: auto;
-    top: 18%;
-    width: 52%;
+    top: 21%;
+    width: 34%;
   }
 
   .other-gallery--lokal .other-gallery__track .other-gallery__frame:not(.other-gallery__text-frame) {
@@ -9093,11 +9084,11 @@ body.other-page {
   }
 }
 
-/* Desktop Other index: both projects share the opening viewport. */
+/* Desktop Other index: unequal, interlocking project fields inspired by the home collage. */
 @media (min-width: 1000px) {
   body.other-page main {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1.16fr) minmax(0, 0.84fr);
     align-items: stretch;
   }
 
@@ -9115,46 +9106,50 @@ body.other-page {
   }
 
   body.other-page .other-index:not(.other-index--lokal) .other-project__frame--cover {
-    left: 6%;
-    top: 11%;
-    width: 68%;
+    left: 2%;
+    top: 27%;
+    width: 72%;
   }
 
   body.other-page .other-index:not(.other-index--lokal) .other-project__frame--menu {
     left: auto;
-    right: -4%;
-    top: 29%;
-    width: 62%;
+    right: -8%;
+    top: 43%;
+    width: 64%;
   }
 
-  body.other-page .other-index:not(.other-index--lokal) .other-project__identity,
-  body.other-page .other-index--lokal .other-project__identity {
-    left: 6%;
-    top: auto;
-    bottom: 11%;
-    width: 90%;
+  body.other-page .other-index:not(.other-index--lokal) .other-project__identity {
+    left: 3%;
+    top: 4%;
+    bottom: auto;
+    width: 96%;
   }
 
-  body.other-page .other-project__identity > .other-project__title-line > span {
-    font-size: clamp(3.25rem, 5.25vw, 5.8rem);
+  body.other-page .other-index:not(.other-index--lokal) .other-project__identity > .other-project__title-line > span {
+    font-size: clamp(3.75rem, 5.7vw, 6rem);
   }
 
-  body.other-page .other-index--lokal .other-project__frame--cover {
-    left: 5%;
-    top: 7%;
-    width: 46%;
+  body.other-page .other-index--lokal .other-project__frame--lokal-photo {
+    left: -2%;
+    top: 8%;
+    width: 64%;
   }
 
-  body.other-page .other-index--lokal .other-project__frame--menu {
-    left: 38%;
+  body.other-page .other-index--lokal .other-project__frame--lokal-logo {
+    left: 55%;
     right: auto;
-    top: 20%;
-    width: 42%;
+    top: 28%;
+    width: 34%;
   }
 
   body.other-page .other-index--lokal .other-project__identity {
-    left: 6%;
-    width: 92%;
-    bottom: 13%;
+    left: -5%;
+    top: 72%;
+    bottom: auto;
+    width: 105%;
+  }
+
+  body.other-page .other-index--lokal .other-project__identity > .other-project__title-line > span {
+    font-size: clamp(3rem, 4.4vw, 5rem);
   }
 }

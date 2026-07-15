@@ -169,9 +169,9 @@ const logoDotLitByIndex = new Map(
         <nav class="site-menu__nav" aria-label="Site">
           <section class="site-menu__group site-menu__group--apps">
             <p>Apps</p>
-            <a href="/tabu-ekstra/">Tabum Ekstra <span class="site-menu__count">01</span></a>
-            <a href="/imposter/">Imposter <span class="site-menu__count">02</span></a>
-            <a href="/holy-shift/">Holy Shift <span class="site-menu__count">03</span></a>
+            <a href="/tabu-ekstra/" data-menu-route>Tabum Ekstra <span class="site-menu__count">01</span></a>
+            <a href="/imposter/" data-menu-route>Imposter <span class="site-menu__count">02</span></a>
+            <a href="/holy-shift/" data-menu-route>Holy Shift <span class="site-menu__count">03</span></a>
           </section>
 
           <section class="site-menu__group site-menu__group--other">
@@ -874,6 +874,13 @@ const logoDotLitByIndex = new Map(
         });
         menu?.querySelectorAll('a').forEach((link) => {
           link.addEventListener('click', (event) => {
+            if (link instanceof HTMLAnchorElement && link.matches('[data-menu-route]')) {
+              event.preventDefault();
+              closeMenu();
+              window.location.assign(link.href);
+              return;
+            }
+
             if (!(link instanceof HTMLAnchorElement) || !link.matches('[data-scene-link]')) {
               closeMenu();
               return;

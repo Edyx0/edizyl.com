@@ -35,7 +35,7 @@ export const apps: AppData[] = [
     subtitle: '2026 Kelimeleri',
     tagline: 'A fast, offline 2026 word game for friends, family, school, and campus groups.',
     icon: '/icons/tabu-ekstra.png',
-    accent: '#9d4edd',
+    accent: '#A133FF',
     appStoreUrl: 'https://apps.apple.com/tr/app/tabum-ekstra-2026-kelimeleri/id6757464030',
     short: 'Offline 2026 word game for party play. Current App Store version: 1.8.2 with a 4.5 rating from 36 reviews.',
     about: [

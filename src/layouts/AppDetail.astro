@@ -7,446 +7,1201 @@ interface Props {
 }
 
 const { app } = Astro.props;
-const isTabuEkstra = app.slug === 'tabu-ekstra';
-const isRebuiltMenuApp = app.slug === 'imposter' || app.slug === 'holy-shift';
-const usesBrandedMasthead = isTabuEkstra || isRebuiltMenuApp;
-const showsStandardAppSections = !isTabuEkstra && app.slug !== 'imposter' && app.slug !== 'holy-shift';
-const showsShowcaseCards = true;
-const presentation = {
+
+const identities = {
+  'holy-shift': {
+    surface: '#09040f',
+    surfaceRaised: '#1a0823',
+    ink: '#fff8ff',
+    muted: '#d4b9d8',
+    accent: '#ff18ae',
+    signal: '#ff5a1f',
+    finalInk: '#09040f',
+    heroArt: '/landing/self-brand/holy-shift-characters-a.webp',
+    heroAlt: 'Six pixel-art Holy Shift character cards',
+    wordmark: '/holy-shift/logo-hs.svg',
+    storyTitle: 'Shift on instinct',
+    footerLabel: 'ENTER THE RIFT',
+  },
   'tabu-ekstra': {
-    title: 'Tabum Ekstra',
+    surface: '#eeeeec',
+    surfaceRaised: '#fffdf8',
+    ink: '#151412',
+    muted: '#5c554c',
+    accent: '#ff9619',
+    signal: '#A133FF',
+    finalInk: '#fffdf8',
+    heroArt: '/landing/self-brand/tabu-ekstra.webp',
+    heroAlt: 'Tabum Ekstra wordmark with a fan of orange game cards',
     wordmark: '',
-    wordmarkAlt: '',
-    art: '',
-    artAlt: '',
-    ctaLabel: 'App Store',
+    storyTitle: 'Do not say the obvious',
+    footerLabel: 'DRAW A CARD',
   },
   imposter: {
-    title: 'Imposter',
+    surface: '#25090b',
+    surfaceRaised: '#3a0c10',
+    ink: '#fff1d8',
+    muted: '#d7bea0',
+    accent: '#cda45b',
+    signal: '#a51820',
+    finalInk: '#fff1d8',
+    heroArt: '/landing/self-brand/imposter.webp',
+    heroAlt: 'A suspicious detective framed by a magnifying glass',
     wordmark: '',
-    wordmarkAlt: '',
-    art: '/landing/self-brand/imposter.webp',
-    artAlt: 'Imposter character artwork',
-    ctaLabel: 'App Store',
-    showcaseTitle: 'Bluff, read, vote',
-    showcaseIntro: 'A single-phone party loop built around private role reveals, careful clues, and a vote that turns every weak answer into evidence.',
-    cards: [
-      { title: 'Private reveal', text: 'Press-and-hold role cards keep the secret hidden while the phone moves player to player.' },
-      { title: 'Clue pressure', text: 'Everyone talks around the same word while the imposter improvises without giving themselves away.' },
-      { title: 'Table vote', text: 'The round closes with suspicion, discussion, and a group vote before the imposter can blend in.' },
-    ],
+    storyTitle: 'Almost everyone knows',
+    footerLabel: 'OPEN THE CASE',
   },
-  'holy-shift': {
-    title: 'Holy Shift',
-    wordmark: '/holy-shift/logo-hs.svg',
-    wordmarkAlt: 'Holy Shift',
-    art: '/landing/self-brand/holy-shift-characters-a.webp',
-    altArt: '/landing/self-brand/holy-shift-characters-b.webp',
-    artAlt: 'Holy Shift neon character artwork',
-    ctaLabel: 'App Store',
-    showcaseTitle: 'Reflex system',
-    showcaseIntro: 'Holy Shift keeps the Tabu-style page rhythm but switches the energy to arcade pressure: color shifting, anomaly bursts, multipliers, and unlockable skins.',
-    cards: [
-      { title: 'RIFT anomaly', text: 'Sudden speed bursts destabilize the run and force instant color decisions.' },
-      { title: 'Shield & Strike', text: 'Risk windows let players charge multipliers while the screen is at its most volatile.' },
-      { title: 'Sparks shop', text: 'Runs feed an unlock loop with skins earned through in-game sparks.' },
-    ],
-  },
-}[app.slug];
-const appColor = {
-  'tabu-ekstra': { surface: '#6f35a1', ink: '#ffffff' },
-  imposter: { surface: '#c89446', ink: '#191817' },
-  'holy-shift': { surface: '#b81486', ink: '#fff5fb' },
-}[app.slug] ?? { surface: app.accent, ink: '#191817' };
-const heroStyle = `--app-accent: ${app.accent}; --app-accent-surface: ${appColor.surface}; --app-accent-ink: ${appColor.ink};`;
+} as const;
+
+const identity = identities[app.slug as keyof typeof identities] ?? identities.imposter;
+const pageStyle = [
+  `--project-surface:${identity.surface}`,
+  `--project-raised:${identity.surfaceRaised}`,
+  `--project-ink:${identity.ink}`,
+  `--project-muted:${identity.muted}`,
+  `--project-accent:${identity.accent}`,
+  `--project-signal:${identity.signal}`,
+  `--project-final-ink:${identity.finalInk}`,
+].join(';');
+const metricsByApp = {
+  'tabu-ekstra': [
+    { value: '#8', detail: 'Peak rank in App Store Card Games' },
+    { value: '13%', detail: 'Sustained conversion rate' },
+    { value: '3500+', detail: 'Active players' },
+    { value: '14000+', detail: 'Players reached · February—July' },
+    { value: '4.5 ★', detail: 'App Store rating · 36 ratings' },
+  ],
+} as const;
+const tabuMetrics = metricsByApp['tabu-ekstra'];
 ---
 
-<Layout title={`${app.name} — Ediz Yılmaz`} description={app.tagline} bodyClass="app-detail-page">
-  <div class="app-detail-shell" style={heroStyle} data-app={app.slug}>
-  <a href="/" class="back-link app-detail__back">Index — Back</a>
+<Layout title={`${app.name} — Ediz Yılmaz`} description={app.tagline} bodyClass="app-project-page">
+  <main class={`app-project app-project--${app.slug}`} style={pageStyle} data-app-project>
+    <header class="app-project__header">
+      <a href="/" class="app-project__back" aria-label="Back to portfolio index">
+        Index — Back
+      </a>
+      <p class="app-project__count" aria-live="polite"><span data-current>01</span> / <span data-total>01</span></p>
+    </header>
 
-  {usesBrandedMasthead && (
-    <section class={`tabu-top app-top app-top--${app.slug}`} aria-label={`${app.name} masthead`}>
-      {presentation?.art && (
-        <img src={presentation.art} alt={presentation.artAlt} class="app-top__art" width="900" height="900" />
-      )}
-      {presentation?.altArt && (
-        <img src={presentation.altArt} alt="" class="app-top__art app-top__art--alt" width="900" height="1800" />
-      )}
-      <div class="tabu-top__inner">
-        {presentation?.wordmark ? (
-          <div class="app-top__wordmark-wrap">
-            <h2 class="sr-only">{presentation?.title ?? app.name}</h2>
-            <img
-              src={presentation.wordmark}
-              alt={presentation.wordmarkAlt}
-              class="app-top__wordmark"
-              width="687"
-              height="332"
-            />
-          </div>
-        ) : (
-          <h2>{presentation?.title ?? app.name}</h2>
-        )}
-        <div class="app-top__store-stack">
-          <img src={app.icon} alt="" class="tabu-top__logo" width="120" height="120" />
-          <a href={app.appStoreUrl} class="tabu-final__link" aria-label={`Open ${app.name} on the App Store`}>
-            {presentation?.ctaLabel ?? 'App Store'}
-          </a>
-        </div>
-      </div>
-    </section>
-  )}
-
-  {!usesBrandedMasthead && (
-    <section class="app-hero">
-      <div class="app-hero-glow"></div>
-      <div class="app-hero-content">
-        <img src={app.icon} alt={`${app.name} icon`} class="app-hero-icon" width="120" height="120" />
-        <div class="app-hero-text">
-          <h1>{app.name}</h1>
-          <p class="hero-sub">{app.subtitle}</p>
-          <p class="hero-tagline">{app.tagline}</p>
-          <p class="app-hero-note">{app.short}</p>
-          <p>
-            <a href={app.appStoreUrl} class="cta">Download on the App Store →</a>
-          </p>
-        </div>
-      </div>
-
-      {app.stats && app.stats.length > 0 && (
-        <div class="stat-pills">
-          {app.stats.map((s) => (
-            <div class="stat-pill">
-              <span class="stat-label">{s.label}</span>
-              <span class="stat-value">{s.value}</span>
-            </div>
-          ))}
-        </div>
-      )}
-    </section>
-  )}
-
-  {(app.screenshots.length > 0 || app.previewVideoHls) && (
-    <section class="section-screenshots app-gallery">
-      {!isTabuEkstra && !['imposter', 'holy-shift'].includes(app.slug) && (
-        <div class="app-gallery__header">
-          <h2>Screenshots</h2>
-        </div>
-      )}
-      <div
-        class="shots-scroll"
-        data-smooth-gallery
-        tabindex="0"
-        role="region"
-        aria-label={`${app.name} screenshot gallery`}
-      >
-        <div class="shots-scroll__track" data-gallery-track>
-          {app.previewVideoHls && (
-            <video
-              class="shot-video"
-              controls
-              autoplay
-              muted
-              loop
-              playsinline
-              preload="metadata"
-              poster={app.previewVideoPoster}
-              data-hls={app.previewVideoHls}
-            ></video>
+    <div
+      class="app-project__rail"
+      data-project-rail
+      tabindex="0"
+      role="region"
+      aria-label={`${app.name} project gallery. Use arrow keys or scroll to explore.`}
+    >
+      <article class="app-project__panel app-project__panel--hero" data-project-panel>
+        <div class="app-project__hero-copy">
+          {identity.wordmark ? (
+            <>
+              <h1 class="sr-only">{app.name}</h1>
+              <img class="app-project__wordmark" src={identity.wordmark} alt={app.name} />
+            </>
+          ) : (
+            <h1>{app.name}</h1>
           )}
-          {app.screenshots.map((src, i) => (
+          <p class="app-project__tagline">{app.tagline}</p>
+        </div>
+        <figure class="app-project__hero-art">
+          <span class="app-project__art-field" aria-hidden="true"></span>
+          <img class="app-project__hero-art-primary" src={identity.heroArt} alt={identity.heroAlt} fetchpriority="high" />
+          {app.slug === 'holy-shift' && (
             <img
-              src={src}
-              alt={`${app.name} screenshot ${i + 1}`}
-              width="600"
-              height="1299"
-              loading="eager"
-              decoding="async"
+              class="app-project__hero-art-secondary"
+              src="/landing/self-brand/holy-shift-characters-b.webp"
+              alt=""
+              fetchpriority="high"
             />
-          ))}
-        </div>
-      </div>
-    </section>
-  )}
-
-  <script>
-    const videos = document.querySelectorAll('video[data-hls]');
-    videos.forEach(async (video) => {
-      const v = video as HTMLVideoElement;
-      const src = v.dataset.hls;
-      if (!src) return;
-      v.muted = true;
-      v.autoplay = true;
-      v.loop = true;
-      const playWhenReady = () => {
-        v.play().catch(() => {
-          // Autoplay can still be blocked by browser settings; controls remain available.
-        });
-      };
-      if (v.canPlayType('application/vnd.apple.mpegurl')) {
-        v.src = src;
-        v.addEventListener('loadedmetadata', playWhenReady, { once: true });
-        return;
-      }
-      // Load hls.js on demand for Chrome/Firefox
-      if (!(window as any).Hls) {
-        await new Promise<void>((resolve, reject) => {
-          const s = document.createElement('script');
-          s.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.18/dist/hls.min.js';
-          s.onload = () => resolve();
-          s.onerror = () => reject();
-          document.head.appendChild(s);
-        });
-      }
-      const Hls = (window as any).Hls;
-      if (Hls && Hls.isSupported()) {
-        const hls = new Hls();
-        hls.loadSource(src);
-        hls.attachMedia(v);
-        hls.on(Hls.Events.MANIFEST_PARSED, playWhenReady);
-      }
-    });
-
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-    document.querySelectorAll<HTMLElement>('[data-smooth-gallery]').forEach((viewport) => {
-      const rail = viewport.querySelector<HTMLElement>('[data-gallery-track]');
-      if (!rail) return;
-
-      const usesTransform = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-      let position = usesTransform ? 0 : viewport.scrollLeft;
-      let target = position;
-      let frame = 0;
-      let dragging = false;
-      let startX = 0;
-      let startScroll = 0;
-      let lastX = 0;
-      let lastTime = 0;
-      let velocity = 0;
-      let cachedMaxScroll = 0;
-
-      const maxScroll = () => cachedMaxScroll;
-      const hasOverflow = () => maxScroll() > 1;
-      const clamp = (value: number) => Math.min(maxScroll(), Math.max(0, value));
-      const currentPosition = () => usesTransform ? position : viewport.scrollLeft;
-      const renderPosition = (value: number) => {
-        position = clamp(value);
-        if (usesTransform) rail.style.left = `${-position}px`;
-        else viewport.scrollLeft = position;
-      };
-      const updateOverflowState = () => {
-        cachedMaxScroll = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
-        const overflow = hasOverflow();
-        viewport.dataset.galleryOverflow = overflow ? 'true' : 'false';
-        viewport.tabIndex = overflow ? 0 : -1;
-        if (!overflow) {
-          target = 0;
-          renderPosition(0);
-        } else {
-          target = clamp(currentPosition());
-          renderPosition(target);
-        }
-        return overflow;
-      };
-
-      const glide = () => {
-        const distance = target - currentPosition();
-        if (reducedMotion.matches || Math.abs(distance) < 0.35) {
-          renderPosition(target);
-          frame = 0;
-          return;
-        }
-        renderPosition(currentPosition() + distance * 0.105);
-        frame = requestAnimationFrame(glide);
-      };
-
-      const moveTo = (value: number) => {
-        target = clamp(value);
-        if (reducedMotion.matches) {
-          renderPosition(target);
-          return;
-        }
-        if (!frame) frame = requestAnimationFrame(glide);
-      };
-
-      const handlePointerMove = (event: PointerEvent) => {
-        if (!dragging) return;
-        const now = performance.now();
-        const elapsed = Math.max(1, now - lastTime);
-        velocity = (lastX - event.clientX) / elapsed;
-        target = clamp(startScroll - (event.clientX - startX));
-        renderPosition(target);
-        lastX = event.clientX;
-        lastTime = now;
-      };
-
-      const release = (event: PointerEvent) => {
-        if (!dragging) return;
-        dragging = false;
-        viewport.classList.remove('is-dragging');
-        if (viewport.hasPointerCapture(event.pointerId)) viewport.releasePointerCapture(event.pointerId);
-        viewport.removeEventListener('pointermove', handlePointerMove);
-        viewport.removeEventListener('pointerup', release);
-        viewport.removeEventListener('pointercancel', release);
-        moveTo(currentPosition() + velocity * 240);
-      };
-
-      viewport.addEventListener('pointerdown', (event) => {
-        if (!updateOverflowState()) return;
-        if (event.pointerType !== 'mouse') return;
-        if ((event.target as HTMLElement).closest('video, button, a')) return;
-        event.preventDefault();
-        dragging = true;
-        if (frame) cancelAnimationFrame(frame);
-        frame = 0;
-        target = currentPosition();
-        startX = lastX = event.clientX;
-        startScroll = currentPosition();
-        lastTime = performance.now();
-        velocity = 0;
-        viewport.classList.add('is-dragging');
-        viewport.setPointerCapture(event.pointerId);
-        viewport.addEventListener('pointermove', handlePointerMove);
-        viewport.addEventListener('pointerup', release);
-        viewport.addEventListener('pointercancel', release);
-      });
-      viewport.addEventListener('keydown', (event) => {
-        if (!updateOverflowState()) return;
-        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
-        event.preventDefault();
-        const direction = event.key === 'ArrowRight' ? 1 : -1;
-        moveTo(currentPosition() + viewport.clientWidth * 0.72 * direction);
-      });
-      window.addEventListener('resize', () => {
-        updateOverflowState();
-        target = clamp(currentPosition());
-      }, { passive: true });
-      rail.querySelectorAll('img').forEach((image) => {
-        image.addEventListener('load', () => {
-          updateOverflowState();
-        }, { once: true });
-      });
-
-      updateOverflowState();
-    });
-  </script>
-
-  {isTabuEkstra && (
-    <>
-      <section class="tabu-spread" aria-label="Tabum Ekstra visual system">
-        <header class="tabu-spread__header">
-          <h2>Words change with the room.</h2>
-          <p>Seasonal decks keep the game current without changing the one-phone rhythm.</p>
-        </header>
-        <figure class="tabu-spread__image tabu-spread__image--wide">
-          <img src="/landing/self-brand/summer-words.webp" alt="Summer Words event artwork for Tabum Ekstra" loading="lazy" />
-          <figcaption>Summer Words · 2026</figcaption>
+          )}
         </figure>
-        <figure class="tabu-spread__image tabu-spread__image--poster">
-          <img src="/tabu-ekstra/ramadantabu.webp" alt="Ramadan event artwork for Tabum Ekstra" loading="lazy" />
-          <figcaption>Ramadan deck · 2026</figcaption>
-        </figure>
-      </section>
-    </>
-  )}
+        <p class="app-project__scroll-note" aria-hidden="true">Scroll to explore <span>→</span></p>
+      </article>
 
-  {isRebuiltMenuApp && presentation && (
-    <section class={`tabu-spread app-showcase app-showcase--${app.slug}`} aria-label={`${app.name} gameplay system`}>
-      <h2>{presentation.showcaseTitle}</h2>
-      <p class="app-showcase__intro">{presentation.showcaseIntro}</p>
-      {showsShowcaseCards && (
-        <>
-          <div class="app-showcase__cards">
-            {presentation.cards.map((card) => (
-              <article class="app-showcase__card">
-                <h3>{card.title}</h3>
-                <p>{card.text}</p>
-              </article>
-            ))}
-          </div>
-        </>
+      {app.screenshots[0] && (
+        <figure class="app-project__panel app-project__panel--shot app-project__panel--shot-lead" data-project-panel>
+          <span class="app-project__shot-number" aria-hidden="true">01</span>
+          <img src={app.screenshots[0]} alt={`${app.name} App Store screenshot 1`} loading="eager" />
+          <figcaption>{app.subtitle}</figcaption>
+        </figure>
       )}
-    </section>
-  )}
 
-  {showsStandardAppSections && (
-    <>
-      <section class="app-section app-section--about">
-        <h2>About</h2>
-        <div class="app-section__body">{app.about.map((p) => <p>{p}</p>)}</div>
-      </section>
-
-      <section class="app-section app-section--features">
-        <h2>Features</h2>
-        <div class="app-section__body">
-          <ul class="list">
-            {app.features.map((f) => <li>{f}</li>)}
-          </ul>
+      <article class="app-project__panel app-project__panel--story" data-project-panel>
+        <h2>{identity.storyTitle}</h2>
+        <div class="app-project__story-copy">
+          {app.about.slice(0, 2).map((paragraph) => <p>{paragraph}</p>)}
         </div>
-      </section>
+      </article>
 
-      <section class="app-section app-section--build">
-        <h2>How it was built?</h2>
-        <div class="app-section__body">
-          {app.builtStory.map((p) => <p>{p}</p>)}
+      {app.screenshots.slice(1, 3).map((screenshot, index) => (
+        <figure class={`app-project__panel app-project__panel--shot app-project__panel--shot-${index + 2}`} data-project-panel>
+          <span class="app-project__shot-number" aria-hidden="true">{String(index + 2).padStart(2, '0')}</span>
+          <img src={screenshot} alt={`${app.name} App Store screenshot ${index + 2}`} loading="lazy" />
+          <figcaption>{app.features[index] ?? app.subtitle}</figcaption>
+        </figure>
+      ))}
 
-          <div class="chips">
-            {app.techChips.map((c) => <span class="chip">{c}</span>)}
+      {app.slug === 'tabu-ekstra' && (
+        <article class="app-project__panel app-project__panel--features" data-project-panel>
+          <div class="app-project__features-head">
+            <h2>Real traction</h2>
           </div>
+          <ol class="app-project__feature-list">
+            {tabuMetrics.map(({ value, detail }) => (
+              <li class="app-project__metric">
+                <strong>{value}</strong>
+                <p>{detail}</p>
+              </li>
+            ))}
+          </ol>
+        </article>
+      )}
 
-          <details class="tech-details">
-            <summary>Full tech stack</summary>
-            <dl class="stack">
-              {app.stack.map((s) => (
-                <>
-                  <dt>{s.label}</dt>
-                  <dd>{s.value}</dd>
-                </>
-              ))}
-            </dl>
-          </details>
-        </div>
-      </section>
-
-      {app.highlights && app.highlights.length > 0 && (
-        <section class="app-section app-section--highlights">
-          <h2>Highlights</h2>
-          <div class="app-section__body">
-            <ul class="list">
-              {app.highlights.map((h) => <li>{h}</li>)}
-            </ul>
+      {app.slug === 'tabu-ekstra' && (
+        <section
+          class="app-project__panel app-project__panel--seasonal"
+          data-project-panel
+          aria-labelledby="seasonal-decks-title"
+        >
+          <header class="app-project__seasonal-head">
+            <h2 id="seasonal-decks-title">Words change with the room.</h2>
+            <p>Seasonal decks keep the game current without changing the one-phone rhythm.</p>
+          </header>
+          <div class="app-project__seasonal-decks">
+            <figure class="app-project__seasonal-deck app-project__seasonal-deck--summer">
+              <img
+                src="/landing/self-brand/summer-words.webp"
+                alt="Summer Words event artwork for Tabum Ekstra"
+                loading="lazy"
+              />
+              <figcaption><strong>Summer Words</strong><span>2026</span></figcaption>
+            </figure>
+            <figure class="app-project__seasonal-deck app-project__seasonal-deck--ramadan">
+              <img
+                src="/tabu-ekstra/ramadantabu.webp"
+                alt="Ramadan event artwork for Tabum Ekstra"
+                loading="lazy"
+              />
+              <figcaption><strong>Ramadan deck</strong><span>2026</span></figcaption>
+            </figure>
           </div>
         </section>
       )}
 
-      <section class="app-section app-section--technical">
-        <h2>Technical details</h2>
-        <div class="app-section__body">
-          <div class="meta-grid">
-            <div><span class="muted">Version</span><br />{app.meta.version}</div>
-            <div><span class="muted">Released</span><br />{app.meta.released}</div>
-            <div><span class="muted">Updated</span><br />{app.meta.updated}</div>
-            <div><span class="muted">Requires</span><br />{app.meta.minOS}</div>
-            <div><span class="muted">Size</span><br />{app.meta.size}</div>
-            <div><span class="muted">Genre</span><br />{app.meta.genre}</div>
-            {app.meta.rating && <div><span class="muted">Rating</span><br />{app.meta.rating}</div>}
-          </div>
+      {app.screenshots.slice(3).map((screenshot, index) => (
+        <figure class={`app-project__panel app-project__panel--shot app-project__panel--shot-${index + 4}`} data-project-panel>
+          <span class="app-project__shot-number" aria-hidden="true">{String(index + 4).padStart(2, '0')}</span>
+          <img src={screenshot} alt={`${app.name} App Store screenshot ${index + 4}`} loading="lazy" />
+          <figcaption>{app.features[index + 2] ?? app.subtitle}</figcaption>
+        </figure>
+      ))}
+
+      <article class="app-project__panel app-project__panel--final" data-project-panel>
+        <img class="app-project__final-icon" src={app.icon} alt="" width="144" height="144" loading="lazy" />
+        <p>{identity.footerLabel}</p>
+        <h2>{app.name}</h2>
+        <div class="app-project__final-actions">
+          <a href={app.appStoreUrl} target="_blank" rel="noreferrer">View on the App Store <span aria-hidden="true">↗</span></a>
+          <a href={`/${app.slug}/privacy/`}>Privacy</a>
         </div>
-      </section>
+      </article>
+    </div>
 
-      <section class="bottom-cta app-final">
-        <h2>Try it</h2>
-        <p>{app.tagline}</p>
-        <p>
-          <a href={app.appStoreUrl} class="cta">Get {app.name} on the App Store →</a>
-        </p>
-        <p class="muted" style="margin-top: 1rem;">
-          See the <a href={`/${app.slug}/privacy`}>{app.name} privacy policy</a>.
-        </p>
-      </section>
-    </>
-  )}
-  </div>
-
+    <div class="app-project__progress" aria-hidden="true"><span data-project-progress></span></div>
+  </main>
 </Layout>
+
+<script>
+  const projects = document.querySelectorAll<HTMLElement>('[data-app-project]');
+
+  projects.forEach((project) => {
+    const rail = project.querySelector<HTMLElement>('[data-project-rail]');
+    const panels = [...project.querySelectorAll<HTMLElement>('[data-project-panel]')];
+    const progress = project.querySelector<HTMLElement>('[data-project-progress]');
+    const current = project.querySelector<HTMLElement>('[data-current]');
+    const total = project.querySelector<HTMLElement>('[data-total]');
+    if (!rail || panels.length === 0) return;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let dragging = false;
+    let dragStartX = 0;
+    let dragStartScroll = 0;
+
+    if (total) total.textContent = String(panels.length).padStart(2, '0');
+
+    const updateChrome = () => {
+      const max = Math.max(1, rail.scrollWidth - rail.clientWidth);
+      const ratio = Math.min(1, Math.max(0, rail.scrollLeft / max));
+      if (progress) progress.style.transform = `scaleX(${ratio})`;
+
+      const center = rail.scrollLeft + rail.clientWidth / 2;
+      let activeIndex = 0;
+      let closest = Number.POSITIVE_INFINITY;
+      panels.forEach((panel, index) => {
+        const panelCenter = panel.offsetLeft + panel.offsetWidth / 2;
+        const distance = Math.abs(center - panelCenter);
+        if (distance < closest) {
+          closest = distance;
+          activeIndex = index;
+        }
+      });
+      if (current) current.textContent = String(activeIndex + 1).padStart(2, '0');
+      panels.forEach((panel, index) => panel.toggleAttribute('data-active', index === activeIndex));
+    };
+
+    project.addEventListener('wheel', (event) => {
+      const rawDelta = Math.abs(event.deltaY) > Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+      if (!rawDelta) return;
+      event.preventDefault();
+      const unit = event.deltaMode === WheelEvent.DOM_DELTA_LINE
+        ? 32
+        : event.deltaMode === WheelEvent.DOM_DELTA_PAGE
+          ? rail.clientWidth
+          : 1;
+      const delta = rawDelta * unit;
+      const max = Math.max(0, rail.scrollWidth - rail.clientWidth);
+      rail.scrollLeft = Math.min(max, Math.max(0, rail.scrollLeft + delta));
+      updateChrome();
+    }, { passive: false });
+
+    rail.addEventListener('pointerdown', (event) => {
+      if (event.pointerType === 'touch') return;
+      if (event.target instanceof Element && event.target.closest('a, button, input, select, textarea')) return;
+      dragging = true;
+      dragStartX = event.clientX;
+      dragStartScroll = rail.scrollLeft;
+      rail.setPointerCapture(event.pointerId);
+      project.setAttribute('data-dragging', '');
+    });
+
+    rail.addEventListener('pointermove', (event) => {
+      if (!dragging) return;
+      const next = dragStartScroll - (event.clientX - dragStartX);
+      rail.scrollLeft = next;
+      updateChrome();
+    });
+
+    const endDrag = (event: PointerEvent) => {
+      if (!dragging) return;
+      dragging = false;
+      project.removeAttribute('data-dragging');
+      if (rail.hasPointerCapture(event.pointerId)) rail.releasePointerCapture(event.pointerId);
+    };
+
+    rail.addEventListener('pointerup', endDrag);
+    rail.addEventListener('pointercancel', endDrag);
+    rail.addEventListener('scroll', updateChrome, { passive: true });
+
+    rail.addEventListener('keydown', (event) => {
+      if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+      event.preventDefault();
+      const direction = event.key === 'ArrowRight' ? 1 : -1;
+      rail.scrollBy({ left: rail.clientWidth * 0.72 * direction, behavior: reducedMotion.matches ? 'auto' : 'smooth' });
+    });
+
+    window.addEventListener('resize', updateChrome, { passive: true });
+    updateChrome();
+  });
+</script>
+
+<style>
+  :global(body.app-project-page) {
+    margin: 0;
+    overflow: hidden;
+    background: var(--project-surface, #111);
+  }
+
+  :global(body.app-project-page > .grain),
+  :global(body.app-project-page > .site) {
+    display: none;
+  }
+
+  .app-project {
+    position: fixed;
+    z-index: 20;
+    inset: 0;
+    width: 100vw;
+    max-width: none;
+    height: 100svh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    color: var(--project-ink);
+    background: var(--project-surface);
+    font-family: 'Schibsted Grotesk', Arial, sans-serif;
+    cursor: grab;
+  }
+
+  .app-project[data-dragging] { cursor: grabbing; }
+
+  .app-project__header {
+    position: fixed;
+    z-index: 8;
+    inset: 0 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    min-height: 4.5rem;
+    padding: 0 clamp(1rem, 2.2vw, 2.25rem);
+    color: var(--project-ink);
+    mix-blend-mode: normal;
+    pointer-events: none;
+  }
+
+  .app-project__header a { pointer-events: auto; }
+  .app-project__back,
+  .app-project__running-title,
+  .app-project__count {
+    margin: 0;
+    color: var(--project-ink);
+    font-family: 'Helvetica Now Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: clamp(1rem, 2vw, 1.75rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+  }
+  .app-project__back {
+    color: inherit;
+    text-decoration: none;
+    background-image: none;
+  }
+  .app-project--tabu-ekstra .app-project__back:hover,
+  .app-project--tabu-ekstra .app-project__back:focus-visible {
+    color: #a133ff;
+  }
+  .app-project--tabu-ekstra .app-project__running-title {
+    color: #a133ff;
+    background: #fffdf8;
+    font-family: 'Anton', Impact, sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    padding: 0.28rem 0.55rem;
+    text-transform: uppercase;
+  }
+  .app-project--tabu-ekstra .app-project__count { padding: 0.28rem 0.5rem; color: #a133ff; background: #fffdf8; }
+  .app-project__running-title { justify-self: center; }
+  .app-project__count { justify-self: end; font-variant-numeric: tabular-nums; }
+
+  .app-project__rail {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: none;
+    touch-action: pan-x;
+  }
+  .app-project__rail::-webkit-scrollbar { display: none; }
+  .app-project__rail:focus-visible { outline: 2px solid var(--project-accent); outline-offset: -4px; }
+
+  .app-project__panel {
+    position: relative;
+    flex: 0 0 auto;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    scroll-snap-align: start;
+  }
+
+  .app-project__panel--hero {
+    display: grid;
+    grid-template-columns: minmax(20rem, 0.92fr) minmax(24rem, 1.08fr);
+    align-items: center;
+    width: 100vw;
+    min-width: 100vw;
+    padding: clamp(6rem, 10vh, 8rem) clamp(1.25rem, 5vw, 5.5rem) clamp(3.5rem, 6vh, 5rem);
+    background: var(--project-surface);
+  }
+
+  .app-project--tabu-ekstra .app-project__panel--hero {
+    background-color: #e8e5ea;
+    background-image: url('/tabu-ekstra/apbg-collage.jpg');
+    background-position: center top;
+    background-repeat: repeat;
+    background-size: clamp(25.5rem, 36vw, 34.5rem) auto;
+  }
+
+  .app-project__hero-copy { position: relative; z-index: 2; max-width: 43rem; }
+  .app-project__chapter,
+  .app-project__story-index,
+  .app-project__features-head > p {
+    margin: 0 0 1.2rem;
+    font-size: clamp(0.75rem, 1vw, 0.95rem);
+    font-weight: 750;
+    letter-spacing: 0.05em;
+  }
+  .app-project__chapter { color: var(--project-muted); }
+  .app-project__story-index,
+  .app-project__features-head > p { color: currentColor; }
+
+  .app-project__hero-copy h1 {
+    max-width: 10ch;
+    margin: 0;
+    font-size: clamp(4.2rem, 9vw, 6rem);
+    line-height: 0.88;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+  .app-project__wordmark { display: block; width: min(34rem, 86%); max-height: 16rem; object-fit: contain; object-position: left center; }
+  .app-project--holy-shift .app-project__wordmark { width: min(27.2rem, 68.8%); max-height: 12.8rem; }
+  .app-project__tagline {
+    max-width: 32rem;
+    margin: clamp(1.5rem, 4vh, 3rem) 0 1.5rem;
+    color: var(--project-muted);
+    font-size: clamp(1.08rem, 1.6vw, 1.45rem);
+    line-height: 1.35;
+    text-wrap: pretty;
+  }
+  .app-project__store-link,
+  .app-project__final-actions a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-height: 3rem;
+    padding: 0.75rem 1rem;
+    color: var(--project-surface);
+    background: var(--project-accent);
+    font-size: 0.9rem;
+    font-weight: 800;
+    text-decoration: none;
+    transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .app-project__store-link:hover,
+  .app-project__final-actions a:hover { transform: translateY(-0.2rem); }
+
+  .app-project__hero-art {
+    position: relative;
+    align-self: stretch;
+    margin: 0;
+  }
+  .app-project__hero-art img {
+    position: absolute;
+    z-index: 2;
+    inset: 50% auto auto 50%;
+    width: min(43vw, 44rem);
+    height: min(80vh, 52rem);
+    object-fit: contain;
+    transform: translate(-45%, -47%) rotate(2deg);
+    filter: drop-shadow(0 0.5rem 0.35rem rgb(0 0 0 / 0.22));
+  }
+  .app-project__art-field {
+    position: absolute;
+    inset: 12% 5% 8% 8%;
+    background: var(--project-raised);
+    transform: rotate(-3deg);
+  }
+  .app-project__scroll-note {
+    position: absolute;
+    z-index: 3;
+    right: clamp(1.25rem, 3vw, 3rem);
+    bottom: 1.4rem;
+    margin: 0;
+    color: var(--project-ink);
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .app-project__scroll-note span { color: var(--project-accent); font-size: 1rem; }
+
+  .app-project__panel--shot {
+    display: grid;
+    grid-template-rows: minmax(0, auto) auto;
+    place-items: center;
+    align-content: center;
+    row-gap: clamp(0.9rem, 1.8vh, 1.35rem);
+    width: clamp(19rem, 34vw, 32rem);
+    padding: clamp(5.5rem, 9vh, 7rem) clamp(1.25rem, 2.4vw, 2.5rem) clamp(2.5rem, 4vh, 3.5rem);
+    background: var(--project-raised);
+  }
+  .app-project__panel--shot:nth-of-type(even) { background: var(--project-surface); }
+  .app-project__panel--shot img {
+    width: auto;
+    height: min(68vh, 44rem);
+    max-width: 100%;
+    object-fit: contain;
+    transform: translate3d(var(--shot-x, 0), var(--shot-y, 0), 0) rotate(var(--shot-rotate, 0deg)) scale(1);
+    transition: transform 760ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .app-project__panel--shot:not([data-active]) img {
+    transform: translate3d(var(--shot-x, 0), var(--shot-y, 0), 0) rotate(var(--shot-rotate, 0deg)) scale(0.94);
+  }
+  .app-project__panel--shot figcaption {
+    width: 100%;
+    margin: 0;
+    color: var(--project-muted);
+    font-size: 0.78rem;
+    font-weight: 650;
+    line-height: 1.35;
+    text-align: center;
+    transform: translate3d(var(--caption-x, 0), var(--caption-y, 0), 0) rotate(var(--caption-rotate, 0deg));
+    transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .app-project__shot-number {
+    position: absolute;
+    top: 5.2rem;
+    left: 1.5rem;
+    color: var(--project-accent);
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  .app-project__panel--story,
+  .app-project__panel--features,
+  .app-project__panel--final {
+    width: clamp(34rem, 58vw, 60rem);
+    padding: clamp(7rem, 13vh, 10rem) clamp(3rem, 7vw, 7rem) 5rem;
+  }
+  .app-project__panel--story {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: var(--project-accent);
+    color: var(--project-surface);
+  }
+  .app-project__panel--story h2,
+  .app-project__features-head h2,
+  .app-project__panel--final h2 {
+    max-width: 13ch;
+    margin: 0;
+    font-size: clamp(2.8rem, 5.5vw, 5.2rem);
+    line-height: 0.97;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+  .app-project__story-copy {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.5rem, 4vw, 4rem);
+    margin-top: clamp(2rem, 6vh, 4.5rem);
+    font-size: clamp(0.96rem, 1.2vw, 1.12rem);
+    line-height: 1.55;
+  }
+  .app-project__story-copy p {
+    margin: 0;
+    color: inherit;
+    font: inherit;
+  }
+  .app-project__meta-line {
+    position: static;
+    max-width: 60ch;
+    margin: clamp(1.5rem, 4vh, 3rem) 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid currentColor;
+    color: inherit;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .app-project__panel--features { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 4rem; background: var(--project-surface); }
+  .app-project__features-head h2 { font-size: clamp(2.7rem, 4.6vw, 4.6rem); }
+  .app-project__feature-list { align-self: center; margin: 0; padding: 0; list-style: none; }
+  .app-project__feature-list li {
+    display: grid;
+    grid-template-columns: 2.2rem 1fr;
+    gap: 1rem;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--project-ink) 28%, transparent);
+  }
+  .app-project__feature-list li:first-child { border-top: 1px solid color-mix(in srgb, var(--project-ink) 28%, transparent); }
+  .app-project__feature-list span { color: var(--project-accent); font-size: 0.72rem; font-weight: 800; }
+  .app-project__feature-list p {
+    margin: 0;
+    color: var(--project-ink);
+    font-size: 0.98rem;
+    line-height: 1.35;
+  }
+
+  .app-project__panel--final {
+    display: flex;
+    width: min(82vw, 76rem);
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    color: var(--project-final-ink);
+    background: var(--project-signal);
+  }
+  .app-project__final-icon { width: 5.5rem; height: 5.5rem; margin-bottom: 2rem; border-radius: 1.25rem; }
+  .app-project__panel--final > p { margin: 0 0 0.9rem; color: inherit; font-size: 0.78rem; font-weight: 850; letter-spacing: 0.08em; }
+  .app-project__panel--final h2 { max-width: none; font-size: clamp(4rem, 9vw, 6rem); }
+  .app-project__final-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 2.5rem; }
+  .app-project__final-actions a { color: var(--project-surface); background: var(--project-ink); }
+  .app-project__final-actions a:last-child { color: var(--project-final-ink); background: transparent; border: 1px solid currentColor; }
+
+  .app-project__progress {
+    position: fixed;
+    z-index: 9;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 0.28rem;
+    background: color-mix(in srgb, var(--project-ink) 18%, transparent);
+  }
+  .app-project__progress span { display: block; width: 100%; height: 100%; background: var(--project-accent); transform: scaleX(0); transform-origin: 0 50%; }
+
+  .app-project--holy-shift .app-project__hero-copy h1,
+  .app-project--holy-shift .app-project__panel--story h2,
+  .app-project--holy-shift .app-project__panel--final h2 { font-family: 'Anton', Impact, sans-serif; font-weight: 400; letter-spacing: 0; text-transform: uppercase; }
+  .app-project--holy-shift .app-project__chapter,
+  .app-project--holy-shift .app-project__shot-number { font-family: 'Bitcount Prop Double', monospace; }
+  .app-project--holy-shift .app-project__back:hover,
+  .app-project--holy-shift .app-project__back:focus-visible { color: var(--project-accent); }
+  .app-project--holy-shift .app-project__running-title {
+    color: var(--project-accent);
+    background: #09040f;
+    font-family: 'Bitcount Prop Double', monospace;
+    letter-spacing: 0.08em;
+    padding: 0.28rem 0.55rem;
+    text-shadow: 0 0 0.8rem rgb(255 24 174 / 0.45);
+  }
+  .app-project--holy-shift .app-project__count { padding: 0.28rem 0.5rem; color: #72f4ff; background: #09040f; }
+  .app-project--holy-shift .app-project__panel--hero {
+    isolation: isolate;
+    background:
+      radial-gradient(circle at 78% 22%, rgb(0 240 255 / 0.24), transparent 26rem),
+      radial-gradient(circle at 22% 88%, rgb(255 25 184 / 0.25), transparent 24rem),
+      linear-gradient(135deg, #05040b, #10082a 56%, #030208);
+  }
+  .app-project--holy-shift .app-project__panel--hero::before {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, rgb(62 211 255 / 0.12) 1px, transparent 1px) 0 0 / 7.5rem 100%,
+      linear-gradient(0deg, rgb(62 211 255 / 0.1) 1px, transparent 1px) 0 0 / 100% 5.5rem;
+    mask-image: linear-gradient(90deg, rgb(0 0 0 / 0.35), #000 28%, #000 88%, rgb(0 0 0 / 0.5));
+  }
+  .app-project--holy-shift .app-project__hero-art-primary,
+  .app-project--holy-shift .app-project__hero-art-secondary {
+    width: min(33vw, 32rem);
+    height: min(76vh, 49rem);
+  }
+  .app-project--holy-shift .app-project__hero-art-primary {
+    z-index: 2;
+    transform: translate(-62%, -48%) rotate(-3deg);
+  }
+  .app-project--holy-shift .app-project__hero-art-secondary {
+    z-index: 1;
+    transform: translate(-38%, -52%) rotate(3deg);
+    filter: drop-shadow(0 0.7rem 0.5rem rgb(0 0 0 / 0.3));
+  }
+  .app-project--holy-shift .app-project__art-field { display: none; }
+  .app-project--holy-shift .app-project__panel--story {
+    width: clamp(38rem, 56vw, 58rem);
+    color: #09040f;
+    background:
+      linear-gradient(90deg, transparent 0 1.4rem, rgb(9 4 15 / 0.16) 1.4rem 1.55rem, transparent 1.55rem),
+      linear-gradient(0deg, transparent 0 1.4rem, rgb(9 4 15 / 0.16) 1.4rem 1.55rem, transparent 1.55rem),
+      var(--project-accent);
+  }
+  .app-project--holy-shift .app-project__panel--story h2 {
+    max-width: 10ch;
+    transform: translate(-0.75rem, -0.35rem);
+  }
+  .app-project--holy-shift .app-project__story-copy p:first-child { transform: translateY(0.55rem); }
+  .app-project--holy-shift .app-project__story-copy p:last-child { transform: translateY(-0.35rem); }
+  .app-project--holy-shift .app-project__panel--shot,
+  .app-project--imposter .app-project__panel--shot {
+    --shot-x: 0;
+    --shot-y: 0;
+    --shot-rotate: 0deg;
+    --caption-x: 0;
+    --caption-y: 0;
+    --caption-rotate: 0deg;
+  }
+  .app-project--holy-shift .app-project__panel--shot img {
+    filter: drop-shadow(0 0 1.1rem rgb(255 24 174 / 0.28));
+  }
+  .app-project--holy-shift .app-project__panel--shot {
+    background-image:
+      radial-gradient(circle at 18% 82%, rgb(255 24 174 / 0.14), transparent 10rem),
+      radial-gradient(circle at 86% 18%, rgb(114 244 255 / 0.11), transparent 8rem);
+  }
+  .app-project--holy-shift .app-project__panel--shot::after {
+    content: '';
+    position: absolute;
+    top: 5.25rem;
+    right: 1.5rem;
+    width: 0.3rem;
+    height: 0.3rem;
+    background: #72f4ff;
+    box-shadow: 0.52rem 0 var(--project-accent), 1.04rem 0 rgb(114 244 255 / 0.32);
+    pointer-events: none;
+  }
+  .app-project--holy-shift .app-project__shot-number {
+    min-width: 2.15rem;
+    padding: 0.22rem 0.35rem;
+    border: 1px solid currentColor;
+    color: #72f4ff;
+    line-height: 1;
+    text-align: center;
+    box-shadow: 0.2rem 0.2rem 0 var(--project-accent);
+  }
+  .app-project--holy-shift .app-project__final-icon {
+    border-radius: 0;
+    clip-path: polygon(10% 0, 90% 0, 90% 5%, 100% 5%, 100% 90%, 95% 90%, 95% 100%, 10% 100%, 10% 95%, 0 95%, 0 10%, 10% 10%);
+    filter: drop-shadow(0.45rem 0.45rem 0 rgb(9 4 15 / 0.72));
+  }
+  .app-project--holy-shift .app-project__panel--final {
+    background-image:
+      radial-gradient(circle at 84% 20%, rgb(114 244 255 / 0.24), transparent 12rem),
+      linear-gradient(90deg, rgb(9 4 15 / 0.1) 1px, transparent 1px),
+      linear-gradient(0deg, rgb(9 4 15 / 0.1) 1px, transparent 1px);
+    background-size: auto, 5rem 100%, 100% 5rem;
+  }
+  .app-project--holy-shift .app-project__progress span {
+    background: linear-gradient(90deg, #72f4ff 0 46%, var(--project-accent) 46% 100%);
+    box-shadow: 0 0 0.65rem rgb(255 24 174 / 0.42);
+  }
+  .app-project--holy-shift .app-project__panel--shot:not([data-active]) img,
+  .app-project--imposter .app-project__panel--shot:not([data-active]) img {
+    transform: translate3d(var(--shot-x, 0), 0, 0) scale(1);
+  }
+  .app-project--holy-shift .app-project__panel--shot-lead { width: clamp(22rem, 31vw, 30rem); --shot-x: -0.65rem; --caption-x: -0.65rem; }
+  .app-project--holy-shift .app-project__panel--shot-2 { width: clamp(19rem, 27vw, 27rem); --shot-x: 0.8rem; --caption-x: 0.8rem; }
+  .app-project--holy-shift .app-project__panel--shot-3 { width: clamp(24rem, 34vw, 33rem); --shot-x: -0.9rem; --caption-x: -0.9rem; }
+  .app-project--holy-shift .app-project__panel--shot-4 { width: clamp(20rem, 29vw, 28rem); --shot-x: 0.7rem; --caption-x: 0.7rem; }
+  .app-project--holy-shift .app-project__panel--final .app-project__final-icon { transform: translateX(0.8rem); }
+  .app-project--holy-shift .app-project__panel--final h2 { transform: translateX(-0.45rem); }
+  .app-project--holy-shift .app-project__panel--final .app-project__final-actions { transform: translateX(0.9rem); }
+
+  .app-project--tabu-ekstra .app-project__hero-copy h1,
+  .app-project--tabu-ekstra .app-project__panel--story h2,
+  .app-project--tabu-ekstra .app-project__features-head h2,
+  .app-project--tabu-ekstra .app-project__panel--final h2 { font-family: 'Anton', Impact, sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: 0; }
+  .app-project--tabu-ekstra .app-project__panel--story h2 {
+    font-size: clamp(2.7rem, 4.8vw, 4.65rem);
+  }
+  .app-project--tabu-ekstra .app-project__panel--story .app-project__story-copy {
+    margin-top: clamp(1.5rem, 3.5vh, 2.75rem);
+  }
+  .app-project--tabu-ekstra .app-project__features-head > p {
+    display: none;
+  }
+  .app-project--tabu-ekstra .app-project__panel--features {
+    width: clamp(44rem, 68vw, 72rem);
+    padding-inline: clamp(2.5rem, 5vw, 5rem);
+    grid-template-columns: minmax(15rem, 0.75fr) minmax(0, 1.25fr);
+    align-items: center;
+    gap: clamp(2.5rem, 4vw, 4rem);
+  }
+  .app-project--tabu-ekstra .app-project__features-head h2 {
+    max-width: 11ch;
+    font-size: clamp(2.75rem, 3.8vw, 3.9rem);
+    line-height: 0.94;
+  }
+  .app-project--tabu-ekstra .app-project__feature-list {
+    --metric-column-gap: clamp(1.25rem, 2vw, 2rem);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+    gap: clamp(2.4rem, 6vh, 4.5rem) var(--metric-column-gap);
+    align-items: start;
+  }
+  .app-project--tabu-ekstra .app-project__feature-list li,
+  .app-project--tabu-ekstra .app-project__feature-list li:first-child {
+    position: relative;
+    display: block;
+    padding: 0;
+    border: 0;
+    transform: none;
+  }
+  .app-project--tabu-ekstra .app-project__feature-list li::before {
+    display: none;
+  }
+  .app-project--tabu-ekstra .app-project__metric strong {
+    display: block;
+    color: var(--project-signal);
+    font-family: 'Anton', Impact, sans-serif;
+    font-size: clamp(3.2rem, 4.4vw, 4.4rem);
+    font-weight: 400;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+  }
+  .app-project--tabu-ekstra .app-project__metric p {
+    max-width: 18ch;
+    margin-top: 0.8rem;
+    color: var(--project-muted);
+    font-size: 0.9rem;
+    line-height: 1.35;
+  }
+  .app-project--tabu-ekstra .app-project__metric:nth-child(5) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    left: clamp(-4.375rem, calc(-5.075rem + 2.235vw), -2.6875rem);
+    width: max-content;
+    max-width: 100%;
+    text-align: center;
+  }
+  .app-project--tabu-ekstra .app-project__metric:nth-child(5) p {
+    margin-inline: auto;
+  }
+  .app-project--tabu-ekstra .app-project__panel--seasonal {
+    display: flex;
+    width: clamp(64rem, 84vw, 86rem);
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(5.25rem, 8vh, 6.5rem) clamp(2.5rem, 4vw, 4.5rem) clamp(2.5rem, 4vh, 3.5rem);
+    color: #fffdf8;
+    background:
+      radial-gradient(circle at 91% 14%, rgb(161 51 255 / 0.28), transparent 13rem),
+      radial-gradient(circle at 8% 88%, rgb(255 150 25 / 0.18), transparent 14rem),
+      #151412;
+  }
+  .app-project__seasonal-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(15rem, 0.85fr);
+    align-items: end;
+    gap: clamp(2rem, 5vw, 6rem);
+    margin-bottom: clamp(1.25rem, 3vh, 2.25rem);
+  }
+  .app-project__seasonal-head h2 {
+    max-width: 12ch;
+    margin: 0;
+    font-family: 'Anton', Impact, sans-serif;
+    font-size: clamp(3rem, 4.5vw, 4.6rem);
+    font-weight: 400;
+    line-height: 0.94;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+  .app-project__seasonal-head p {
+    max-width: 34ch;
+    margin: 0 0 0.35rem;
+    color: rgb(255 253 248 / 0.76);
+    font-size: clamp(0.92rem, 1.15vw, 1.15rem);
+    font-weight: 650;
+    line-height: 1.42;
+    text-wrap: pretty;
+  }
+  .app-project__seasonal-decks {
+    display: grid;
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+    align-items: end;
+    gap: clamp(1rem, 2.5vw, 2.5rem);
+  }
+  .app-project__seasonal-deck { min-width: 0; margin: 0; }
+  .app-project__seasonal-deck img {
+    display: block;
+    width: 100%;
+    height: min(39vh, 24rem);
+    object-fit: contain;
+    object-position: left bottom;
+  }
+  .app-project__seasonal-deck figcaption {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.7rem;
+    color: rgb(255 253 248 / 0.72);
+    font-size: 0.76rem;
+    line-height: 1.3;
+  }
+  .app-project__seasonal-deck figcaption strong { color: #fffdf8; font-weight: 750; }
+  .app-project__seasonal-deck figcaption span { color: var(--project-accent); font-variant-numeric: tabular-nums; }
+  .app-project__seasonal-deck--summer figcaption {
+    width: min(91.12%, 62.44vh, 38.42rem);
+  }
+  .app-project--tabu-ekstra .app-project__panel--shot {
+    --shot-x: 0;
+    --shot-y: 0;
+    --shot-rotate: 0deg;
+    --caption-x: 0;
+    --caption-y: 0;
+    --caption-rotate: 0deg;
+  }
+  .app-project--tabu-ekstra .app-project__panel--shot:not([data-active]) img {
+    transform: translate3d(var(--shot-x, 0), var(--shot-y, 0), 0) scale(1);
+  }
+  .app-project--tabu-ekstra .app-project__panel--shot-lead {
+    width: clamp(21rem, 31vw, 29rem);
+    --shot-x: -0.8rem;
+    --caption-x: -0.8rem;
+  }
+  .app-project--tabu-ekstra .app-project__panel--shot-2 {
+    width: clamp(18rem, 28vw, 26rem);
+    --shot-x: 0.8rem;
+    --caption-x: 0.8rem;
+  }
+  .app-project--tabu-ekstra .app-project__panel--shot-3 {
+    width: clamp(23rem, 35vw, 33rem);
+    --shot-x: -1rem;
+    --caption-x: -1rem;
+  }
+  .app-project--tabu-ekstra .app-project__panel--shot-4 {
+    width: clamp(19rem, 29vw, 27rem);
+    --shot-x: 0.9rem;
+    --caption-x: 0.9rem;
+  }
+  .app-project--tabu-ekstra .app-project__panel--shot-5 {
+    width: clamp(22rem, 33vw, 31rem);
+    --shot-x: -0.65rem;
+    --caption-x: -0.65rem;
+  }
+  .app-project--tabu-ekstra .app-project__panel--shot-6 {
+    width: clamp(20rem, 30vw, 28rem);
+    --shot-x: 0.75rem;
+    --caption-x: 0.75rem;
+  }
+  .app-project--tabu-ekstra .app-project__panel--story h2 {
+    transform: translate(-0.8rem, -0.35rem);
+  }
+  .app-project--tabu-ekstra .app-project__story-copy p:first-child {
+    transform: translateY(0.65rem);
+  }
+  .app-project--tabu-ekstra .app-project__story-copy p:last-child {
+    transform: translateY(-0.45rem);
+  }
+  .app-project--tabu-ekstra .app-project__metric {
+    transition: none;
+  }
+  .app-project--tabu-ekstra .app-project__metric:hover { transform: none; }
+  .app-project--tabu-ekstra .app-project__panel--final .app-project__final-icon { transform: translateX(1.1rem); }
+  .app-project--tabu-ekstra .app-project__panel--final h2 { transform: translateX(-0.5rem); }
+  .app-project--tabu-ekstra .app-project__panel--final .app-project__final-actions { transform: translateX(1.25rem); }
+  .app-project--tabu-ekstra .app-project__hero-art img { width: min(52vw, 50rem); height: auto; transform: translate(-46%, -50%); }
+  .app-project--tabu-ekstra .app-project__art-field { display: none; }
+  .app-project--tabu-ekstra .app-project__panel--story {
+    color: var(--project-ink);
+    background: var(--project-accent);
+  }
+  .app-project--tabu-ekstra .app-project__panel--shot {
+    background-image:
+      radial-gradient(circle at 88% 14%, rgb(161 51 255 / 0.12), transparent 8rem),
+      radial-gradient(circle at 12% 88%, rgb(255 150 25 / 0.1), transparent 9rem);
+  }
+  .app-project--tabu-ekstra .app-project__shot-number {
+    min-width: 2.1rem;
+    padding: 0.2rem 0.45rem;
+    color: #fffdf8;
+    background: #a133ff;
+    line-height: 1.05;
+    text-align: center;
+  }
+  .app-project--tabu-ekstra .app-project__final-icon {
+    border-radius: 0.7rem;
+    box-shadow: 0.45rem 0.45rem 0 var(--project-accent);
+  }
+  .app-project--tabu-ekstra .app-project__panel--final { background-image: none; }
+  .app-project--tabu-ekstra .app-project__progress span {
+    background: linear-gradient(90deg, var(--project-accent) 0 58%, #a133ff 58% 100%);
+  }
+  .app-project--tabu-ekstra ::selection { color: #fffdf8; background: #a133ff; }
+
+  .app-project--imposter .app-project__back:hover,
+  .app-project--imposter .app-project__back:focus-visible { color: var(--project-accent); }
+  .app-project--imposter .app-project__hero-copy h1,
+  .app-project--imposter .app-project__panel--story h2,
+  .app-project--imposter .app-project__panel--final h2 {
+    font-family: 'Anton', Impact, sans-serif;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+  .app-project--imposter .app-project__count { padding: 0.28rem 0.5rem; color: var(--project-accent); background: var(--project-surface); }
+  .app-project--imposter .app-project__hero-art img {
+    width: min(47vw, 47rem);
+    transform: translate(-47%, -50%);
+    filter: drop-shadow(0 1rem 0.4rem rgb(0 0 0 / 0.28));
+  }
+  .app-project--imposter .app-project__art-field {
+    inset: 9% 5% 7% 3%;
+    border-radius: 46% 54% 50% 48% / 54% 46% 52% 48%;
+    background: radial-gradient(
+      ellipse at 48% 44%,
+      rgb(108 36 37 / 0.82) 0%,
+      rgb(74 20 23 / 0.72) 42%,
+      rgb(43 8 11 / 0.5) 72%,
+      rgb(22 3 5 / 0) 100%
+    );
+    filter: blur(0.7rem);
+    transform: scale(1.04, 0.92) rotate(-2deg);
+  }
+  .app-project--imposter .app-project__panel--story {
+    width: clamp(40rem, 59vw, 61rem);
+    color: #25090b;
+    background:
+      radial-gradient(circle at 88% 17%, transparent 0 5.8rem, rgb(37 9 11 / 0.13) 5.85rem 6rem, transparent 6.05rem),
+      radial-gradient(circle at 88% 17%, rgb(37 9 11 / 0.06), transparent 4rem),
+      #ead8b4;
+  }
+  .app-project--imposter .app-project__panel--story h2 {
+    max-width: 12ch;
+    transform: translate(0.55rem, -0.4rem);
+  }
+  .app-project--imposter .app-project__story-copy p:first-child { transform: translateY(0.45rem); }
+  .app-project--imposter .app-project__story-copy p:last-child { transform: translateY(-0.35rem); }
+  .app-project--imposter .app-project__panel--features { background: var(--project-surface); }
+  .app-project--imposter .app-project__panel--shot-lead { width: clamp(23rem, 32vw, 31rem); --shot-x: -0.7rem; --caption-x: -0.7rem; }
+  .app-project--imposter .app-project__panel--shot-2 { width: clamp(20rem, 28vw, 28rem); --shot-x: 0.9rem; --caption-x: 0.9rem; }
+  .app-project--imposter .app-project__panel--shot-3 { width: clamp(24rem, 34vw, 32rem); --shot-x: -0.75rem; --caption-x: -0.75rem; }
+  .app-project--imposter .app-project__panel--shot-4 { width: clamp(19rem, 27vw, 27rem); --shot-x: 1rem; --caption-x: 1rem; }
+  .app-project--imposter .app-project__panel--shot-5 { width: clamp(22rem, 31vw, 30rem); --shot-x: -0.6rem; --caption-x: -0.6rem; }
+  .app-project--imposter .app-project__panel--shot-2,
+  .app-project--imposter .app-project__panel--shot-4 { background: #f1e5cf; }
+  .app-project--imposter .app-project__panel--shot-2 figcaption,
+  .app-project--imposter .app-project__panel--shot-4 figcaption { color: #4e392d; }
+  .app-project--imposter .app-project__panel--shot {
+    background-image:
+      radial-gradient(circle at 82% 20%, transparent 0 3.8rem, rgb(205 164 91 / 0.15) 3.85rem 3.95rem, transparent 4rem),
+      radial-gradient(circle at 16% 84%, rgb(165 24 32 / 0.08), transparent 8rem);
+  }
+  .app-project--imposter .app-project__shot-number {
+    display: grid;
+    min-width: 2.2rem;
+    min-height: 2rem;
+    padding: 0.25rem 0.45rem;
+    place-items: center;
+    border: 1px solid currentColor;
+    color: var(--project-surface);
+    background: var(--project-accent);
+  }
+  .app-project--imposter .app-project__panel--shot figcaption::before {
+    content: '';
+    display: block;
+    width: 2.25rem;
+    height: 1px;
+    margin: 0 auto 0.55rem;
+    background: currentColor;
+    opacity: 0.4;
+  }
+  .app-project--imposter .app-project__final-icon {
+    border-radius: 1.25rem;
+    outline: 1px solid rgb(255 241 216 / 0.52);
+    outline-offset: 0.45rem;
+    box-shadow: 0 0 0 0.16rem rgb(37 9 11 / 0.25);
+  }
+  .app-project--imposter .app-project__panel--final {
+    background-image:
+      radial-gradient(circle at 83% 22%, transparent 0 5.5rem, rgb(255 241 216 / 0.12) 5.55rem 5.7rem, transparent 5.75rem),
+      radial-gradient(circle at 83% 22%, transparent 0 8rem, rgb(255 241 216 / 0.07) 8.05rem 8.2rem, transparent 8.25rem);
+  }
+  .app-project--imposter .app-project__progress span {
+    background: linear-gradient(90deg, var(--project-accent) 0 62%, var(--project-signal) 62% 100%);
+  }
+  .app-project--imposter .app-project__panel--final .app-project__final-icon { transform: translateX(-0.7rem); }
+  .app-project--imposter .app-project__panel--final h2 { transform: translateX(0.5rem); }
+  .app-project--imposter .app-project__panel--final .app-project__final-actions { transform: translateX(1rem); }
+
+  @media (max-width: 800px) {
+    .app-project__header { min-height: 3.8rem; grid-template-columns: 1fr 1fr; }
+    .app-project__running-title { display: none; }
+    .app-project__panel--hero {
+      grid-template-columns: 1fr;
+      grid-template-rows: minmax(0, 1fr) minmax(14rem, 0.95fr);
+      padding: 5rem 1.25rem 3rem;
+    }
+    .app-project--tabu-ekstra .app-project__panel--hero {
+      background-size: 22.5rem auto;
+    }
+    .app-project__hero-copy { align-self: end; }
+    .app-project__hero-copy h1 { font-size: clamp(3.6rem, 18vw, 5.4rem); }
+    .app-project__wordmark { width: min(22rem, 86vw); max-height: 9rem; }
+    .app-project--holy-shift .app-project__wordmark { width: min(17.6rem, 68.8vw); max-height: 7.2rem; }
+    .app-project__tagline { margin: 1rem 0; font-size: 1rem; }
+    .app-project__hero-art img { width: min(78vw, 28rem); height: min(42vh, 25rem); transform: translate(-50%, -50%); }
+    .app-project__art-field { inset: 8% 8% 7%; }
+    .app-project__scroll-note { display: none; }
+    .app-project__panel--shot { width: 82vw; padding: 4.75rem 1.5rem 2.5rem; }
+    .app-project__panel--shot img { height: min(65vh, 39rem); }
+    .app-project__shot-number { top: 4.3rem; }
+    .app-project--holy-shift .app-project__panel--shot::after { top: 4.35rem; }
+    .app-project__panel--story,
+    .app-project__panel--features,
+    .app-project__panel--final { width: 90vw; padding: 5.3rem 1.5rem 4rem; }
+    .app-project__panel--story h2,
+    .app-project__features-head h2 { font-size: clamp(2.7rem, 12vw, 4rem); }
+    .app-project__story-copy { grid-template-columns: 1fr; gap: 1rem; margin-top: 2rem; font-size: 0.9rem; }
+    .app-project__story-copy p:nth-child(2) { display: none; }
+    .app-project__meta-line { margin-top: 1.25rem; }
+    .app-project__panel--features { display: flex; flex-direction: column; gap: 2rem; }
+    .app-project__feature-list { width: 100%; }
+    .app-project__feature-list li { padding: 0.85rem 0; }
+    .app-project__feature-list p { font-size: 0.88rem; }
+    .app-project__panel--final { width: 92vw; }
+    .app-project__panel--final h2 { font-size: clamp(3.7rem, 18vw, 5.5rem); }
+    .app-project--tabu-ekstra .app-project__panel--seasonal {
+      width: 92vw;
+      padding: 4.9rem 1.25rem 2.5rem;
+    }
+    .app-project__seasonal-head {
+      grid-template-columns: 1fr;
+      gap: 0.7rem;
+      margin-bottom: 1.25rem;
+    }
+    .app-project__seasonal-head h2 { max-width: 11ch; font-size: clamp(2.6rem, 10vw, 3.25rem); }
+    .app-project__seasonal-head p { max-width: 38ch; font-size: 0.82rem; }
+    .app-project__seasonal-decks { grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr); gap: 0.75rem; }
+    .app-project__seasonal-deck img { height: min(24vh, 13rem); }
+    .app-project__seasonal-deck figcaption { gap: 0.35rem; margin-top: 0.45rem; font-size: 0.64rem; }
+    .app-project__seasonal-deck--summer figcaption { width: min(91.12%, 38.42vh, 20.81rem); }
+    .app-project--holy-shift .app-project__hero-art-primary,
+    .app-project--holy-shift .app-project__hero-art-secondary {
+      width: min(64vw, 18rem);
+      height: min(48vh, 30rem);
+    }
+    .app-project--holy-shift .app-project__hero-art-primary { transform: translate(-62%, -48%) rotate(-3deg); }
+    .app-project--holy-shift .app-project__hero-art-secondary { transform: translate(-38%, -52%) rotate(3deg); }
+    .app-project--tabu-ekstra .app-project__hero-art img { width: 88vw; }
+    .app-project--imposter .app-project__hero-art img { width: min(82vw, 29rem); transform: translate(-50%, -50%); }
+    .app-project--holy-shift .app-project__panel--story,
+    .app-project--imposter .app-project__panel--story { width: 90vw; }
+    .app-project--holy-shift .app-project__panel--shot,
+    .app-project--imposter .app-project__panel--shot { width: 82vw; }
+    .app-project--holy-shift .app-project__panel--shot-lead { --shot-x: -0.35rem; --caption-x: -0.35rem; }
+    .app-project--holy-shift .app-project__panel--shot-2 { --shot-x: 0.4rem; --caption-x: 0.4rem; }
+    .app-project--holy-shift .app-project__panel--shot-3 { --shot-x: -0.45rem; --caption-x: -0.45rem; }
+    .app-project--holy-shift .app-project__panel--shot-4 { --shot-x: 0.35rem; --caption-x: 0.35rem; }
+    .app-project--imposter .app-project__panel--shot-lead { --shot-x: -0.35rem; --caption-x: -0.35rem; }
+    .app-project--imposter .app-project__panel--shot-2 { --shot-x: 0.4rem; --caption-x: 0.4rem; }
+    .app-project--imposter .app-project__panel--shot-3 { --shot-x: -0.4rem; --caption-x: -0.4rem; }
+    .app-project--imposter .app-project__panel--shot-4 { --shot-x: 0.45rem; --caption-x: 0.45rem; }
+    .app-project--imposter .app-project__panel--shot-5 { --shot-x: -0.3rem; --caption-x: -0.3rem; }
+    .app-project--holy-shift .app-project__panel--story h2 { transform: translate(-0.25rem, 0); }
+    .app-project--imposter .app-project__panel--story h2 { transform: translate(0.2rem, 0); }
+    .app-project--holy-shift .app-project__story-copy p:first-child,
+    .app-project--imposter .app-project__story-copy p:first-child { transform: translateY(0.2rem); }
+    .app-project--tabu-ekstra .app-project__panel--features { display: flex; gap: 2.5rem; }
+    .app-project--tabu-ekstra .app-project__feature-list {
+      --metric-column-gap: 1.5rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2rem var(--metric-column-gap);
+    }
+    .app-project--tabu-ekstra .app-project__metric strong { font-size: clamp(2.8rem, 12vw, 3.8rem); }
+    .app-project--tabu-ekstra .app-project__metric p { font-size: 0.78rem; }
+    .app-project--tabu-ekstra .app-project__panel--shot { width: 82vw; }
+    .app-project--tabu-ekstra .app-project__panel--shot-lead { --shot-x: -0.4rem; --caption-x: -0.4rem; }
+    .app-project--tabu-ekstra .app-project__panel--shot-2 { --shot-x: 0.4rem; --caption-x: 0.4rem; }
+    .app-project--tabu-ekstra .app-project__panel--shot-3 { --shot-x: -0.45rem; --caption-x: -0.45rem; }
+    .app-project--tabu-ekstra .app-project__panel--shot-4 { --shot-x: 0.4rem; --caption-x: 0.4rem; }
+    .app-project--tabu-ekstra .app-project__panel--shot-5 { --shot-x: -0.35rem; --caption-x: -0.35rem; }
+    .app-project--tabu-ekstra .app-project__panel--shot-6 { --shot-x: 0.4rem; --caption-x: 0.4rem; }
+    .app-project--tabu-ekstra .app-project__panel--story h2 { transform: translate(-0.25rem, 0); }
+    .app-project--tabu-ekstra .app-project__story-copy p:first-child { transform: translateY(0.25rem); }
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .app-project__rail { scroll-snap-type: x proximity; }
+  }
+
+  @media (max-height: 680px) and (min-width: 801px) {
+    .app-project__panel--hero { padding-top: 5rem; padding-bottom: 2.5rem; }
+    .app-project__hero-art img { height: 72vh; }
+    .app-project__panel--shot img { height: 66vh; }
+    .app-project__panel--story,
+    .app-project__panel--features,
+    .app-project__panel--final { padding-top: 5.5rem; padding-bottom: 3.5rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .app-project__rail { scroll-behavior: auto; }
+    .app-project__panel--shot img,
+    .app-project__panel--shot figcaption,
+    .app-project__store-link,
+    .app-project__final-actions a { transition: none; }
+    .app-project__panel--shot:not([data-active]) img { transform: none; }
+  }
+</style>
