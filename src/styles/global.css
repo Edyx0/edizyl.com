@@ -3674,7 +3674,8 @@ header.site nav a:focus-visible .dot-word--sampled .dot-word__dot,
   }
 
   .studio-profile__facts div:last-child {
-    margin-left: 0;
+    margin-left: auto;
+    text-align: right;
   }
 
   .studio-profile__facts dd {
@@ -3691,8 +3692,10 @@ header.site nav a:focus-visible .dot-word--sampled .dot-word__dot,
   }
 
   .contact-stage__social {
-    flex-wrap: wrap;
-    padding-right: 5rem;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+    padding-right: 0;
   }
 
 }
@@ -3963,7 +3966,23 @@ body.menu-open {
   }
 }
 
+@keyframes menu-enter-mobile {
+  from {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 760px) {
+  .site-menu[open] {
+    animation: menu-enter-mobile 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
   .site-menu__nav {
     display: flex;
     flex-direction: column;
@@ -6256,7 +6275,7 @@ html[data-opening-theme] body.app-detail-page .meta-grid {
     right: auto;
     bottom: auto;
     flex: 0 0 auto;
-    margin: 0.5rem auto 2rem 10vw;
+    margin: 0.7rem auto 2rem 10vw;
   }
 
   .site-menu__music-meta {
@@ -8383,7 +8402,7 @@ body.other-page {
 
   .other-project__identity {
     left: 0;
-    top: clamp(16.5rem, 53vw, 20rem);
+    top: clamp(12.5rem, 58vw, 18rem);
     bottom: auto;
     width: 90%;
   }
@@ -9121,7 +9140,7 @@ body.other-page {
   }
 
   .other-index--lokal .other-project__identity {
-    top: clamp(19rem, 102vw, 26rem);
+    top: clamp(18rem, 92vw, 23rem);
   }
 
   .other-gallery--lokal .other-gallery__track .other-gallery__frame:not(.other-gallery__text-frame) {

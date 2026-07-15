@@ -861,7 +861,11 @@ const logoDotLitByIndex = new Map(
 
           if (animateLandingFrames) {
             window.dispatchEvent(new CustomEvent('site-menu:opening'));
-            menuCloseTimer = window.setTimeout(openMenu, 520);
+            if (mobileMenuMedia.matches) {
+              openMenu();
+            } else {
+              menuCloseTimer = window.setTimeout(openMenu, 520);
+            }
           } else {
             openMenu();
           }
