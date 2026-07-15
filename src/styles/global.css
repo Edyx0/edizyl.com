@@ -7777,19 +7777,19 @@ body.app-detail-page:has(.app-detail-shell[data-app="holy-shift"]) header.site {
 html[data-opening-theme] body.other-page,
 body.other-page {
   color: #191817;
-  background: #fff;
+  background: #f6f3ea;
 }
 
 .other-page .site-scene-transition,
 .other-page .site-scene-transition__wash {
-  background: #fff;
+  background: #f6f3ea;
 }
 
 .other-index {
   min-height: 100svh;
   overflow: visible;
   padding-bottom: clamp(3rem, 6vw, 6rem);
-  background: #fff;
+  background: #f6f3ea;
 }
 
 .other-index__masthead {
@@ -9132,6 +9132,10 @@ body.other-page .other-project__frame img {
     margin: 0;
   }
 
+  body.other-page .other-index--imposter .other-project {
+    container-type: inline-size;
+  }
+
   body.other-page .other-index:not(.other-index--lokal):not(.other-index--imposter) .other-project__frame--cover {
     left: 2%;
     top: 4%;
@@ -9201,8 +9205,8 @@ body.other-page .other-project__frame img {
 
   body.other-page .other-index--imposter .other-project__identity {
     left: 4%;
-    top: auto;
-    bottom: 3.5%;
+    top: calc(4% + 64cqw + 0.35rem);
+    bottom: auto;
     width: 92%;
   }
 
