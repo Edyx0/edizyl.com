@@ -223,7 +223,7 @@ const tabuMetrics = metricsByApp['tabu-ekstra'];
         <p>{identity.footerLabel}</p>
           <h2>{app.name}{finalYear && <span class="app-project__final-year"> ({finalYear})</span>}</h2>
         <div class="app-project__final-actions">
-          <a href={app.appStoreUrl} target="_blank" rel="noreferrer">View on the App Store <span aria-hidden="true">↗</span></a>
+          <a href={app.appStoreUrl} target="_blank" rel="noreferrer">View on the App Store</a>
           <a href={`/${app.slug}/privacy/`}>Privacy</a>
         </div>
       </article>
@@ -1191,7 +1191,11 @@ const tabuMetrics = metricsByApp['tabu-ekstra'];
     .app-project--imposter .app-project__panel--story h2 { transform: translate(0.2rem, 0); }
     .app-project--holy-shift .app-project__story-copy p:first-child,
     .app-project--imposter .app-project__story-copy p:first-child { transform: translateY(0.2rem); }
-    .app-project--tabu-ekstra .app-project__panel--features { display: flex; gap: 2.5rem; }
+    .app-project--tabu-ekstra .app-project__panel--features {
+      display: flex;
+      width: 82vw;
+      gap: 2.5rem;
+    }
     .app-project--tabu-ekstra .app-project__feature-list {
       --metric-column-gap: 1.5rem;
       grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -4235,11 +4235,29 @@ body.other-page {
 .other-page header.site {
   position: fixed;
   inset: 0 0 auto;
-  color: var(--opening-content-ink, #f9f7f7);
-  background: color-mix(in srgb, var(--opening-content, #392e2b) 28%, transparent);
-  border: 0;
-  backdrop-filter: invert(1) contrast(135%) saturate(145%);
-  -webkit-backdrop-filter: invert(1) contrast(135%) saturate(145%);
+  color: var(--other-page-ink, #191817);
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.other-page header.site::before,
+.other-page header.site::after,
+.other-page header.site > div {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.other-page header.site::before,
+.other-page header.site::after {
+  content: none !important;
 }
 
 .other-page header.site .menu-toggle {
@@ -7763,14 +7781,23 @@ body.app-detail-page:has(.app-detail-shell[data-app="holy-shift"]) header.site {
 
 @media (max-width: 767px) {
   header.site > div {
-    padding-top: max(0.25rem, env(safe-area-inset-top));
-    padding-right: max(0.25rem, env(safe-area-inset-right));
+    padding-top: max(0.75rem, env(safe-area-inset-top));
+    padding-right: max(0.75rem, env(safe-area-inset-right));
   }
 
   .home header.site .menu-toggle {
-    top: max(0.25rem, env(safe-area-inset-top));
-    right: max(0.25rem, env(safe-area-inset-right));
+    top: max(0.75rem, env(safe-area-inset-top));
+    right: max(0.75rem, env(safe-area-inset-right));
   }
+
+  .other-page header.site .menu-toggle {
+    position: fixed;
+    top: max(0.75rem, env(safe-area-inset-top));
+    right: max(0.75rem, env(safe-area-inset-right));
+    align-items: flex-end;
+    writing-mode: vertical-lr;
+  }
+
 }
 
 /* Other index refinement — white field, separated hierarchy, no frame collisions */
@@ -9066,10 +9093,24 @@ body.other-page {
 }
 
 @media (max-width: 760px) {
+  body.other-page .other-index {
+    min-height: 0;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  body.other-page .other-index:first-of-type {
+    padding-top: 5rem;
+  }
+
+  .other-index--lokal .other-project {
+    height: clamp(29rem, 135vw, 33rem);
+  }
+
   .other-index--lokal .other-project__frame--lokal-photo {
     left: 2%;
     top: 3%;
-    width: 82%;
+    width: 68%;
   }
 
   .other-index--lokal .other-project__frame--lokal-logo {
@@ -9077,6 +9118,10 @@ body.other-page {
     right: auto;
     top: 21%;
     width: 34%;
+  }
+
+  .other-index--lokal .other-project__identity {
+    top: clamp(19rem, 102vw, 26rem);
   }
 
   .other-gallery--lokal .other-gallery__track .other-gallery__frame:not(.other-gallery__text-frame) {
