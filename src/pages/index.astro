@@ -221,9 +221,19 @@ import Layout from '../layouts/Layout.astro';
       return theme;
     };
 
+    const getStoredOpeningTheme = () => {
+      try {
+        const storedTheme = sessionStorage.getItem('opening-theme-values');
+        return storedTheme ? JSON.parse(storedTheme) : null;
+      } catch (_) {
+        return null;
+      }
+    };
+
     const startOpeningSequence = () => {
       if (!opening || !openingStage) return;
-      const theme = chooseOpeningTheme();
+      const hasCompletedOpening = sessionStorage.getItem('opening-complete') === 'true';
+      const theme = hasCompletedOpening ? getStoredOpeningTheme() ?? chooseOpeningTheme() : chooseOpeningTheme();
       opening.style.setProperty('--opening-bg', theme.bg);
       opening.style.setProperty('--opening-ink', theme.ink);
       opening.style.setProperty('--opening-accent', theme.accent);
@@ -283,7 +293,7 @@ import Layout from '../layouts/Layout.astro';
         window.removeEventListener('keydown', preventOpeningKey);
       };
 
-      if (reducedMotionQuery.matches) {
+      if (hasCompletedOpening || reducedMotionQuery.matches) {
         setPhase(3);
         opening.classList.add('opening-ready');
         unlockOpening();
@@ -296,7 +306,10 @@ import Layout from '../layouts/Layout.astro';
         window.setTimeout(() => setPhase(1), 1000),
         window.setTimeout(() => setPhase(2), 3000),
         window.setTimeout(() => setPhase(3), 4000),
-        window.setTimeout(unlockOpening, 4500),
+        window.setTimeout(() => {
+          sessionStorage.setItem('opening-complete', 'true');
+          unlockOpening();
+        }, 4500),
       ];
     };
 
