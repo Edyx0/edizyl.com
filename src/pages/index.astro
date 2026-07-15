@@ -303,29 +303,17 @@ import Layout from '../layouts/Layout.astro';
       setPhase(0);
       opening.classList.add('opening-ready');
       [
-        window.setTimeout(() => setPhase(1), 1000),
-        window.setTimeout(() => setPhase(2), 3000),
-        window.setTimeout(() => setPhase(3), 4000),
+        window.setTimeout(() => setPhase(1), 400),
+        window.setTimeout(() => setPhase(2), 1200),
+        window.setTimeout(() => setPhase(3), 1700),
         window.setTimeout(() => {
           sessionStorage.setItem('opening-complete', 'true');
           unlockOpening();
-        }, 4500),
+        }, 2000),
       ];
     };
 
-    const waitForOpeningFonts = async () => {
-      if (!document.fonts) return;
-
-      try {
-        await document.fonts.load('400 1em "Anton"');
-        await document.fonts.ready;
-      } catch (_) {
-        // Continue with the fallback stack if the web font cannot be loaded.
-      }
-    };
-
-    const startOpeningWhenFontsAreReady = async () => {
-      await waitForOpeningFonts();
+    const startOpening = () => {
       body.classList.remove('font-loading');
       startOpeningSequence();
     };
@@ -387,7 +375,7 @@ import Layout from '../layouts/Layout.astro';
     updateHeader();
     updateOpeningColor();
     setupOpeningFlowHover();
-    startOpeningWhenFontsAreReady();
+    startOpening();
     window.addEventListener('scroll', onScroll, { passive: true });
   </script>
 </Layout>

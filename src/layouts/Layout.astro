@@ -23,6 +23,9 @@ const classes = [
 ].filter(Boolean).join(' ');
 const defaultSpotifyStatusEndpoint = 'https://edizy-spotify-status.kickle-edizy.workers.dev';
 const spotifyStatusEndpoint = import.meta.env.PUBLIC_SPOTIFY_STATUS_ENDPOINT?.trim() || defaultSpotifyStatusEndpoint;
+const siteURL = Astro.site ?? new URL(Astro.url.origin);
+const canonicalURL = new URL(Astro.url.pathname, siteURL);
+const previewImageURL = new URL('/social-preview.jpg', siteURL);
 
 const logoDots = [
   [6.6,72.7],[6.6,59.5],[6.6,46.3],[19.8,85.9],[19.8,72.7],[19.8,59.5],[19.8,46.3],[19.8,33],
@@ -79,6 +82,18 @@ const logoDotLitByIndex = new Map(
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0e0c0a" />
+    <link rel="canonical" href={canonicalURL.href} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL.href} />
+    <meta property="og:image" content={previewImageURL.href} />
+    <meta property="og:image:alt" content="Ediz Yılmaz portfolio collage" />
+    <meta property="og:site_name" content="Ediz Yılmaz" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={previewImageURL.href} />
     <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon-e-red.svg" />
     <link rel="shortcut icon" type="image/svg+xml" href="/favicon-e-red.svg" />
     <link rel="apple-touch-icon" href="/favicon-e-red.svg" />
@@ -227,11 +242,11 @@ const logoDotLitByIndex = new Map(
 
     <div class="site-scene-transition" aria-hidden="true">
       <div class="site-scene-transition__wash"></div>
-      <figure style="--scene-i: 0; --scene-x: -34vw; --scene-y: -28vh; --scene-r: -2deg;"><img src="/other-projects/ayasofya/shot-1.webp" alt="" /></figure>
-      <figure style="--scene-i: 1; --scene-x: 10vw; --scene-y: -38vh; --scene-r: 1deg;"><img src="/other-projects/ayasofya/cover.webp" alt="" /></figure>
-      <figure style="--scene-i: 2; --scene-x: 36vw; --scene-y: -16vh; --scene-r: 2deg;"><img src="/other-projects/ayasofya/shot-2.webp" alt="" /></figure>
-      <figure style="--scene-i: 3; --scene-x: -32vw; --scene-y: 30vh; --scene-r: 1deg;"><img src="/other-projects/ayasofya/shot-3.webp" alt="" /></figure>
-      <figure style="--scene-i: 4; --scene-x: 32vw; --scene-y: 32vh; --scene-r: -2deg;"><img src="/landing/self-brand/food-trip.webp" alt="" /></figure>
+      <figure style="--scene-i: 0; --scene-x: -34vw; --scene-y: -28vh; --scene-r: -2deg;"><img data-scene-src="/other-projects/ayasofya/shot-1.webp" alt="" decoding="async" /></figure>
+      <figure style="--scene-i: 1; --scene-x: 10vw; --scene-y: -38vh; --scene-r: 1deg;"><img data-scene-src="/other-projects/ayasofya/cover.webp" alt="" decoding="async" /></figure>
+      <figure style="--scene-i: 2; --scene-x: 36vw; --scene-y: -16vh; --scene-r: 2deg;"><img data-scene-src="/other-projects/ayasofya/shot-2.webp" alt="" decoding="async" /></figure>
+      <figure style="--scene-i: 3; --scene-x: -32vw; --scene-y: 30vh; --scene-r: 1deg;"><img data-scene-src="/other-projects/ayasofya/shot-3.webp" alt="" decoding="async" /></figure>
+      <figure style="--scene-i: 4; --scene-x: 32vw; --scene-y: 32vh; --scene-r: -2deg;"><img data-scene-src="/landing/self-brand/food-trip.webp" alt="" decoding="async" /></figure>
     </div>
 
     <main>
@@ -615,6 +630,14 @@ const logoDotLitByIndex = new Map(
           menu.close();
         };
 
+        const loadSceneTransitionImages = () => {
+          sceneTransition?.querySelectorAll('img[data-scene-src]').forEach((image) => {
+            if (!(image instanceof HTMLImageElement) || !image.dataset.sceneSrc) return;
+            image.src = image.dataset.sceneSrc;
+            image.removeAttribute('data-scene-src');
+          });
+        };
+
         const setLogoPointerState = (hovered) => {
           if (!logo || musicReducedMotion.matches) return;
           window.clearTimeout(logoHoverPreviewTimer);
@@ -852,6 +875,7 @@ const logoDotLitByIndex = new Map(
         menuToggle?.addEventListener('click', () => {
           if (!menu || typeof menu.showModal !== 'function') return;
           window.clearTimeout(menuCloseTimer);
+          loadSceneTransitionImages();
           const openMenu = () => {
             menu.showModal();
             menu.focus({ preventScroll: true });
@@ -872,15 +896,11 @@ const logoDotLitByIndex = new Map(
 
           if (animateLandingFrames) {
             window.dispatchEvent(new CustomEvent('site-menu:opening'));
-            if (mobileMenuMedia.matches) {
-              openMenu();
-            } else {
-              menuCloseTimer = window.setTimeout(openMenu, 520);
-            }
-          } else {
-            openMenu();
           }
+          openMenu();
         });
+        menuToggle?.addEventListener('pointerenter', loadSceneTransitionImages, { once: true });
+        menuToggle?.addEventListener('focus', loadSceneTransitionImages, { once: true });
 
         menuClose?.addEventListener('click', closeMenu);
         menu?.addEventListener('click', (event) => {
@@ -905,7 +925,7 @@ const logoDotLitByIndex = new Map(
             sceneTransition.classList.remove('is-arriving');
             sceneTransition.classList.add('is-leaving');
             sessionStorage.setItem('scene-arrival', 'other');
-            window.setTimeout(() => window.location.assign(link.href), 860);
+            window.setTimeout(() => window.location.assign(link.href), 300);
           });
         });
         musicLink?.addEventListener('mouseenter', updateMusicArtwork);
@@ -929,8 +949,9 @@ const logoDotLitByIndex = new Map(
         const sceneArrival = sessionStorage.getItem('scene-arrival');
         if (sceneTransition && sceneArrival) {
           sessionStorage.removeItem('scene-arrival');
+          loadSceneTransitionImages();
           sceneTransition.classList.add('is-arriving');
-          window.setTimeout(() => sceneTransition.classList.remove('is-arriving'), 1050);
+          window.setTimeout(() => sceneTransition.classList.remove('is-arriving'), 460);
 
           if (sceneArrival === 'other' && document.body.classList.contains('other-page') && logo && !musicReducedMotion.matches) {
             window.clearTimeout(logoHoverPreviewTimer);
@@ -939,7 +960,7 @@ const logoDotLitByIndex = new Map(
               logoHoverPreviewTimer = window.setTimeout(() => {
                 logo.classList.remove('is-hover-preview');
               }, 4000);
-            }, 1050);
+            }, 460);
           }
         }
 
