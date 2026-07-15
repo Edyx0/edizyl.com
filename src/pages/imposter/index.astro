@@ -1,8 +1,3 @@
 ---
-import AppDetail from '../../layouts/AppDetail.astro';
-import { findApp } from '../../data/apps';
-
-const app = findApp('imposter')!;
+return Astro.redirect('/other/#other-index-imposter');
 ---
-
-<AppDetail app={app} />

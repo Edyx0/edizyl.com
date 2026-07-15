@@ -9084,18 +9084,45 @@ body.other-page {
   }
 }
 
-/* Desktop Other index: unequal, interlocking project fields inspired by the home collage. */
+body.other-page .other-project__frame,
+body.other-page .other-project__surface,
+body.other-page .other-project__frame img {
+  rotate: 0deg;
+}
+
+/* Desktop Other index: one aligned, asymmetric project canvas inspired by the home collage. */
 @media (min-width: 1000px) {
   body.other-page main {
     display: grid;
-    grid-template-columns: minmax(0, 1.16fr) minmax(0, 0.84fr);
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: repeat(12, minmax(0, 1fr));
+    gap: clamp(0.75rem, 1.2vw, 1.25rem);
     align-items: stretch;
+    min-height: 48rem;
+    height: calc(100svh - 6rem);
   }
 
   body.other-page .other-index {
-    min-height: 100svh;
-    height: 100svh;
-    padding: clamp(4.5rem, 7vw, 6rem) clamp(1rem, 2vw, 2rem) clamp(1.5rem, 2vw, 2rem);
+    min-width: 0;
+    min-height: 0;
+    height: auto;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  body.other-page .other-index--imposter {
+    grid-column: 1 / 8;
+    grid-row: 1 / -1;
+  }
+
+  body.other-page .other-index--lokal {
+    grid-column: 8 / -1;
+    grid-row: 1 / 7;
+  }
+
+  body.other-page .other-index:not(.other-index--lokal):not(.other-index--imposter) {
+    grid-column: 8 / -1;
+    grid-row: 7 / -1;
   }
 
   body.other-page .other-project {
@@ -9105,51 +9132,198 @@ body.other-page {
     margin: 0;
   }
 
-  body.other-page .other-index:not(.other-index--lokal) .other-project__frame--cover {
+  body.other-page .other-index:not(.other-index--lokal):not(.other-index--imposter) .other-project__frame--cover {
     left: 2%;
-    top: 27%;
-    width: 72%;
-  }
-
-  body.other-page .other-index:not(.other-index--lokal) .other-project__frame--menu {
-    left: auto;
-    right: -8%;
-    top: 43%;
-    width: 64%;
-  }
-
-  body.other-page .other-index:not(.other-index--lokal) .other-project__identity {
-    left: 3%;
     top: 4%;
-    bottom: auto;
-    width: 96%;
+    width: 70%;
   }
 
-  body.other-page .other-index:not(.other-index--lokal) .other-project__identity > .other-project__title-line > span {
-    font-size: clamp(3.75rem, 5.7vw, 6rem);
+  body.other-page .other-index:not(.other-index--lokal):not(.other-index--imposter) .other-project__frame--menu {
+    left: auto;
+    right: 2%;
+    top: 27%;
+    width: 58%;
+  }
+
+  body.other-page .other-index:not(.other-index--lokal):not(.other-index--imposter) .other-project__identity {
+    left: 3%;
+    top: auto;
+    bottom: 4%;
+    width: 94%;
+  }
+
+  body.other-page .other-index:not(.other-index--lokal):not(.other-index--imposter) .other-project__identity > .other-project__title-line > span {
+    font-size: clamp(2.6rem, 3.2vw, 3.8rem);
   }
 
   body.other-page .other-index--lokal .other-project__frame--lokal-photo {
-    left: -2%;
-    top: 8%;
-    width: 64%;
+    left: 3%;
+    top: 3%;
+    width: 55%;
   }
 
   body.other-page .other-index--lokal .other-project__frame--lokal-logo {
-    left: 55%;
+    left: 62%;
     right: auto;
-    top: 28%;
-    width: 34%;
+    top: 13%;
+    width: 29%;
   }
 
   body.other-page .other-index--lokal .other-project__identity {
-    left: -5%;
-    top: 72%;
+    left: 62%;
+    top: 58%;
     bottom: auto;
-    width: 105%;
+    width: 36%;
+    justify-items: start;
+    text-align: left;
+  }
+
+  body.other-page .other-index--lokal .other-project__identity > .other-project__title-line {
+    justify-content: flex-start;
+    text-align: left;
   }
 
   body.other-page .other-index--lokal .other-project__identity > .other-project__title-line > span {
-    font-size: clamp(3rem, 4.4vw, 5rem);
+    font-size: clamp(2.5rem, 3.2vw, 3.8rem);
+  }
+
+  body.other-page .other-index--lokal .other-project__identity > small {
+    max-width: 100%;
+    font-size: clamp(0.68rem, 0.72vw, 0.78rem);
+    text-align: left;
+  }
+
+  body.other-page .other-index--imposter .other-project__frame--imposter-art {
+    left: -8%;
+    top: 4%;
+    width: 78%;
+  }
+
+  body.other-page .other-index--imposter .other-project__identity {
+    left: 4%;
+    top: auto;
+    bottom: 3.5%;
+    width: 92%;
+  }
+
+  body.other-page .other-index--imposter .other-project__identity > .other-project__title-line > span {
+    font-size: clamp(3.75rem, 5vw, 5.75rem);
+  }
+}
+
+/* Imposter — portrait App Store storytelling inside the shared Other gallery system. */
+.other-index--imposter {
+  --imposter-ink: #17090a;
+  --imposter-cream: #f4e3c2;
+  --imposter-gold: #c89a52;
+  --imposter-red: #8e1017;
+  color: var(--imposter-ink);
+}
+
+.other-index--imposter .other-project__frame--imposter-art {
+  z-index: 1;
+  left: 5%;
+  top: 3%;
+  width: 72%;
+  aspect-ratio: 1;
+}
+
+.other-index--imposter .other-project__frame--imposter-art .other-project__surface {
+  background: transparent;
+}
+
+.other-index--imposter .other-project__frame--imposter-art img {
+  box-sizing: border-box;
+  object-fit: contain;
+  padding-inline: 8%;
+}
+
+.other-index--imposter .other-project__identity {
+  color: var(--imposter-ink);
+}
+
+.other-index--imposter .other-project__identity > small {
+  color: var(--imposter-cream);
+  background: var(--imposter-ink);
+}
+
+.other-index--imposter .other-project__identity .other-project__year {
+  color: currentColor;
+}
+
+.other-gallery--imposter {
+  --imposter-ink: #17090a;
+  --imposter-cream: #f4e3c2;
+  --imposter-gold: #c89a52;
+  --imposter-red: #8e1017;
+}
+
+.other-gallery--imposter .other-gallery__intro-title {
+  max-width: 10ch;
+  color: var(--imposter-cream);
+}
+
+.other-gallery--imposter .other-gallery__back:hover,
+.other-gallery--imposter .other-gallery__back:focus-visible,
+.other-gallery--imposter .other-gallery__project-link:hover,
+.other-gallery--imposter .other-gallery__project-link:focus-visible {
+  color: var(--imposter-gold);
+}
+
+.other-gallery--imposter .other-gallery__text-surface {
+  color: var(--imposter-ink);
+  background: var(--imposter-cream);
+}
+
+.other-gallery--imposter .other-gallery__text-slot {
+  color: var(--imposter-ink);
+}
+
+.other-gallery--imposter .other-gallery__track .other-gallery__frame:not(.other-gallery__text-frame) {
+  width: auto;
+  height: min(calc(100svh - 9rem), 42rem);
+  aspect-ratio: 600 / 1299;
+  --gallery-rest-y: 0;
+}
+
+.other-gallery--imposter .other-gallery__track .other-gallery__frame--middle:not(.other-gallery__text-frame) {
+  height: min(calc(100svh - 12rem), 36rem);
+}
+
+.other-gallery--imposter .other-gallery__track .other-gallery__frame--edge:not(.other-gallery__text-frame) {
+  height: min(calc(100svh - 10rem), 39rem);
+}
+
+.other-gallery--imposter .other-gallery__track .other-gallery__frame--tail:not(.other-gallery__text-frame) {
+  height: min(calc(100svh - 14rem), 34rem);
+}
+
+.other-gallery--imposter .other-gallery__track .other-gallery__frame:not(.other-gallery__text-frame) img {
+  object-fit: contain;
+  object-position: center;
+  transform: scale(1);
+}
+
+.other-gallery--imposter .other-gallery__track .other-gallery__frame:not(.other-gallery__text-frame) .other-gallery__surface {
+  background: var(--imposter-ink);
+}
+
+@media (max-width: 760px) {
+  .other-index--imposter .other-project__frame--imposter-art {
+    left: 5%;
+    top: 1%;
+    width: 86%;
+  }
+
+  .other-index--imposter .other-project__identity {
+    top: clamp(15.8rem, 51vw, 19rem);
+  }
+
+  .other-gallery--imposter .other-gallery__track .other-gallery__frame:not(.other-gallery__text-frame) {
+    width: auto;
+  }
+
+  .other-gallery--imposter .other-gallery__track .other-gallery__text-frame {
+    width: min(82vw, 28rem);
   }
 }

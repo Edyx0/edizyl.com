@@ -86,18 +86,73 @@ const lokalItems = [
   },
 ] as const;
 
+const imposterItems = [
+  {
+    kind: 'image',
+    role: 'lead',
+    image: {
+      src: '/screenshots/imposter/1.jpg',
+      alt: 'Imposter App Store artwork introducing the party deduction game and its hidden role',
+    },
+  },
+  {
+    kind: 'text',
+    variant: 'one',
+    slot: 'imposter-intro',
+    text: 'Imposter turns one phone into a whole-room social deduction game. Everyone receives the same secret word except one player, who has to bluff through the clues, read the room, and survive the vote without giving themselves away.',
+  },
+  {
+    kind: 'image',
+    role: 'middle',
+    image: {
+      src: '/screenshots/imposter/2.jpg',
+      alt: 'Imposter App Store artwork explaining how players give clues without revealing the secret',
+    },
+  },
+  {
+    kind: 'image',
+    role: 'edge',
+    image: {
+      src: '/screenshots/imposter/5.jpg',
+      alt: 'Imposter pass-and-play role reveal screen shown inside an iPhone',
+    },
+  },
+  {
+    kind: 'text',
+    variant: 'two',
+    slot: 'imposter-outro',
+    text: 'I designed and built the iOS app in SwiftUI around a private pass-and-play ritual. A press-and-hold reveal hides the role as soon as the player lifts their finger, while categories, voting, premium groups, English and Turkish localization, and the full game state stay fast on a single device.',
+  },
+  {
+    kind: 'image',
+    role: 'tail',
+    image: {
+      src: '/screenshots/imposter/3.jpg',
+      alt: 'Imposter App Store artwork showing the play-it-cool role screen',
+    },
+  },
+  {
+    kind: 'image',
+    role: 'tail',
+    image: {
+      src: '/screenshots/imposter/4.jpg',
+      alt: 'Imposter App Store artwork presenting six modes and groups of three to eight players',
+    },
+  },
+] as const;
+
 const projects = [
   {
-    id: 'ayasofya',
-    title: 'Hagia Sophia: Sacred Wisdom Stone',
-    indexLabel: 'Hagia Sophia',
-    indexMeta: 'Sacred Wisdom Stone · jam game',
-    galleryItems: ayasofyaItems,
-    canvas: '#0b0f1c',
-    ink: '#f2d7a6',
-    frame: '#ed46d5',
-    link: 'https://edizy.itch.io/ayasofya-kutsal-bilgelik-tasi',
-    linkLabel: 'Play on itch.io ↗',
+    id: 'imposter',
+    title: 'Imposter',
+    indexLabel: 'Imposter',
+    indexMeta: 'iOS party game · product & development',
+    galleryItems: imposterItems,
+    canvas: '#17090a',
+    ink: '#f4e3c2',
+    frame: '#c89a52',
+    link: 'https://apps.apple.com/app/imposter-spy-at-the-party/id6761042851',
+    linkLabel: 'View on the App Store ↗',
   },
   {
     id: 'lokal',
@@ -111,6 +166,18 @@ const projects = [
     link: null,
     linkLabel: 'App Store visual direction',
   },
+  {
+    id: 'ayasofya',
+    title: 'Hagia Sophia: Sacred Wisdom Stone',
+    indexLabel: 'Hagia Sophia',
+    indexMeta: 'Sacred Wisdom Stone · jam game',
+    galleryItems: ayasofyaItems,
+    canvas: '#0b0f1c',
+    ink: '#f2d7a6',
+    frame: '#ed46d5',
+    link: 'https://edizy.itch.io/ayasofya-kutsal-bilgelik-tasi',
+    linkLabel: 'Play on itch.io ↗',
+  },
 ] as const;
 ---
 
@@ -121,7 +188,11 @@ const projects = [
 >
   {projects.map((project) => (
     <section
-      class:list={['other-index', project.id === 'lokal' && 'other-index--lokal']}
+      class:list={[
+        'other-index',
+        project.id === 'lokal' && 'other-index--lokal',
+        project.id === 'imposter' && 'other-index--imposter',
+      ]}
       id={`other-index-${project.id}`}
       data-other-index
       style={`--project-frame: ${project.frame};`}
@@ -134,7 +205,7 @@ const projects = [
         aria-controls={`other-gallery-${project.id}`}
         aria-label={`Open ${project.title} project gallery`}
       >
-{project.id === 'lokal' ? (
+        {project.id === 'lokal' ? (
           <>
             <span class="other-project__frame other-project__frame--lokal-photo" style="--frame-i: 0; --frame-x: -18vw; --frame-y: -22vh;" data-index-frame aria-hidden="true">
               <span class="other-project__surface">
@@ -144,6 +215,14 @@ const projects = [
             <span class="other-project__frame other-project__frame--lokal-logo" style="--frame-i: 1; --frame-x: 20vw; --frame-y: -28vh;" data-index-frame aria-hidden="true">
               <span class="other-project__surface">
                 <img src="/other-projects/lokal/lokallogo.svg" alt="Lokal app logo" loading="lazy" decoding="async" />
+              </span>
+            </span>
+          </>
+        ) : project.id === 'imposter' ? (
+          <>
+            <span class="other-project__frame other-project__frame--imposter-art" style="--frame-i: 0; --frame-x: -18vw; --frame-y: -22vh;" data-index-frame aria-hidden="true">
+              <span class="other-project__surface">
+                <img src="/landing/self-brand/imposter.webp" alt="Imposter detective artwork" decoding="async" />
               </span>
             </span>
           </>
@@ -166,8 +245,10 @@ const projects = [
             <span class="other-project__title-text">
               {project.id === 'ayasofya' ? (
                 <>Hagia <span class="other-project__title-end">Sophia <small class="other-project__year">(2021)</small></span></>
-              ) : (
+              ) : project.id === 'lokal' ? (
                 <span class="other-project__title-end">lokal <small class="other-project__year">(2026)</small></span>
+              ) : (
+                <span class="other-project__title-end">Imposter <small class="other-project__year">(2026)</small></span>
               )}
             </span>
           </span>
@@ -179,7 +260,11 @@ const projects = [
 
   {projects.map((project) => (
     <section
-      class:list={['other-gallery', project.id === 'lokal' && 'other-gallery--lokal']}
+      class:list={[
+        'other-gallery',
+        project.id === 'lokal' && 'other-gallery--lokal',
+        project.id === 'imposter' && 'other-gallery--imposter',
+      ]}
       id={`other-gallery-${project.id}`}
       style={`--project-canvas: ${project.canvas}; --project-ink: ${project.ink}; --project-frame: ${project.frame};`}
       aria-label={`${project.title} project gallery`}

@@ -15,6 +15,7 @@ export interface AppData {
   highlights?: string[];
   stats?: { label: string; value: string }[];
   previewVideoHls?: string;
+  previewVideoMp4?: string;
   previewVideoPoster?: string;
   screenshots: string[];
   meta: {
@@ -191,6 +192,7 @@ export const apps: AppData[] = [
       { label: 'Unlockables', value: '6+ skins' },
     ],
     previewVideoHls: 'https://apptrailers.itunes.apple.com/itunes-assets/PurpleVideo211/v4/8d/6a/16/8d6a16e9-f7b4-0bc0-4c12-bc12757bb91b/P1241418578_default.m3u8',
+    previewVideoMp4: 'https://apptrailers.itunes.apple.com/itunes-assets/PurpleVideo221/v4/81/6e/a6/816ea641-e577-8ab9-cb0b-9e09f09611b2/P1241418578_Anull_video_gr240_sdr_520x1128-.mp4',
     previewVideoPoster: '/screenshots/holy-shift/1.jpg',
     screenshots: [
       '/screenshots/holy-shift/1.jpg',

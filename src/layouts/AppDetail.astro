@@ -7,6 +7,7 @@ interface Props {
 }
 
 const { app } = Astro.props;
+const finalYear = app.slug === 'holy-shift' ? '2025' : app.slug === 'tabu-ekstra' ? '2026' : undefined;
 
 const identities = {
   'holy-shift': {
@@ -134,11 +135,32 @@ const tabuMetrics = metricsByApp['tabu-ekstra'];
       </article>
 
       {app.screenshots.slice(1, 3).map((screenshot, index) => (
-        <figure class={`app-project__panel app-project__panel--shot app-project__panel--shot-${index + 2}`} data-project-panel>
-          <span class="app-project__shot-number" aria-hidden="true">{String(index + 2).padStart(2, '0')}</span>
-          <img src={screenshot} alt={`${app.name} App Store screenshot ${index + 2}`} loading="lazy" />
-          <figcaption>{app.features[index] ?? app.subtitle}</figcaption>
-        </figure>
+        <>
+          <figure class={`app-project__panel app-project__panel--shot app-project__panel--shot-${index + 2}`} data-project-panel>
+            <span class="app-project__shot-number" aria-hidden="true">{String(index + 2).padStart(2, '0')}</span>
+            <img src={screenshot} alt={`${app.name} App Store screenshot ${index + 2}`} loading="lazy" />
+            <figcaption>{app.features[index] ?? app.subtitle}</figcaption>
+          </figure>
+
+          {index === 0 && app.slug === 'holy-shift' && (app.previewVideoMp4 || app.previewVideoHls) && (
+            <figure class="app-project__panel app-project__panel--shot app-project__panel--gameplay" data-project-panel>
+              <span class="app-project__shot-number" aria-hidden="true">PLAY</span>
+              <video
+                class="app-project__gameplay-video"
+                src={app.previewVideoMp4 ?? app.previewVideoHls}
+                poster={app.previewVideoPoster}
+                aria-label={`${app.name} gameplay video`}
+                autoplay
+                muted
+                playsinline
+                loop
+                preload="metadata"
+                data-autoplay-video
+              ></video>
+              <figcaption>Gameplay</figcaption>
+            </figure>
+          )}
+        </>
       ))}
 
       {app.slug === 'tabu-ekstra' && (
@@ -199,7 +221,7 @@ const tabuMetrics = metricsByApp['tabu-ekstra'];
       <article class="app-project__panel app-project__panel--final" data-project-panel>
         <img class="app-project__final-icon" src={app.icon} alt="" width="144" height="144" loading="lazy" />
         <p>{identity.footerLabel}</p>
-        <h2>{app.name}</h2>
+          <h2>{app.name}{finalYear && <span class="app-project__final-year"> ({finalYear})</span>}</h2>
         <div class="app-project__final-actions">
           <a href={app.appStoreUrl} target="_blank" rel="noreferrer">View on the App Store <span aria-hidden="true">↗</span></a>
           <a href={`/${app.slug}/privacy/`}>Privacy</a>
@@ -220,6 +242,7 @@ const tabuMetrics = metricsByApp['tabu-ekstra'];
     const progress = project.querySelector<HTMLElement>('[data-project-progress]');
     const current = project.querySelector<HTMLElement>('[data-current]');
     const total = project.querySelector<HTMLElement>('[data-total]');
+    const autoplayVideos = [...project.querySelectorAll<HTMLVideoElement>('[data-autoplay-video]')];
     if (!rail || panels.length === 0) return;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -247,6 +270,14 @@ const tabuMetrics = metricsByApp['tabu-ekstra'];
       });
       if (current) current.textContent = String(activeIndex + 1).padStart(2, '0');
       panels.forEach((panel, index) => panel.toggleAttribute('data-active', index === activeIndex));
+      autoplayVideos.forEach((video) => {
+        const shouldPlay = video.closest('[data-project-panel]')?.hasAttribute('data-active') && !document.hidden;
+        if (shouldPlay) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      });
     };
 
     project.addEventListener('wheel', (event) => {
@@ -291,6 +322,7 @@ const tabuMetrics = metricsByApp['tabu-ekstra'];
     rail.addEventListener('pointerup', endDrag);
     rail.addEventListener('pointercancel', endDrag);
     rail.addEventListener('scroll', updateChrome, { passive: true });
+    document.addEventListener('visibilitychange', updateChrome);
 
     rail.addEventListener('keydown', (event) => {
       if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
@@ -515,7 +547,8 @@ const tabuMetrics = metricsByApp['tabu-ekstra'];
     background: var(--project-raised);
   }
   .app-project__panel--shot:nth-of-type(even) { background: var(--project-surface); }
-  .app-project__panel--shot img {
+  .app-project__panel--shot img,
+  .app-project__gameplay-video {
     width: auto;
     height: min(68vh, 44rem);
     max-width: 100%;
@@ -523,9 +556,11 @@ const tabuMetrics = metricsByApp['tabu-ekstra'];
     transform: translate3d(var(--shot-x, 0), var(--shot-y, 0), 0) rotate(var(--shot-rotate, 0deg)) scale(1);
     transition: transform 760ms cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .app-project__panel--shot:not([data-active]) img {
+  .app-project__panel--shot:not([data-active]) img,
+  .app-project__panel--shot:not([data-active]) .app-project__gameplay-video {
     transform: translate3d(var(--shot-x, 0), var(--shot-y, 0), 0) rotate(var(--shot-rotate, 0deg)) scale(0.94);
   }
+  .app-project__gameplay-video { display: block; background: #000; }
   .app-project__panel--shot figcaption {
     width: 100%;
     margin: 0;
@@ -625,6 +660,7 @@ const tabuMetrics = metricsByApp['tabu-ekstra'];
   .app-project__final-icon { width: 5.5rem; height: 5.5rem; margin-bottom: 2rem; border-radius: 1.25rem; }
   .app-project__panel--final > p { margin: 0 0 0.9rem; color: inherit; font-size: 0.78rem; font-weight: 850; letter-spacing: 0.08em; }
   .app-project__panel--final h2 { max-width: none; font-size: clamp(4rem, 9vw, 6rem); }
+  .app-project__final-year { display: inline-block; margin-left: 0.2em; font-size: 0.24em; line-height: 1; vertical-align: 0.15em; letter-spacing: 0.04em; }
   .app-project__final-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 2.5rem; }
   .app-project__final-actions a { color: var(--project-surface); background: var(--project-ink); }
   .app-project__final-actions a:last-child { color: var(--project-final-ink); background: transparent; border: 1px solid currentColor; }
@@ -712,7 +748,8 @@ const tabuMetrics = metricsByApp['tabu-ekstra'];
     --caption-y: 0;
     --caption-rotate: 0deg;
   }
-  .app-project--holy-shift .app-project__panel--shot img {
+  .app-project--holy-shift .app-project__panel--shot img,
+  .app-project--holy-shift .app-project__gameplay-video {
     filter: drop-shadow(0 0 1.1rem rgb(255 24 174 / 0.28));
   }
   .app-project--holy-shift .app-project__panel--shot {
@@ -757,11 +794,13 @@ const tabuMetrics = metricsByApp['tabu-ekstra'];
     box-shadow: 0 0 0.65rem rgb(255 24 174 / 0.42);
   }
   .app-project--holy-shift .app-project__panel--shot:not([data-active]) img,
+  .app-project--holy-shift .app-project__panel--shot:not([data-active]) .app-project__gameplay-video,
   .app-project--imposter .app-project__panel--shot:not([data-active]) img {
     transform: translate3d(var(--shot-x, 0), 0, 0) scale(1);
   }
   .app-project--holy-shift .app-project__panel--shot-lead { width: clamp(22rem, 31vw, 30rem); --shot-x: -0.65rem; --caption-x: -0.65rem; }
   .app-project--holy-shift .app-project__panel--shot-2 { width: clamp(19rem, 27vw, 27rem); --shot-x: 0.8rem; --caption-x: 0.8rem; }
+  .app-project--holy-shift .app-project__panel--gameplay { width: clamp(20rem, 29vw, 28rem); }
   .app-project--holy-shift .app-project__panel--shot-3 { width: clamp(24rem, 34vw, 33rem); --shot-x: -0.9rem; --caption-x: -0.9rem; }
   .app-project--holy-shift .app-project__panel--shot-4 { width: clamp(20rem, 29vw, 28rem); --shot-x: 0.7rem; --caption-x: 0.7rem; }
   .app-project--holy-shift .app-project__panel--final .app-project__final-icon { transform: translateX(0.8rem); }
@@ -1093,7 +1132,8 @@ const tabuMetrics = metricsByApp['tabu-ekstra'];
     .app-project__art-field { inset: 8% 8% 7%; }
     .app-project__scroll-note { display: none; }
     .app-project__panel--shot { width: 82vw; padding: 4.75rem 1.5rem 2.5rem; }
-    .app-project__panel--shot img { height: min(65vh, 39rem); }
+    .app-project__panel--shot img,
+    .app-project__gameplay-video { height: min(65vh, 39rem); }
     .app-project__shot-number { top: 4.3rem; }
     .app-project--holy-shift .app-project__panel--shot::after { top: 4.35rem; }
     .app-project__panel--story,
@@ -1177,7 +1217,8 @@ const tabuMetrics = metricsByApp['tabu-ekstra'];
   @media (max-height: 680px) and (min-width: 801px) {
     .app-project__panel--hero { padding-top: 5rem; padding-bottom: 2.5rem; }
     .app-project__hero-art img { height: 72vh; }
-    .app-project__panel--shot img { height: 66vh; }
+    .app-project__panel--shot img,
+    .app-project__gameplay-video { height: 66vh; }
     .app-project__panel--story,
     .app-project__panel--features,
     .app-project__panel--final { padding-top: 5.5rem; padding-bottom: 3.5rem; }
@@ -1186,9 +1227,11 @@ const tabuMetrics = metricsByApp['tabu-ekstra'];
   @media (prefers-reduced-motion: reduce) {
     .app-project__rail { scroll-behavior: auto; }
     .app-project__panel--shot img,
+    .app-project__gameplay-video,
     .app-project__panel--shot figcaption,
     .app-project__store-link,
     .app-project__final-actions a { transition: none; }
-    .app-project__panel--shot:not([data-active]) img { transform: none; }
+    .app-project__panel--shot:not([data-active]) img,
+    .app-project__panel--shot:not([data-active]) .app-project__gameplay-video { transform: none; }
   }
 </style>
